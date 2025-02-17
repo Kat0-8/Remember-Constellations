@@ -1,2 +1,2 @@
 # Remember-Constellations
-Distributed system for stydying constellations
+Distributed system for studying constellations
