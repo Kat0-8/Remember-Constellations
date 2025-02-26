@@ -27,7 +27,9 @@
         <url/>
     </scm>
     <properties>
-        <java.version>23</java.version>
+            <maven.compiler.source>17</maven.compiler.source>
+            <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
             <sonar.organization>kat0-8</sonar.organization>
             <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
