@@ -18,10 +18,10 @@ https://asciiart.website/index.php?art=nature/astronomy
 **⚙️Функционал**
 --
 --Получение созвездия по названию\
---Получение созвездия по аббревиатуре (в соответствии с обозначениями IAU/NASA)\
+--Получение созвездия по аббревиатуре (в соответствии с обозначениями IAU)\
 --Получение всех созвездий
 > [!TIP]
-> IAU - International Astronomical Union; NASA - National Aeronautics and Space Administration
+> IAU - International Astronomical Union;
 
 
 
