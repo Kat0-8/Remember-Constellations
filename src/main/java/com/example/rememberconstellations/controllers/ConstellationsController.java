@@ -22,8 +22,13 @@ public class ConstellationsController {
     }
 
     @GetMapping("/get/byName")
-    public Constellation getConstellationByName(@RequestParam String name) {
-        return constellationsService.getConstellationByName(name);
+    public ResponseEntity<Constellation> getConstellationByName(@RequestParam String name) {
+        Constellation constellation = constellationsService.getConstellationByName(name);
+        if (constellation == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(constellation);
+        }
     }
 
     @GetMapping("/get/byAbbreviation/{abbreviation}")
@@ -37,8 +42,13 @@ public class ConstellationsController {
     }
 
     @GetMapping("/get/all")
-    public List<Constellation> getAllConstellations() {
-        return constellationsService.getConstellations();
+    public ResponseEntity<List<Constellation>> getAllConstellations() {
+        List<Constellation> list = constellationsService.getConstellations();
+        if (list.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(list);
+        }
     }
 }
 

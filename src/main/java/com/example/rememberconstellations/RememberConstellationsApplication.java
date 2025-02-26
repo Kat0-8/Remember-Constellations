@@ -8,5 +8,4 @@ public class RememberConstellationsApplication {
     public static void main(String[] args) {
         SpringApplication.run(RememberConstellationsApplication.class, args);
     }
-
 }
