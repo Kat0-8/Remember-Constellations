@@ -31,7 +31,7 @@ https://asciiart.website/index.php?art=nature/astronomy
 **🖥️Используемые технологии**
 --
 IDE: IntelliJ IDEA\
-SDK: JDK 23\
+SDK: JDK 17\
 Build: Maven\
 Framework: Spring Boot\
 Database: PostrgeSQL
