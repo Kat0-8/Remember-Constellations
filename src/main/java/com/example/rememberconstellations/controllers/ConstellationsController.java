@@ -33,7 +33,7 @@ public class ConstellationsController {
     }
 
     @GetMapping("/get/byAbbreviation/{abbreviation}")
-    public ResponseEntity<?> getConstellationByAbbreviation(@PathVariable String abbreviation) {
+    public ResponseEntity<Constellation> getConstellationByAbbreviation(@PathVariable String abbreviation) {
         Constellation constellation = constellationsService.getConstellationByAbbreviation(abbreviation);
         if (constellation == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Constellation());
