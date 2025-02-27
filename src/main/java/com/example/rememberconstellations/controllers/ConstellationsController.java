@@ -23,11 +23,10 @@ public class ConstellationsController {
     }
 
     @GetMapping("/get/byName")
-    public ResponseEntity<?> getConstellationByName(@RequestParam String name) {
+    public ResponseEntity<Constellation> getConstellationByName(@RequestParam String name) {
         Constellation constellation = constellationsService.getConstellationByName(name);
         if (constellation == null) { // EXCEPTION HANDLERS
-            String errorMessage = "No constellation with such name found";
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Constellation());
         } else {
             return ResponseEntity.ok(constellation);
         }
@@ -37,8 +36,7 @@ public class ConstellationsController {
     public ResponseEntity<?> getConstellationByAbbreviation(@PathVariable String abbreviation) {
         Constellation constellation = constellationsService.getConstellationByAbbreviation(abbreviation);
         if (constellation == null) {
-            String errorMessage = "No constellation found with such abbreviation";
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Constellation());
         } else {
             return ResponseEntity.ok(constellation);
         }
