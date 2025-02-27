@@ -28,5 +28,4 @@ public class ConstellationsService {
     public Constellation getConstellationByAbbreviation(final String abbreviation) {
         return constellationsRepository.getConstellationByAbbreviation(abbreviation);
     }
-
 }

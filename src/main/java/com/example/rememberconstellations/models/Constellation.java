@@ -23,5 +23,4 @@ public class Constellation {
         this.abbreviation = "UNDEFINED";
         this.stars = new ArrayList<>();
     }
-
 }
