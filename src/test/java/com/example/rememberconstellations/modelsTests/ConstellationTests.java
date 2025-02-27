@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ConstellationTests {
+class ConstellationTests {
 
     private static final String TEST_NAME = "Test name";
     private static final String TEST_ABBREVIATION = "Test abbreviation";
@@ -23,14 +23,14 @@ public class ConstellationTests {
     }
 
     @Test
-    public void testGetters() {
+    void testGetters() {
         assertEquals(UNDEFINED, constellation.getName());
         assertEquals(UNDEFINED, constellation.getAbbreviation());
         assertTrue(constellation.getStars().isEmpty());
     }
 
     @Test
-    public void testSetters() {
+    void testSetters() {
         constellation.setName(TEST_NAME);
         assertEquals(TEST_NAME, constellation.getName());
 
@@ -43,17 +43,17 @@ public class ConstellationTests {
     }
 
     @Test
-    public void testConstructorWithParameters() {
+    void testConstructorWithParameters() {
         List<Star> testStars = Arrays.asList(new Star(), new Star());
-        Constellation constellation = new Constellation(TEST_NAME, TEST_ABBREVIATION, testStars);
+        Constellation testConstellation = new Constellation(TEST_NAME, TEST_ABBREVIATION, testStars);
 
-        assertEquals(TEST_NAME, constellation.getName());
-        assertEquals(TEST_ABBREVIATION, constellation.getAbbreviation());
-        assertEquals(testStars, constellation.getStars());
+        assertEquals(TEST_NAME, testConstellation.getName());
+        assertEquals(TEST_ABBREVIATION, testConstellation.getAbbreviation());
+        assertEquals(testStars, testConstellation.getStars());
     }
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         constellation = new Constellation(TEST_NAME, TEST_ABBREVIATION, new ArrayList<>());
         assertEquals(TEST_NAME, constellation.getName());
         assertEquals(TEST_ABBREVIATION, constellation.getAbbreviation());

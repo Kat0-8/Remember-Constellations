@@ -6,6 +6,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Star {
+    private static final String UNDEFINED = "UNDEFINED";
     private String name;
     private String type;
     private double mass;
@@ -26,13 +27,13 @@ public class Star {
     }
 
     public Star() {
-        this.name = "UNDEFINED";
-        this.type = "UNDEFINED";
+        this.name = UNDEFINED;
+        this.type = UNDEFINED;
         this.mass = 0.0;
         this.radius = 0.0;
         this.temperature = 0.0;
         this.luminosity = 0.0;
-        this.positionInConstellation = "UNDEFINED";
+        this.positionInConstellation = UNDEFINED;
     }
 
 }
