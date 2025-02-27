@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,9 +54,9 @@ class ConstellationTests {
 
     @Test
     void testDefaultConstructor() {
-        constellation = new Constellation(TEST_NAME, TEST_ABBREVIATION, new ArrayList<>());
-        assertEquals(TEST_NAME, constellation.getName());
-        assertEquals(TEST_ABBREVIATION, constellation.getAbbreviation());
+        constellation = new Constellation();
+        assertEquals(UNDEFINED, constellation.getName());
+        assertEquals(UNDEFINED, constellation.getAbbreviation());
         assertNotNull(constellation.getStars());
         assertTrue(constellation.getStars().isEmpty());
     }
