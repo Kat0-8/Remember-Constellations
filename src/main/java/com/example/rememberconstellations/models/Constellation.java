@@ -1,5 +1,6 @@
 package com.example.rememberconstellations.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,12 @@ public class Constellation {
         this.name = name;
         this.abbreviation = abbreviation;
         this.stars = stars;
+    }
+
+    public Constellation() {
+        this.name = "UNDEFINED";
+        this.abbreviation = "UNDEFINED";
+        this.stars = new ArrayList<>();
     }
 
 }

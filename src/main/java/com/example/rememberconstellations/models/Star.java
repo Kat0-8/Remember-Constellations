@@ -25,4 +25,14 @@ public class Star {
         this.positionInConstellation = positionInConstellation;
     }
 
+    public Star() {
+        this.name = "UNDEFINED";
+        this.type = "UNDEFINED";
+        this.mass = 0.0;
+        this.radius = 0.0;
+        this.temperature = 0.0;
+        this.luminosity = 0.0;
+        this.positionInConstellation = "UNDEFINED";
+    }
+
 }
