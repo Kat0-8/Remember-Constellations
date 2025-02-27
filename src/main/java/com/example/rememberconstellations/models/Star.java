@@ -35,5 +35,4 @@ public class Star {
         this.luminosity = 0.0;
         this.positionInConstellation = UNDEFINED;
     }
-
 }
