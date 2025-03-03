@@ -3,7 +3,9 @@ package com.example.rememberconstellations.controllers;
 import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.services.ConstellationsService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,35 +24,42 @@ public class ConstellationsController {
         this.constellationsService = constellationsService;
     }
 
-    @GetMapping("/get/byName")
-    public ResponseEntity<Constellation> getConstellationByName(@RequestParam String name) {
-        Constellation constellation = constellationsService.getConstellationByName(name);
-        if (constellation == null) { // EXCEPTION HANDLERS
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Constellation());
+    @GetMapping("/{id}")
+    public ResponseEntity<Constellation> getConstellationById(@PathVariable int id) {
+        Optional<Constellation> constellation = constellationsService.getConstellationById(id);
+        if (constellation.isPresent()) {
+            return ResponseEntity.ok(constellation.get());
         } else {
-            return ResponseEntity.ok(constellation);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Constellation());
         }
     }
 
-    @GetMapping("/get/byAbbreviation/{abbreviation}")
-    public ResponseEntity<Constellation> getConstellationByAbbreviation(@PathVariable String abbreviation) {
-        Constellation constellation = constellationsService.getConstellationByAbbreviation(abbreviation);
-        if (constellation == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Constellation());
-        } else {
-            return ResponseEntity.ok(constellation);
-        }
-    }
-
-    @GetMapping("/get/all")
-    public ResponseEntity<List<Constellation>> getAllConstellations() {
-        List<Constellation> list = constellationsService.getConstellations();
-        if (list.isEmpty()) {
+    @GetMapping("")
+    public ResponseEntity<List<Constellation>> getConstellationByCriteria(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String abbreviation,
+            @RequestParam(required = false) String family,
+            @RequestParam(required = false) String region,
+            Pageable pageable) {
+        List<Constellation> constellations =
+                constellationsService.getConstellationsByCriteria(name, abbreviation, family, region, pageable);
+        if (constellations.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(list);
+            return ResponseEntity.ok(constellations);
         }
     }
+
+    /*@GetMapping("/all")
+    public ResponseEntity<List<Constellation>> getAllConstellations() {
+        List<Constellation> constellations = constellationsService.getAllConstellations();
+        if (constellations.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(constellations);
+        }
+    }
+     */
 }
 
 

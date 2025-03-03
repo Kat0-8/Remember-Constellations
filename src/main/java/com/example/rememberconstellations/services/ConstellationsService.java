@@ -2,8 +2,13 @@ package com.example.rememberconstellations.services;
 
 import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.repositories.ConstellationsRepository;
+import com.example.rememberconstellations.utilities.ConstellationSpecification;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
@@ -17,15 +22,37 @@ public class ConstellationsService {
         this.constellationsRepository = constellationsRepository;
     }
 
-    public List<Constellation> getConstellations() {
-        return constellationsRepository.getAllConstellations();
+    public Optional<Constellation> getConstellationById(final int id) {
+        return constellationsRepository.findById(id);
     }
 
-    public Constellation getConstellationByName(final String name) {
-        return constellationsRepository.getConstellationByName(name);
+    public List<Constellation> getConstellationsByCriteria(String name, String abbreviation,
+                                                           String family, String region, Pageable pageable) {
+        Specification<Constellation> specification = Specification.where(null);
+
+        if (name != null) {
+            specification = specification.and(ConstellationSpecification.withName(name));
+        }
+        if (abbreviation != null) {
+            specification = specification.and(ConstellationSpecification.withAbbreviation(abbreviation));
+        }
+        if (family != null) {
+            specification = specification.and(ConstellationSpecification.withFamily(family));
+        }
+        if (region != null) {
+            specification = specification.and(ConstellationSpecification.withRegion(region));
+        }
+
+        if (pageable != null) {
+            return constellationsRepository.findAll(specification, pageable).getContent();
+        } else {
+            return constellationsRepository.findAll(specification);
+        }
     }
 
-    public Constellation getConstellationByAbbreviation(final String abbreviation) {
-        return constellationsRepository.getConstellationByAbbreviation(abbreviation);
+    /*public List<Constellation> getAllConstellations() {
+        return constellationsRepository.findAll();
     }
+     */
+
 }
