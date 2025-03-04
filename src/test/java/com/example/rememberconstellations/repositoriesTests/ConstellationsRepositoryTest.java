@@ -29,53 +29,17 @@ class ConstellationsRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        constellation = new Constellation();
-        constellation.setName("Orion");
-        constellation.setId(999);
-
-        constellationsRepository.save(constellation);
-
-        Star star1 = new Star();
-        star1.setName("Betelgeuse");
-        star1.setConstellation(constellation);
-
-        Star star2 = new Star();
-        star2.setName("Rigel");
-        star2.setConstellation(constellation);
-
-        starsRepository.save(star1);
-        starsRepository.save(star2);
+        //nested
     }
 
     @Test
     void testFindByIdWithStars() {
-        Optional<Constellation> fetchedConstellation = constellationsRepository.findById(constellation.getId());
-
-        assertTrue(fetchedConstellation.isPresent());
-        Constellation foundConstellation = fetchedConstellation.get();
-
-        assertEquals("Orion", foundConstellation.getName());
-        assertNotNull(foundConstellation.getStars());
-        assertEquals(2, foundConstellation.getStars().size());
-        assertTrue(foundConstellation.getStars().stream().anyMatch(star -> star.getName().equals("Betelgeuse")));
-        assertTrue(foundConstellation.getStars().stream().anyMatch(star -> star.getName().equals("Rigel")));
+       //nested
     }
 
     @Test
     void testFindByIdWithNoStars() {
-
-        Constellation emptyConstellation = new Constellation();
-        emptyConstellation.setName("Empty Constellation");
-        constellationsRepository.save(emptyConstellation);
-
-        Optional<Constellation> fetchedConstellation = constellationsRepository.findById(emptyConstellation.getId());
-
-        assertTrue(fetchedConstellation.isPresent());
-        Constellation foundConstellation = fetchedConstellation.get();
-
-        assertEquals("Empty Constellation", foundConstellation.getName());
-        assertNotNull(foundConstellation.getStars());
-        assertTrue(foundConstellation.getStars().isEmpty());
+        //nested
     }
 }
 

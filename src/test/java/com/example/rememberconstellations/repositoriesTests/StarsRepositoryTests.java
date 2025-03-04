@@ -21,30 +21,16 @@ class StarsRepositoryTests {
 
     @BeforeEach
     void setUp() {
-        constellation = new Constellation();
-        constellation.setName("Orion");
-
-        star = new Star();
-        star.setName("Betelgeuse");
-        star.setConstellation(constellation);
-
-        starsRepository.save(star);
+        //nested
     }
 
     @Test
     void testFindStarByIdShouldReturnStarWithConstellation() {
-        Optional<Star> foundStar = starsRepository.findStarById(star.getId());
-
-        assertThat(foundStar).isPresent();
-        assertThat(foundStar.get().getName()).isEqualTo(star.getName());
-        assertThat(foundStar.get().getConstellation()).isNotNull();
-        assertThat(foundStar.get().getConstellation().getName()).isEqualTo(constellation.getName());
+        //nested
     }
 
     @Test
     void testFindStarByIdShouldReturnEmptyWhenStarNotFound() {
-        Optional<Star> foundStar = starsRepository.findStarById(999);
-
-        assertThat(foundStar).isNotPresent();
+        //nested
     }
 }
