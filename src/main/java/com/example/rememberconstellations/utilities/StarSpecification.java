@@ -61,9 +61,4 @@ public class StarSpecification {
                         + positionInConstellation.toLowerCase() + "%") : null;
     }
 
-    public static Specification<Star> withConstellationId(Long constellationId) {
-        return (root, query, criteriaBuilder) ->
-                constellationId != null
-                ? criteriaBuilder.equal(root.get("constellation").get("id"), constellationId) : null;
-    }
 }

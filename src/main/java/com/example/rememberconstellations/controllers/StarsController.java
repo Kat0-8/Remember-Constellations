@@ -47,7 +47,8 @@ public class StarsController {
             Pageable pageable) {
         List<Star> stars =
                 starsService.getStarsByCriteria(name, type, mass, radius, temperature, luminosity,
-                                                rightAscension, declination, positionInConstellation, pageable);
+                                                rightAscension, declination, positionInConstellation,
+                                                constellationId, pageable);
         if (stars.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
