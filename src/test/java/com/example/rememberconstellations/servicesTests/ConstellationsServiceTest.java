@@ -18,7 +18,7 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConstellationsServiceTest {
+class ConstellationsServiceTest {
 
     @Mock
     private ConstellationsRepository constellationsRepository;

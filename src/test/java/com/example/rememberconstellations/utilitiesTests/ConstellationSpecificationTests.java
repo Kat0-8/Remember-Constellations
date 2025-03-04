@@ -1,4 +1,11 @@
 package com.example.rememberconstellations.utilitiesTests;
 
-public class ConstellationSpecificationTests {
+import org.junit.jupiter.api.Test;
+
+class ConstellationSpecificationTests {
+
+    @Test
+    void testGetStarsByCriteriaWithPageable() {
+        //f
+    }
 }

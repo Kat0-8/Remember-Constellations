@@ -3,7 +3,6 @@ package com.example.rememberconstellations.servicesTests;
 import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.StarsRepository;
 import com.example.rememberconstellations.services.StarsService;
-import com.example.rememberconstellations.utilities.StarSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +19,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
         import static org.assertj.core.api.Assertions.assertThat;
 
-public class StarsServiceTest {
+class StarsServiceTest {
 
     @Mock
     private StarsRepository starsRepository;
