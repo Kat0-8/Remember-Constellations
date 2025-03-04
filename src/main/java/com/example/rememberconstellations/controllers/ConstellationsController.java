@@ -49,17 +49,6 @@ public class ConstellationsController {
             return ResponseEntity.ok(constellations);
         }
     }
-
-    /*@GetMapping("/all")
-    public ResponseEntity<List<Constellation>> getAllConstellations() {
-        List<Constellation> constellations = constellationsService.getAllConstellations();
-        if (constellations.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok(constellations);
-        }
-    }
-     */
 }
 
 

@@ -48,10 +48,4 @@ public class ConstellationsService {
             return constellationsRepository.findAll(specification);
         }
     }
-
-    /*public List<Constellation> getAllConstellations() {
-        return constellationsRepository.findAll();
-    }
-     */
-
 }
