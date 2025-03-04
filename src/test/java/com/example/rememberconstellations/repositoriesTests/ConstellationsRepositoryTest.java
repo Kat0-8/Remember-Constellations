@@ -31,6 +31,7 @@ class ConstellationsRepositoryTest {
     void setUp() {
         constellation = new Constellation();
         constellation.setName("Orion");
+        constellation.setId(999);
 
         constellationsRepository.save(constellation);
 
