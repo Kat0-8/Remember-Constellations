@@ -8,7 +8,7 @@ class RememberConstellationsApplicationTests {
 
     @Test
     void contextLoads() {
-        //nester comment. Are you satisfied, Sonar?
+        //nested comment. Are you satisfied, Sonar?
     }
 
 }
