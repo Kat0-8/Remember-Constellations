@@ -37,18 +37,19 @@ public class StarsController {
     public ResponseEntity<List<Star>> getStarsByCriteria(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) double mass,
-            @RequestParam(required = false) double radius,
-            @RequestParam(required = false) double temperature,
-            @RequestParam(required = false) double luminosity,
-            @RequestParam(required = false) double rightAscension,
-            @RequestParam(required = false) double declination,
+            @RequestParam(required = false) Double mass,
+            @RequestParam(required = false) Double radius,
+            @RequestParam(required = false) Double temperature,
+            @RequestParam(required = false) Double luminosity,
+            @RequestParam(required = false) Double rightAscension,
+            @RequestParam(required = false) Double declination,
             @RequestParam(required = false) String positionInConstellation,
+            @RequestParam(required = false) Integer constellationId,
             Pageable pageable) {
         List<Star> stars =
                 starsService.getStarsByCriteria(name, type, mass, radius, temperature, luminosity,
                                                 rightAscension, declination, positionInConstellation,
-                                                pageable);
+                                                constellationId, pageable);
         if (stars.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {

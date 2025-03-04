@@ -26,7 +26,7 @@ public class StarsService {
     public List<Star> getStarsByCriteria(String name, String type, Double mass, Double radius,
                                          Double temperature, Double luminosity, Double rightAscension,
                                          Double declination, String positionInConstellation,
-                                         Pageable pageable) {
+                                         Integer constellationId, Pageable pageable) {
         Specification<Star> specification = Specification.where(null);
 
         if (name != null) {
@@ -55,6 +55,9 @@ public class StarsService {
         }
         if (positionInConstellation != null) {
             specification = specification.and(StarSpecification.withPositionInConstellation(positionInConstellation));
+        }
+        if (constellationId != null) {
+            specification = specification.and(StarSpecification.withConstellationId(constellationId));
         }
 
         if (pageable != null) {

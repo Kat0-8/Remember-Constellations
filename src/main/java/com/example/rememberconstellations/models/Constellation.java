@@ -1,5 +1,6 @@
 package com.example.rememberconstellations.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -42,6 +43,7 @@ public class Constellation {
     @OneToMany(mappedBy = "constellation", fetch = FetchType.LAZY,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)
     @JsonManagedReference
+    //@JsonIgnore
     private List<Star> stars;
 
     public Constellation(int id, String name, String abbreviation,

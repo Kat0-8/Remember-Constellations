@@ -2,6 +2,7 @@ package com.example.rememberconstellations.models;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -33,22 +34,22 @@ public class Star {
     private String type;
 
     @Column(name = "star_mass", nullable = false)
-    private double mass;
+    private Double mass;
 
     @Column(name = "star_radius", nullable = false)
-    private double radius;
+    private Double radius;
 
     @Column(name = "star_temperature", nullable = false)
-    private double temperature;
+    private Double temperature;
 
     @Column(name = "star_luminosity", nullable = false)
-    private double luminosity;
+    private Double luminosity;
 
     @Column(name = "star_right_ascension", nullable = false)
-    private double rightAscension;
+    private Double rightAscension;
 
     @Column(name = "star_declination", nullable = false)
-    private double declination;
+    private Double declination;
 
     @Column(name = "star_position_in_constellation", nullable = false)
     private String positionInConstellation;
@@ -56,6 +57,7 @@ public class Star {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "constellation_id")
     @JsonBackReference
+    //@JsonIgnore
     private Constellation constellation;
 
     public Star(String name, String type, double mass, double radius,
