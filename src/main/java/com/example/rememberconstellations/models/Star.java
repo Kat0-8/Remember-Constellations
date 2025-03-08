@@ -1,6 +1,5 @@
 package com.example.rememberconstellations.models;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +20,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "stars")
 public class Star {
-    //private static final String UNDEFINED = "UNDEFINED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,19 +71,4 @@ public class Star {
         this.declination = declination;
         this.positionInConstellation = positionInConstellation;
     }
-
-    /* public Star() {
-        this.id = -1;
-        this.name = UNDEFINED;
-        this.type = UNDEFINED;
-        this.mass = 0.0;
-        this.radius = 0.0;
-        this.temperature = 0.0;
-        this.luminosity = 0.0;
-        this.rightAscension = 0.0;
-        this.declination = 0.0;
-        this.positionInConstellation = UNDEFINED;
-    }
-
-     */
 }

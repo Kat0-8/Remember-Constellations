@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-//import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -23,7 +22,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "constellations")
 public class Constellation {
-    //private static final String UNDEFINED = "UNDEFINED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,14 +54,4 @@ public class Constellation {
         this.region = region;
         this.stars = stars;
     }
-
-   /* public Constellation() {
-        this.id = -1;
-        this.name = UNDEFINED;
-        this.abbreviation = "N/D";
-        this.family = UNDEFINED;
-        this.region = UNDEFINED;
-        this.stars = new ArrayList<>();
-    }
-    */
 }

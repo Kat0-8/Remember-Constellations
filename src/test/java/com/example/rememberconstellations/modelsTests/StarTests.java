@@ -62,23 +62,6 @@ class StarTests {
         assertEquals("Edge", star.getPositionInConstellation());
     }
 
-    /*@Test
-    void testDefaultConstructor() {
-        Star defaultStar = new Star();
-        assertEquals(-1, defaultStar.getId());
-        assertEquals("UNDEFINED", defaultStar.getName());
-        assertEquals("UNDEFINED", defaultStar.getType());
-        assertEquals(0.0, defaultStar.getMass());
-        assertEquals(0.0, defaultStar.getRadius());
-        assertEquals(0.0, defaultStar.getTemperature());
-        assertEquals(0.0, defaultStar.getLuminosity());
-        assertEquals(0.0, defaultStar.getRightAscension());
-        assertEquals(0.0, defaultStar.getDeclination());
-        assertEquals("UNDEFINED", defaultStar.getPositionInConstellation());
-    }
-
-     */
-
     @Test
     void testStarWithConstellation() {
         Constellation constellation = new Constellation(1, "Orion", "ORI", "Orionidae", "Northern", new ArrayList<>());
