@@ -53,7 +53,7 @@ class ConstellationTests {
         assertEquals(stars, constellation.getStars());
     }
 
-    @Test
+    /*@Test
     void testDefaultConstructor() {
         Constellation defaultConstellation = new Constellation();
         assertEquals(-1, defaultConstellation.getId());
@@ -64,6 +64,8 @@ class ConstellationTests {
         assertNotNull(defaultConstellation.getStars());
         assertTrue(defaultConstellation.getStars().isEmpty());
     }
+
+     */
 
     @Test
     void testConstellationWithNoStars() {

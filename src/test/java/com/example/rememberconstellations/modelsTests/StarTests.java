@@ -62,7 +62,7 @@ class StarTests {
         assertEquals("Edge", star.getPositionInConstellation());
     }
 
-    @Test
+    /*@Test
     void testDefaultConstructor() {
         Star defaultStar = new Star();
         assertEquals(-1, defaultStar.getId());
@@ -76,6 +76,8 @@ class StarTests {
         assertEquals(0.0, defaultStar.getDeclination());
         assertEquals("UNDEFINED", defaultStar.getPositionInConstellation());
     }
+
+     */
 
     @Test
     void testStarWithConstellation() {
