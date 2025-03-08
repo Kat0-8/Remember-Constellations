@@ -42,7 +42,6 @@ public class Constellation {
     @OneToMany(mappedBy = "constellation", fetch = FetchType.LAZY,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)
     @JsonManagedReference
-    //@JsonIgnore
     private List<Star> stars;
 
     public Constellation(int id, String name, String abbreviation,
