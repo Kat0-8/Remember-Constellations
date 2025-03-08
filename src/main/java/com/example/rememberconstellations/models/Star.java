@@ -53,11 +53,12 @@ public class Star {
     @Column(name = "star_position_in_constellation", nullable = false)
     private String positionInConstellation;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "constellation_id")
-    @JsonBackReference
     private Constellation constellation;
 
+    @SuppressWarnings("java:S107")
     public Star(String name, String type, double mass, double radius,
                 double temperature, double luminosity, double rightAscension,
                 double declination, String positionInConstellation) {

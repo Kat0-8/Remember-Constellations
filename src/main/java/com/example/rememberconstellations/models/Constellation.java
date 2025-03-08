@@ -40,9 +40,9 @@ public class Constellation {
     @Column(name = "constellation_region", nullable = false)
     private String region;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "constellation", fetch = FetchType.LAZY,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)
-    @JsonManagedReference
     private List<Star> stars = new ArrayList<>();
 
     public Constellation(int id, String name, String abbreviation,

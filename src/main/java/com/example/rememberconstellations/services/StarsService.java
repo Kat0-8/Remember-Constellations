@@ -31,6 +31,7 @@ public class StarsService {
         return starsRepository.findStarById(id);
     }
 
+    @SuppressWarnings("java:S107")
     public List<Star> getStarsByCriteria(String name, String type, Double mass, Double radius,
                                          Double temperature, Double luminosity, Double rightAscension,
                                          Double declination, String positionInConstellation,
