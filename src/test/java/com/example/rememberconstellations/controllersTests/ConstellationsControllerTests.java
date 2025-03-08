@@ -23,9 +23,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-class ConstellationsControllerTest {
+class ConstellationsControllerTests {
 
-    private MockMvc mockMvc;
+    //private MockMvc mockMvc;
 
     @Mock
     private ConstellationsService constellationsService;
@@ -36,7 +36,7 @@ class ConstellationsControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(constellationsController).build();
+       // mockMvc = MockMvcBuilders.standaloneSetup(constellationsController).build();
     }
 
     /* CREATE */

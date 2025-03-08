@@ -56,7 +56,6 @@ public class Star {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "constellation_id")
     @JsonBackReference
-    //@JsonIgnore
     private Constellation constellation;
 
     public Star(String name, String type, double mass, double radius,

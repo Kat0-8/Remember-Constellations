@@ -23,9 +23,9 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class StarsControllerTest {
+class StarsControllerTests {
 
-    private MockMvc mockMvc;
+   // private MockMvc mockMvc;
 
     @Mock
     private StarsService starsService;
@@ -36,7 +36,7 @@ class StarsControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(starsController).build();
+    //    mockMvc = MockMvcBuilders.standaloneSetup(starsController).build();
     }
 
     /* CREATE */

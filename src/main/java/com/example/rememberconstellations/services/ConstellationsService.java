@@ -29,7 +29,7 @@ public class ConstellationsService {
 
     /* READ */
 
-    public Optional<Constellation> getConstellationById(final int id) {
+    public Optional<Constellation> getConstellationById(int id) {
         return constellationsRepository.findById(id);
     }
 
