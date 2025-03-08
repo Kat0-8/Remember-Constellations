@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 //import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,7 +45,7 @@ public class Constellation {
     @OneToMany(mappedBy = "constellation", fetch = FetchType.LAZY,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)
     @JsonManagedReference
-    private List<Star> stars;
+    private List<Star> stars = new ArrayList<>();
 
     public Constellation(int id, String name, String abbreviation,
                          String family, String region, List<Star> stars) {
