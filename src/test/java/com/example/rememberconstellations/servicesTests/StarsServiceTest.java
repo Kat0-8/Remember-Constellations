@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
-        import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class StarsServiceTest {
 
@@ -43,10 +43,25 @@ class StarsServiceTest {
         star.setLuminosity(100000.0);
         star.setRightAscension(5.0);
         star.setDeclination(7.0);
-        star.setPositionInConstellation("Aldebaran");
+        star.setPositionInConstellation("Alpha");
 
         when(starsRepository.findStarById(1)).thenReturn(Optional.of(star));
     }
+
+    /* CREATE */
+
+    @Test
+    void testCreateStar() {
+        when(starsRepository.save(any(Star.class))).thenReturn(star);
+
+        Star createdStar = starsService.createStar(star);
+
+        assertThat(createdStar).isNotNull();
+        assertThat(createdStar.getName()).isEqualTo("Betelgeuse");
+        verify(starsRepository, times(1)).save(star);
+    }
+
+    /* READ */
 
     @Test
     void testGetStarById() {
@@ -71,8 +86,9 @@ class StarsServiceTest {
         when(starsRepository.findAll(any(Specification.class), eq(pageable)))
                 .thenReturn(new PageImpl<>(List.of(star), pageable, 1));
 
-        List<Star> stars = starsService.getStarsByCriteria("Betelgeuse", null, null, null, null, null, null, null, null, null, pageable);
-
+        List<Star> stars = starsService.getStarsByCriteria("Betelgeuse", null, null, null, null,
+                null, null, null, null,
+                null, pageable);
         assertThat(stars).isNotEmpty();
         assertThat(stars.get(0).getName()).isEqualTo("Betelgeuse");
     }
@@ -82,7 +98,9 @@ class StarsServiceTest {
         when(starsRepository.findAll(any(Specification.class)))
                 .thenReturn(List.of(star));
 
-        List<Star> stars = starsService.getStarsByCriteria("Betelgeuse", null, null, null, null, null, null, null, null, null, null);
+        List<Star> stars = starsService.getStarsByCriteria("Betelgeuse", null, null, null, null,
+                null, null, null, null,
+                null, null);
 
         assertThat(stars).isNotEmpty();
         assertThat(stars.get(0).getName()).isEqualTo("Betelgeuse");
@@ -94,7 +112,9 @@ class StarsServiceTest {
         when(starsRepository.findAll(any(Specification.class), eq(pageable)))
                 .thenReturn(new PageImpl<>(List.of(star), pageable, 1));
 
-        List<Star> stars = starsService.getStarsByCriteria("Betelgeuse", "Supergiant", 10.0, 800.0, 3000.0, 50000.0, 4.0, 6.0, "Aldebaran", 1, pageable);
+        List<Star> stars = starsService.getStarsByCriteria("Betelgeuse", "Supergiant", 10.0, 800.0, 3000.0,
+                50000.0, 4.0, 6.0, "Alpha",
+                1, pageable);
 
         assertThat(stars).isNotEmpty();
         assertThat(stars.get(0).getName()).isEqualTo("Betelgeuse");
@@ -105,6 +125,52 @@ class StarsServiceTest {
         assertThat(stars.get(0).getLuminosity()).isGreaterThanOrEqualTo(50000.0);
         assertThat(stars.get(0).getRightAscension()).isGreaterThanOrEqualTo(4.0);
         assertThat(stars.get(0).getDeclination()).isGreaterThanOrEqualTo(6.0);
-        assertThat(stars.get(0).getPositionInConstellation()).isEqualTo("Aldebaran");
+        assertThat(stars.get(0).getPositionInConstellation()).isEqualTo("Alpha");
+    }
+
+
+    /* UPDATE */
+
+    @Test
+    void testUpdateStar() {
+        when(starsRepository.existsById(1)).thenReturn(true);
+        when(starsRepository.save(any(Star.class))).thenReturn(star);
+
+        Optional<Star> updatedStar = starsService.updateStar(1, star);
+
+        assertThat(updatedStar).isPresent();
+        assertThat(updatedStar.get().getName()).isEqualTo("Betelgeuse");
+        verify(starsRepository, times(1)).save(star);
+    }
+
+    @Test
+    void testUpdateStarShouldReturnEmptyWhenNotFound() {
+        when(starsRepository.existsById(999)).thenReturn(false);
+
+        Optional<Star> updatedStar = starsService.updateStar(999, star);
+
+        assertThat(updatedStar).isNotPresent();
+    }
+
+    /* DELETE */
+
+    @Test
+    void testDeleteStar() {
+        when(starsRepository.existsById(1)).thenReturn(true);
+
+        boolean isDeleted = starsService.deleteStar(1);
+
+        assertThat(isDeleted).isTrue();
+        verify(starsRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    void testDeleteStarShouldReturnFalseWhenNotFound() {
+        when(starsRepository.existsById(999)).thenReturn(false);
+
+        boolean isDeleted = starsService.deleteStar(999);
+
+        assertThat(isDeleted).isFalse();
+        verify(starsRepository, times(0)).deleteById(999);
     }
 }
