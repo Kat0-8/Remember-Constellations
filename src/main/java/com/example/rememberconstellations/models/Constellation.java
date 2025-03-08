@@ -1,6 +1,8 @@
 package com.example.rememberconstellations.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,6 +42,7 @@ public class Constellation {
     @Column(name = "constellation_region", nullable = false)
     private String region;
 
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonManagedReference
     @OneToMany(mappedBy = "constellation", fetch = FetchType.LAZY,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)

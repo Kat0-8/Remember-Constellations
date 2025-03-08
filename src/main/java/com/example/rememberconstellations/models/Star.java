@@ -1,6 +1,7 @@
 package com.example.rememberconstellations.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -53,6 +54,7 @@ public class Star {
     @Column(name = "star_position_in_constellation", nullable = false)
     private String positionInConstellation;
 
+    @JsonIdentityReference(alwaysAsId = true)
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "constellation_id")
