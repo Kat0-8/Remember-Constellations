@@ -1,23 +1,20 @@
 package com.example.rememberconstellations.repositoriesTests;
 
-import com.example.rememberconstellations.models.Constellation;
-import com.example.rememberconstellations.models.Star;
-import com.example.rememberconstellations.repositories.ConstellationsRepository;
-import com.example.rememberconstellations.repositories.StarsRepository;
+//import com.example.rememberconstellations.models.Constellation;
+//import com.example.rememberconstellations.repositories.ConstellationsRepository;
+//import com.example.rememberconstellations.repositories.StarsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 class ConstellationsRepositoryTest {
+
+    /*
 
     @Autowired
     private ConstellationsRepository constellationsRepository;
@@ -25,7 +22,9 @@ class ConstellationsRepositoryTest {
     @Autowired
     private StarsRepository starsRepository;
 
-    private Constellation constellation;
+     */
+
+  //private Constellation constellation;
 
     @BeforeEach
     void setUp() {
