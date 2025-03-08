@@ -6,6 +6,10 @@ import org.springframework.util.StringUtils;
 
 public class StarSpecification {
 
+    private StarSpecification() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     public static Specification<Star> withName(String name) {
         return (root, query, criteriaBuilder) ->
                 StringUtils.hasText(name)

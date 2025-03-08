@@ -11,9 +11,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +22,6 @@ import static org.mockito.Mockito.*;
 
 class ConstellationsControllerTests {
 
-    //private MockMvc mockMvc;
-
     @Mock
     private ConstellationsService constellationsService;
 
@@ -36,7 +31,6 @@ class ConstellationsControllerTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-       // mockMvc = MockMvcBuilders.standaloneSetup(constellationsController).build();
     }
 
     /* CREATE */

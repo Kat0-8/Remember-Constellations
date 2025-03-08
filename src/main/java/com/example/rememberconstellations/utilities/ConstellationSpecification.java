@@ -6,6 +6,10 @@ import org.springframework.util.StringUtils;
 
 public class ConstellationSpecification {
 
+    private ConstellationSpecification() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     public static Specification<Constellation> withName(String name) {
         return (root, query, criteriaBuilder) ->
                 StringUtils.hasText(name)

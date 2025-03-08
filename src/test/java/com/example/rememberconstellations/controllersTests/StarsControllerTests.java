@@ -11,8 +11,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,8 +23,6 @@ import static org.mockito.Mockito.*;
 
 class StarsControllerTests {
 
-   // private MockMvc mockMvc;
-
     @Mock
     private StarsService starsService;
 
@@ -36,7 +32,6 @@ class StarsControllerTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-    //    mockMvc = MockMvcBuilders.standaloneSetup(starsController).build();
     }
 
     /* CREATE */
