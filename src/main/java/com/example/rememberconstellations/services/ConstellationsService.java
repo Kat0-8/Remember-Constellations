@@ -21,6 +21,14 @@ public class ConstellationsService {
         this.constellationsRepository = constellationsRepository;
     }
 
+    /* CREATE */
+
+    public Constellation createConstellation(Constellation constellation) {
+        return constellationsRepository.save(constellation);
+    }
+
+    /* READ */
+
     public Optional<Constellation> getConstellationById(final int id) {
         return constellationsRepository.findById(id);
     }
@@ -46,6 +54,28 @@ public class ConstellationsService {
             return constellationsRepository.findAll(specification, pageable).getContent();
         } else {
             return constellationsRepository.findAll(specification);
+        }
+    }
+
+    /* UPDATE */
+
+    public Optional<Constellation> updateConstellation(int id, Constellation constellation) {
+        if (constellationsRepository.existsById(id)) {
+            constellation.setId(id);
+            return Optional.of(constellationsRepository.save(constellation));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /* DELETE */
+
+    public boolean deleteConstellation(int id) {
+        if (constellationsRepository.existsById(id)) {
+            constellationsRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
         }
     }
 }

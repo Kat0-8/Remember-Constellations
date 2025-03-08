@@ -19,6 +19,14 @@ public class StarsService {
         this.starsRepository = starsRepository;
     }
 
+    /* CREATE */
+
+    public Star createStar(Star star) {
+        return starsRepository.save(star);
+    }
+
+    /* READ */
+
     public Optional<Star> getStarById(final int id) {
         return starsRepository.findStarById(id);
     }
@@ -64,6 +72,28 @@ public class StarsService {
             return starsRepository.findAll(specification, pageable).getContent();
         } else {
             return starsRepository.findAll(specification);
+        }
+    }
+
+    /* UPDATE */
+
+    public Optional<Star> updateStar(int id, Star star) {
+        if (starsRepository.existsById(id)) {
+            star.setId(id);
+            return Optional.of(starsRepository.save(star));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /* DELETE */
+
+    public boolean deleteStar(int id) {
+        if (starsRepository.existsById(id)) {
+            starsRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
         }
     }
 }

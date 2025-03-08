@@ -6,9 +6,14 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +27,16 @@ public class StarsController {
     public StarsController(StarsService starsService) {
         this.starsService = starsService;
     }
+
+    /* CREATE */
+
+    @PostMapping("")
+    public ResponseEntity<Star> createStar(@RequestBody Star star) {
+        Star createdStar = starsService.createStar(star);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdStar);
+    }
+
+    /* READ */
 
     @GetMapping("/{id}")
     public ResponseEntity<Star> getStarById(@PathVariable int id) {
@@ -57,4 +72,27 @@ public class StarsController {
         }
     }
 
+    /* UPDATE */
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Star> updateStar(@PathVariable int id, @RequestBody Star star) {
+        Optional<Star> updatedStar = starsService.updateStar(id, star);
+        if (updatedStar.isPresent()) {
+            return ResponseEntity.ok(updatedStar.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /* DELETE */
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Star> deleteStar(@PathVariable int id) {
+        boolean isDeleted = starsService.deleteStar(id);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
