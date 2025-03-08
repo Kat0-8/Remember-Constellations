@@ -12,14 +12,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @Entity
+@NoArgsConstructor
 @Table(name = "stars")
 public class Star {
-    private static final String UNDEFINED = "UNDEFINED";
+    //private static final String UNDEFINED = "UNDEFINED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,7 +74,7 @@ public class Star {
         this.positionInConstellation = positionInConstellation;
     }
 
-    public Star() {
+    /* public Star() {
         this.id = -1;
         this.name = UNDEFINED;
         this.type = UNDEFINED;
@@ -84,4 +86,6 @@ public class Star {
         this.declination = 0.0;
         this.positionInConstellation = UNDEFINED;
     }
+
+     */
 }
