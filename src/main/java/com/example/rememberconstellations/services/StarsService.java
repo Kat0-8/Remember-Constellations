@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StarsService {
@@ -21,6 +22,7 @@ public class StarsService {
 
     /* CREATE */
 
+    @Transactional
     public Star createStar(Star star) {
         return starsRepository.save(star);
     }
@@ -78,6 +80,7 @@ public class StarsService {
 
     /* UPDATE */
 
+    @Transactional
     public Optional<Star> updateStar(int id, Star star) {
         if (starsRepository.existsById(id)) {
             star.setId(id);
@@ -89,8 +92,11 @@ public class StarsService {
 
     /* DELETE */
 
+    @Transactional
     public boolean deleteStar(int id) {
         if (starsRepository.existsById(id)) {
+            starsRepository.findById(id)
+                            .orElseThrow(() -> new RuntimeException("Something is wrong: no star found with id: " + id));
             starsRepository.deleteById(id);
             return true;
         } else {

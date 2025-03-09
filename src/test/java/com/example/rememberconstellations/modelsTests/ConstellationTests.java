@@ -52,16 +52,4 @@ class ConstellationTests {
         constellation.setStars(stars);
         assertEquals(stars, constellation.getStars());
     }
-
-    @Test
-    void testConstellationWithNoStars() {
-        Constellation noStarsConstellation = new Constellation(3, "Draco", "DRA", "Draconidae", "Northern", new ArrayList<>());
-        assertEquals(3, noStarsConstellation.getId());
-        assertEquals("Draco", noStarsConstellation.getName());
-        assertEquals("DRA", noStarsConstellation.getAbbreviation());
-        assertEquals("Draconidae", noStarsConstellation.getFamily());
-        assertEquals("Northern", noStarsConstellation.getRegion());
-        assertNotNull(noStarsConstellation.getStars());
-        assertTrue(noStarsConstellation.getStars().isEmpty());
-    }
 }

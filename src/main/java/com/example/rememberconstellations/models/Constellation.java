@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "constellations")
 public class Constellation {
@@ -47,14 +49,4 @@ public class Constellation {
     @OneToMany(mappedBy = "constellation", fetch = FetchType.LAZY,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)
     private List<Star> stars = new ArrayList<>();
-
-    public Constellation(int id, String name, String abbreviation,
-                         String family, String region, List<Star> stars) {
-        this.id = id;
-        this.name = name;
-        this.abbreviation = abbreviation;
-        this.family = family;
-        this.region = region;
-        this.stars = stars;
-    }
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "stars")
 public class Star {
 
@@ -51,13 +53,13 @@ public class Star {
     @Column(name = "star_declination", nullable = false)
     private Double declination;
 
-    @Column(name = "star_position_in_constellation", nullable = false)
+    @Column(name = "star_position_in_constellation", nullable = true)
     private String positionInConstellation;
 
     @JsonIdentityReference(alwaysAsId = true)
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "constellation_id")
+    @JoinColumn(name = "constellation_id", nullable = true)
     private Constellation constellation;
 
     @SuppressWarnings("java:S107")

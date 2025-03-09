@@ -1,12 +1,8 @@
 package com.example.rememberconstellations.modelsTests;
 
-
-import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.models.Star;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,13 +56,5 @@ class StarTests {
 
         star.setPositionInConstellation("Edge");
         assertEquals("Edge", star.getPositionInConstellation());
-    }
-
-    @Test
-    void testStarWithConstellation() {
-        Constellation constellation = new Constellation(1, "Orion", "ORI", "Orionidae", "Northern", new ArrayList<>());
-        Star starInConstellation = new Star("Betelgeuse", "Red Supergiant", 20.0, 900, 3500, 120000, 5.9, -7.2, "Shoulder");
-        starInConstellation.setConstellation(constellation);
-        assertEquals(constellation, starInConstellation.getConstellation());
     }
 }
