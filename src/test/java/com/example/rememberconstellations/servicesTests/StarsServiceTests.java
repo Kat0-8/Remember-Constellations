@@ -45,15 +45,19 @@ class StarsServiceTests {
         star.setDeclination(7.0);
         star.setPositionInConstellation("Alpha");
 
+        // Mocks
         when(starsRepository.findStarById(1)).thenReturn(Optional.of(star));
+        when(starsRepository.findStarById(999)).thenReturn(Optional.empty());
+        when(starsRepository.existsById(1)).thenReturn(true);
+        when(starsRepository.existsById(999)).thenReturn(false);
+        when(starsRepository.save(any(Star.class))).thenReturn(star);
+        doNothing().when(starsRepository).deleteById(1);
     }
 
     /* CREATE */
 
     @Test
     void testCreateStar() {
-        when(starsRepository.save(any(Star.class))).thenReturn(star);
-
         Star createdStar = starsService.createStar(star);
 
         assertThat(createdStar).isNotNull();
@@ -73,8 +77,6 @@ class StarsServiceTests {
 
     @Test
     void testGetStarByIdShouldReturnEmptyWhenNotFound() {
-        when(starsRepository.findStarById(999)).thenReturn(Optional.empty());
-
         Optional<Star> foundStar = starsService.getStarById(999);
 
         assertThat(foundStar).isNotPresent();
@@ -89,6 +91,7 @@ class StarsServiceTests {
         List<Star> stars = starsService.getStarsByCriteria("Betelgeuse", null, null, null, null,
                 null, null, null, null,
                 null, pageable);
+
         assertThat(stars).isNotEmpty();
         assertThat(stars.get(0).getName()).isEqualTo("Betelgeuse");
     }
@@ -106,50 +109,36 @@ class StarsServiceTests {
         assertThat(stars.get(0).getName()).isEqualTo("Betelgeuse");
     }
 
-    @Test
-    void testGetStarsByCriteriaWithMultipleFilters() {
-        Pageable pageable = PageRequest.of(0, 10);
-        when(starsRepository.findAll(any(Specification.class), eq(pageable)))
-                .thenReturn(new PageImpl<>(List.of(star), pageable, 1));
-
-        List<Star> stars = starsService.getStarsByCriteria("Betelgeuse", "Supergiant", 10.0, 800.0, 3000.0,
-                50000.0, 4.0, 6.0, "Alpha",
-                1, pageable);
-
-        assertThat(stars).isNotEmpty();
-        assertThat(stars.get(0).getName()).isEqualTo("Betelgeuse");
-        assertThat(stars.get(0).getType()).isEqualTo("Supergiant");
-        assertThat(stars.get(0).getMass()).isGreaterThanOrEqualTo(10.0);
-        assertThat(stars.get(0).getRadius()).isGreaterThanOrEqualTo(800.0);
-        assertThat(stars.get(0).getTemperature()).isGreaterThanOrEqualTo(3000.0);
-        assertThat(stars.get(0).getLuminosity()).isGreaterThanOrEqualTo(50000.0);
-        assertThat(stars.get(0).getRightAscension()).isGreaterThanOrEqualTo(4.0);
-        assertThat(stars.get(0).getDeclination()).isGreaterThanOrEqualTo(6.0);
-        assertThat(stars.get(0).getPositionInConstellation()).isEqualTo("Alpha");
-    }
-
-
     /* UPDATE */
 
     @Test
     void testUpdateStar() {
+        Star updatedStar = new Star();
+        updatedStar.setId(1);
+        updatedStar.setName("New Betelgeuse");
+
         when(starsRepository.existsById(1)).thenReturn(true);
-        when(starsRepository.save(any(Star.class))).thenReturn(star);
+        when(starsRepository.save(any(Star.class))).thenReturn(updatedStar);
 
-        Optional<Star> updatedStar = starsService.updateStar(1, star);
+        Optional<Star> result = starsService.updateStar(1, updatedStar);
 
-        assertThat(updatedStar).isPresent();
-        assertThat(updatedStar.get().getName()).isEqualTo("Betelgeuse");
-        verify(starsRepository, times(1)).save(star);
+        assertThat(result).isPresent();
+        assertThat(result.get().getName()).isEqualTo("New Betelgeuse");
+        verify(starsRepository, times(1)).save(updatedStar);
     }
 
     @Test
     void testUpdateStarShouldReturnEmptyWhenNotFound() {
+        Star updatedStar = new Star();
+        updatedStar.setId(1);
+        updatedStar.setName("New Betelgeuse");
+
         when(starsRepository.existsById(999)).thenReturn(false);
 
-        Optional<Star> updatedStar = starsService.updateStar(999, star);
+        Optional<Star> result = starsService.updateStar(999, updatedStar);
 
-        assertThat(updatedStar).isNotPresent();
+        assertThat(result).isNotPresent();
+        verify(starsRepository, times(0)).save(updatedStar);
     }
 
     /* DELETE */

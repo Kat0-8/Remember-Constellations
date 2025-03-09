@@ -94,9 +94,8 @@ public class StarsService {
 
     @Transactional
     public boolean deleteStar(int id) {
-        if (starsRepository.existsById(id)) {
-            starsRepository.findById(id)
-                            .orElseThrow(() -> new RuntimeException("Something is wrong: no star found with id: " + id));
+        Optional<Star> starOptional = starsRepository.findStarById(id);
+        if (starOptional.isPresent()) {
             starsRepository.deleteById(id);
             return true;
         } else {

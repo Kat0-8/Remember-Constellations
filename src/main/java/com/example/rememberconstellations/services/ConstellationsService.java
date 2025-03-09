@@ -91,13 +91,13 @@ public class ConstellationsService {
 
     @Transactional
     public boolean deleteConstellation(int id) {
-        if (constellationsRepository.existsById(id)) {
-            Constellation constellationToDelete = constellationsRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Something is wrong: no constellation found with id: " + id));
-            List<Star> starsToDetach = constellationToDelete.getStars();
+        Optional<Constellation> constellationOptional = constellationsRepository.findById(id);
+        if (constellationOptional.isPresent()) {
+            List<Star> starsToDetach = constellationOptional.get().getStars();
             for (Star starToDetach : starsToDetach) {
                 starToDetach.setConstellation(null);
                 starToDetach.setPositionInConstellation(null);
+                starsRepository.save(starToDetach);
             }
             constellationsRepository.deleteById(id);
             return true;
