@@ -37,4 +37,4 @@ IDE: IntelliJ IDEA\
 SDK: JDK 17\
 Build: Maven\
 Framework: Spring Boot\
-Database: PostrgeSQL
+Database: PostgreSQL
