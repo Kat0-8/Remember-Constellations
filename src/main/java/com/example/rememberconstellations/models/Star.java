@@ -27,34 +27,34 @@ public class Star {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "star_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "star_name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "star_type", nullable = false)
+    @Column(name = "type", nullable = false)
     private String type;
 
-    @Column(name = "star_mass", nullable = false)
+    @Column(name = "mass", nullable = false)
     private Double mass;
 
-    @Column(name = "star_radius", nullable = false)
+    @Column(name = "radius", nullable = false)
     private Double radius;
 
-    @Column(name = "star_temperature", nullable = false)
+    @Column(name = "temperature", nullable = false)
     private Double temperature;
 
-    @Column(name = "star_luminosity", nullable = false)
+    @Column(name = "luminosity", nullable = false)
     private Double luminosity;
 
-    @Column(name = "star_right_ascension", nullable = false)
+    @Column(name = "right_ascension", nullable = false)
     private Double rightAscension;
 
-    @Column(name = "star_declination", nullable = false)
+    @Column(name = "declination", nullable = false)
     private Double declination;
 
-    @Column(name = "star_position_in_constellation", nullable = true)
+    @Column(name = "position_in_constellation", nullable = true)
     private String positionInConstellation;
 
     @JsonIdentityReference(alwaysAsId = true)

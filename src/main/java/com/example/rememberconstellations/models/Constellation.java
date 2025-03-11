@@ -29,19 +29,19 @@ public class Constellation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "constellation_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "constellation_name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "constellation_abbreviation", nullable = false)
+    @Column(name = "abbreviation", nullable = false)
     private String abbreviation;
 
-    @Column(name = "constellation_family", nullable = false)
+    @Column(name = "family", nullable = false)
     private String family;
 
-    @Column(name = "constellation_region", nullable = false)
+    @Column(name = "region", nullable = false)
     private String region;
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
