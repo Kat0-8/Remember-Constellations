@@ -1,9 +1,7 @@
 package com.example.rememberconstellations.services;
 
 import com.example.rememberconstellations.models.Constellation;
-import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.ConstellationsRepository;
-import com.example.rememberconstellations.repositories.StarsRepository;
 import com.example.rememberconstellations.utilities.ConstellationSpecification;
 import java.util.List;
 import java.util.Optional;
@@ -18,30 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConstellationsService {
 
     private final ConstellationsRepository constellationsRepository;
-    private final StarsRepository starsRepository;
 
     @Autowired
-    public ConstellationsService(ConstellationsRepository constellationsRepository, StarsRepository starsRepository) {
+    public ConstellationsService(ConstellationsRepository constellationsRepository) {
         this.constellationsRepository = constellationsRepository;
-        this.starsRepository = starsRepository;
     }
 
     /* CREATE */
 
     @Transactional
     public Constellation createConstellation(Constellation constellation) {
-        List<Star> stars = constellation.getStars();
-        for (Star star : stars) {
-            if (star.getId() == 0) {
-                star.setConstellation(constellation);
-                starsRepository.save(star);
-            } else {
-                Star existingStar = starsRepository.findById(star.getId())
-                        .orElseThrow(() -> new RuntimeException("Star not found"));
-                existingStar.setConstellation(constellation);
-                starsRepository.save(existingStar);
-            }
-        }
         return constellationsRepository.save(constellation);
     }
 
@@ -93,12 +77,6 @@ public class ConstellationsService {
     public boolean deleteConstellation(int id) {
         Optional<Constellation> constellationOptional = constellationsRepository.findById(id);
         if (constellationOptional.isPresent()) {
-            List<Star> starsToDetach = constellationOptional.get().getStars();
-            for (Star starToDetach : starsToDetach) {
-                starToDetach.setConstellation(null);
-                starToDetach.setPositionInConstellation(null);
-                starsRepository.save(starToDetach);
-            }
             constellationsRepository.deleteById(id);
             return true;
         } else {

@@ -47,6 +47,6 @@ public class Constellation {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonManagedReference
     @OneToMany(mappedBy = "constellation", fetch = FetchType.LAZY,
-            cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = false)
+            cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Star> stars = new ArrayList<>();
 }
