@@ -41,11 +41,7 @@ public class ConstellationsController {
     @GetMapping("/{id}")
     public ResponseEntity<ConstellationDto> getConstellationById(@PathVariable int id) {
         Optional<ConstellationDto> constellationDto = constellationsService.getConstellationById(id);
-        if (constellationDto.isPresent()) {
-            return ResponseEntity.ok(constellationDto.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        return constellationDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping("")
@@ -69,11 +65,7 @@ public class ConstellationsController {
     @PutMapping("/{id}")
     public ResponseEntity<ConstellationDto> updateConstellation(@PathVariable int id, @RequestBody ConstellationDto constellationDto) {
         Optional<ConstellationDto> updatedConstellationDto = constellationsService.updateConstellation(id, constellationDto);
-        if (updatedConstellationDto.isPresent()) {
-            return ResponseEntity.ok(updatedConstellationDto.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        return updatedConstellationDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     /* DELETE */

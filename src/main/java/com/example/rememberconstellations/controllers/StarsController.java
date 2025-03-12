@@ -41,11 +41,7 @@ public class StarsController {
     @GetMapping("/{id}")
     public ResponseEntity<StarDto> getStarById(@PathVariable int id) {
         Optional<StarDto> starDto = starsService.getStarById(id);
-        if (starDto.isPresent()) {
-            return ResponseEntity.ok(starDto.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return starDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("")
@@ -77,11 +73,7 @@ public class StarsController {
     @PutMapping("/{id}")
     public ResponseEntity<StarDto> updateStar(@PathVariable int id, @RequestBody StarDto starDto) {
         Optional<StarDto> updatedStarDto = starsService.updateStar(id, starDto);
-        if (updatedStarDto.isPresent()) {
-            return ResponseEntity.ok(updatedStarDto.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return updatedStarDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /* DELETE */
