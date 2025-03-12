@@ -1,5 +1,6 @@
 package com.example.rememberconstellations.controllers;
 
+import com.example.rememberconstellations.dto.StarDto;
 import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.services.StarsService;
 import java.util.List;
@@ -31,25 +32,25 @@ public class StarsController {
     /* CREATE */
 
     @PostMapping("")
-    public ResponseEntity<Star> createStar(@RequestBody Star star) {
-        Star createdStar = starsService.createStar(star);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdStar);
+    public ResponseEntity<StarDto> createStar(@RequestBody StarDto starDto) {
+        StarDto createdStarDto = starsService.createStar(starDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdStarDto);
     }
 
     /* READ */
 
     @GetMapping("/{id}")
-    public ResponseEntity<Star> getStarById(@PathVariable int id) {
-        Optional<Star> star = starsService.getStarById(id);
-        if (star.isPresent()) {
-            return ResponseEntity.ok(star.get());
+    public ResponseEntity<StarDto> getStarById(@PathVariable int id) {
+        Optional<StarDto> starDto = starsService.getStarById(id);
+        if (starDto.isPresent()) {
+            return ResponseEntity.ok(starDto.get());
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Star>> getStarsByCriteria(
+    public ResponseEntity<List<StarDto>> getStarsByCriteria(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) Double mass,
@@ -61,24 +62,24 @@ public class StarsController {
             @RequestParam(required = false) String positionInConstellation,
             @RequestParam(required = false) Integer constellationId,
             Pageable pageable) {
-        List<Star> stars =
+        List<StarDto> starDtos =
                 starsService.getStarsByCriteria(name, type, mass, radius, temperature, luminosity,
                                                 rightAscension, declination, positionInConstellation,
                                                 constellationId, pageable);
-        if (stars.isEmpty()) {
+        if (starDtos.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(stars);
+            return ResponseEntity.ok(starDtos);
         }
     }
 
     /* UPDATE */
 
     @PutMapping("/{id}")
-    public ResponseEntity<Star> updateStar(@PathVariable int id, @RequestBody Star star) {
-        Optional<Star> updatedStar = starsService.updateStar(id, star);
-        if (updatedStar.isPresent()) {
-            return ResponseEntity.ok(updatedStar.get());
+    public ResponseEntity<StarDto> updateStar(@PathVariable int id, @RequestBody StarDto starDto) {
+        Optional<StarDto> updatedStarDto = starsService.updateStar(id, starDto);
+        if (updatedStarDto.isPresent()) {
+            return ResponseEntity.ok(updatedStarDto.get());
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -87,7 +88,7 @@ public class StarsController {
     /* DELETE */
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Star> deleteStar(@PathVariable int id) {
+    public ResponseEntity<Void> deleteStar(@PathVariable int id) {
         boolean isDeleted = starsService.deleteStar(id);
         if (isDeleted) {
             return ResponseEntity.noContent().build();

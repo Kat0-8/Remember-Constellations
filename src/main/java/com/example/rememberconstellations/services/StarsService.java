@@ -1,10 +1,13 @@
 package com.example.rememberconstellations.services;
 
+import com.example.rememberconstellations.dto.StarDto;
+import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.StarsRepository;
 import com.example.rememberconstellations.utilities.StarSpecification;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,27 +17,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class StarsService {
     private final StarsRepository starsRepository;
+    private final StarMapper starMapper;
 
     @Autowired
-    public StarsService(StarsRepository starsRepository) {
+    public StarsService(StarsRepository starsRepository, StarMapper starMapper) {
         this.starsRepository = starsRepository;
+        this.starMapper = starMapper;
     }
 
     /* CREATE */
 
     @Transactional
-    public Star createStar(Star star) {
-        return starsRepository.save(star);
+    public StarDto createStar(StarDto starDto) {
+        Star star = starMapper.mapToEntity(starDto);
+        Star savedStar = starsRepository.save(star);
+        return starMapper.mapToDto(savedStar);
     }
 
     /* READ */
 
-    public Optional<Star> getStarById(final int id) {
-        return starsRepository.findStarById(id);
+    public Optional<StarDto> getStarById(final int id) {
+        return starsRepository.findStarById(id)
+                .map(starMapper::mapToDto);
     }
 
     @SuppressWarnings("java:S107")
-    public List<Star> getStarsByCriteria(String name, String type, Double mass, Double radius,
+    public List<StarDto> getStarsByCriteria(String name, String type, Double mass, Double radius,
                                          Double temperature, Double luminosity, Double rightAscension,
                                          Double declination, String positionInConstellation,
                                          Integer constellationId, Pageable pageable) {
@@ -72,19 +80,25 @@ public class StarsService {
         }
 
         if (pageable != null) {
-            return starsRepository.findAll(specification, pageable).getContent();
+            return starsRepository.findAll(specification, pageable).getContent().stream()
+                    .map(starMapper::mapToDto)
+                    .collect(Collectors.toList());
         } else {
-            return starsRepository.findAll(specification);
+            return starsRepository.findAll(specification).stream()
+                    .map(starMapper::mapToDto)
+                    .collect(Collectors.toList());
         }
     }
 
     /* UPDATE */
 
     @Transactional
-    public Optional<Star> updateStar(int id, Star star) {
+    public Optional<StarDto> updateStar(int id, StarDto starDto) {
         if (starsRepository.existsById(id)) {
+            Star star = starMapper.mapToEntity(starDto);
             star.setId(id);
-            return Optional.of(starsRepository.save(star));
+            Star updatedStar = starsRepository.save(star);
+            return Optional.of(starMapper.mapToDto(updatedStar));
         } else {
             return Optional.empty();
         }

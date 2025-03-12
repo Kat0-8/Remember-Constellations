@@ -1,7 +1,5 @@
-package com.example.rememberconstellations.controllersTests;
-
 import com.example.rememberconstellations.controllers.StarsController;
-import com.example.rememberconstellations.models.Star;
+import com.example.rememberconstellations.dto.StarDto;
 import com.example.rememberconstellations.services.StarsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class StarsControllerTests {
@@ -38,32 +35,32 @@ class StarsControllerTests {
 
     @Test
     void testCreateStar_Success() {
-        Star star = new Star();
-        star.setId(1); // Example setting
+        StarDto starDto = new StarDto();
+        starDto.setId(1); // Example setting
 
-        when(starsService.createStar(any(Star.class))).thenReturn(star);
+        when(starsService.createStar(any(StarDto.class))).thenReturn(starDto);
 
-        ResponseEntity<Star> result = starsController.createStar(star);
+        ResponseEntity<StarDto> result = starsController.createStar(starDto);
         assertNotNull(result);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
-        assertEquals(star, result.getBody());
+        assertEquals(starDto, result.getBody());
 
-        verify(starsService, times(1)).createStar(any(Star.class));
+        verify(starsService, times(1)).createStar(any(StarDto.class));
     }
 
     /* READ */
 
     @Test
     void testGetStarById_Success() {
-        Star star = new Star();
-        star.setId(1); // Example setting
+        StarDto starDto = new StarDto();
+        starDto.setId(1); // Example setting
 
-        when(starsService.getStarById(1)).thenReturn(Optional.of(star));
+        when(starsService.getStarById(1)).thenReturn(Optional.of(starDto));
 
-        ResponseEntity<Star> result = starsController.getStarById(1);
+        ResponseEntity<StarDto> result = starsController.getStarById(1);
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(star, result.getBody());
+        assertEquals(starDto, result.getBody());
 
         verify(starsService, times(1)).getStarById(anyInt());
     }
@@ -72,7 +69,7 @@ class StarsControllerTests {
     void testGetStarById_NotFound() {
         when(starsService.getStarById(1)).thenReturn(Optional.empty());
 
-        ResponseEntity<Star> result = starsController.getStarById(1);
+        ResponseEntity<StarDto> result = starsController.getStarById(1);
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 
@@ -81,18 +78,18 @@ class StarsControllerTests {
 
     @Test
     void testGetStarsByCriteria_Success() {
-        List<Star> stars = Arrays.asList(new Star(), new Star());
+        List<StarDto> starDtos = Arrays.asList(new StarDto(), new StarDto());
 
         when(starsService.getStarsByCriteria(
                 null, null, null, null, null, null, null, null, null, null, Pageable.unpaged()))
-                .thenReturn(stars);
+                .thenReturn(starDtos);
 
-        ResponseEntity<List<Star>> result = starsController.getStarsByCriteria(
+        ResponseEntity<List<StarDto>> result = starsController.getStarsByCriteria(
                 null, null, null, null, null, null, null, null, null, null, Pageable.unpaged());
 
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(stars, result.getBody());
+        assertEquals(starDtos, result.getBody());
 
         verify(starsService, times(1)).getStarsByCriteria(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(Pageable.class));
     }
@@ -103,7 +100,7 @@ class StarsControllerTests {
                 null, null, null, null, null, null, null, null, null, null, Pageable.unpaged()))
                 .thenReturn(List.of());
 
-        ResponseEntity<List<Star>> result = starsController.getStarsByCriteria(
+        ResponseEntity<List<StarDto>> result = starsController.getStarsByCriteria(
                 null, null, null, null, null, null, null, null, null, null, Pageable.unpaged());
 
         assertNotNull(result);
@@ -116,35 +113,35 @@ class StarsControllerTests {
 
     @Test
     void testUpdateStar_Success() {
-        Star star = new Star();
-        star.setId(1);
-        star.setName("Updated Star");
+        StarDto starDto = new StarDto();
+        starDto.setId(1);
+        starDto.setName("Updated Star");
 
-        when(starsService.updateStar(1, star)).thenReturn(Optional.of(star));
+        when(starsService.updateStar(1, starDto)).thenReturn(Optional.of(starDto));
 
-        ResponseEntity<Star> result = starsController.updateStar(1, star);
+        ResponseEntity<StarDto> result = starsController.updateStar(1, starDto);
 
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(star, result.getBody());
+        assertEquals(starDto, result.getBody());
 
-        verify(starsService, times(1)).updateStar(anyInt(), any(Star.class));
+        verify(starsService, times(1)).updateStar(anyInt(), any(StarDto.class));
     }
 
     @Test
     void testUpdateStar_NotFound() {
-        Star star = new Star();
-        star.setId(1);
-        star.setName("Updated Star");
+        StarDto starDto = new StarDto();
+        starDto.setId(1);
+        starDto.setName("Updated Star");
 
-        when(starsService.updateStar(1, star)).thenReturn(Optional.empty());
+        when(starsService.updateStar(1, starDto)).thenReturn(Optional.empty());
 
-        ResponseEntity<Star> result = starsController.updateStar(1, star);
+        ResponseEntity<StarDto> result = starsController.updateStar(1, starDto);
 
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 
-        verify(starsService, times(1)).updateStar(anyInt(), any(Star.class));
+        verify(starsService, times(1)).updateStar(anyInt(), any(StarDto.class));
     }
 
     /* DELETE */
@@ -153,7 +150,7 @@ class StarsControllerTests {
     void testDeleteStar_Success() {
         when(starsService.deleteStar(1)).thenReturn(true);
 
-        ResponseEntity<Star> result = starsController.deleteStar(1);
+        ResponseEntity<Void> result = starsController.deleteStar(1);
 
         assertNotNull(result);
         assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
@@ -165,7 +162,7 @@ class StarsControllerTests {
     void testDeleteStar_NotFound() {
         when(starsService.deleteStar(1)).thenReturn(false);
 
-        ResponseEntity<Star> result = starsController.deleteStar(1);
+        ResponseEntity<Void> result = starsController.deleteStar(1);
 
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
