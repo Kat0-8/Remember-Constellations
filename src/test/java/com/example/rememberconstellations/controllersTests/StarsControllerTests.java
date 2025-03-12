@@ -119,15 +119,15 @@ class StarsControllerTests {
         starDto.setId(1);
         starDto.setName("Updated Star");
 
-        when(starsService.updateStar(1, starDto)).thenReturn(Optional.of(starDto));
+        when(starsService.putStar(1, starDto)).thenReturn(Optional.of(starDto));
 
-        ResponseEntity<StarDto> result = starsController.updateStar(1, starDto);
+        ResponseEntity<StarDto> result = starsController.putStar(1, starDto);
 
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(starDto, result.getBody());
 
-        verify(starsService, times(1)).updateStar(anyInt(), any(StarDto.class));
+        verify(starsService, times(1)).putStar(anyInt(), any(StarDto.class));
     }
 
     @Test
@@ -136,14 +136,14 @@ class StarsControllerTests {
         starDto.setId(1);
         starDto.setName("Updated Star");
 
-        when(starsService.updateStar(1, starDto)).thenReturn(Optional.empty());
+        when(starsService.putStar(1, starDto)).thenReturn(Optional.empty());
 
-        ResponseEntity<StarDto> result = starsController.updateStar(1, starDto);
+        ResponseEntity<StarDto> result = starsController.putStar(1, starDto);
 
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 
-        verify(starsService, times(1)).updateStar(anyInt(), any(StarDto.class));
+        verify(starsService, times(1)).putStar(anyInt(), any(StarDto.class));
     }
 
     /* DELETE */

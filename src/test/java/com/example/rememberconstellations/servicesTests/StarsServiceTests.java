@@ -123,7 +123,7 @@ class StarsServiceTests {
     /* UPDATE */
 
     @Test
-    void testUpdateStar() {
+    void testPutStar() {
         StarDto updatedStarDto = new StarDto(1, "New Betelgeuse", "Supergiant", 18.0, 950.0, 3500.0,
                 100000.0, 5.0, 7.0, "Alpha");
 
@@ -132,7 +132,7 @@ class StarsServiceTests {
         when(starMapper.mapToDto(any(Star.class))).thenReturn(updatedStarDto);
         when(starMapper.mapToEntity(any(StarDto.class))).thenReturn(star);
 
-        Optional<StarDto> result = starsService.updateStar(1, updatedStarDto);
+        Optional<StarDto> result = starsService.putStar(1, updatedStarDto);
 
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("New Betelgeuse");
@@ -140,13 +140,13 @@ class StarsServiceTests {
     }
 
     @Test
-    void testUpdateStarShouldReturnEmptyWhenNotFound() {
+    void testPutStarShouldReturnEmptyWhenNotFound() {
         StarDto updatedStarDto = new StarDto(1, "New Betelgeuse", "Supergiant", 18.0, 950.0, 3500.0,
                 100000.0, 5.0, 7.0, "Alpha");
 
         when(starsRepository.existsById(999)).thenReturn(false);
 
-        Optional<StarDto> result = starsService.updateStar(999, updatedStarDto);
+        Optional<StarDto> result = starsService.putStar(999, updatedStarDto);
 
         assertThat(result).isNotPresent();
         verify(starsRepository, times(0)).save(any(Star.class));

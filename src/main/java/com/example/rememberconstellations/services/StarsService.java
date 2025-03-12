@@ -93,12 +93,53 @@ public class StarsService {
     /* UPDATE */
 
     @Transactional
-    public Optional<StarDto> updateStar(int id, StarDto starDto) {
+    public Optional<StarDto> putStar(int id, StarDto starDto) {
         if (starsRepository.existsById(id)) {
             Star star = starMapper.mapToEntity(starDto);
             star.setId(id);
             Star updatedStar = starsRepository.save(star);
             return Optional.of(starMapper.mapToDto(updatedStar));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Transactional
+    public Optional<StarDto> patchStar(int id, StarDto starDto) {
+        Star star;
+        Optional<Star> starToPatch = starsRepository.findStarById(id);
+        if (starToPatch.isPresent()) {
+            star = starToPatch.get();
+
+            if (starDto.getName() != null) {
+                star.setName(starDto.getName());
+            }
+            if (starDto.getType() != null) {
+                star.setType(starDto.getType());
+            }
+            if (starDto.getMass() != null) {
+                star.setMass(starDto.getMass());
+            }
+            if (starDto.getRadius() != null) {
+                star.setRadius(starDto.getRadius());
+            }
+            if (starDto.getTemperature() != null) {
+                star.setTemperature(starDto.getTemperature());
+            }
+            if (starDto.getLuminosity() != null) {
+                star.setLuminosity(starDto.getLuminosity());
+            }
+            if (starDto.getRightAscension() != null) {
+                star.setRightAscension(starDto.getRightAscension());
+            }
+            if (starDto.getDeclination() != null) {
+                star.setDeclination(starDto.getDeclination());
+            }
+            if (starDto.getPositionInConstellation() != null) {
+                star.setPositionInConstellation(starDto.getPositionInConstellation());
+            }
+            Star patchedStar = starsRepository.save(star);
+            return Optional.of(starMapper.mapToDto(patchedStar));
         } else {
             return Optional.empty();
         }

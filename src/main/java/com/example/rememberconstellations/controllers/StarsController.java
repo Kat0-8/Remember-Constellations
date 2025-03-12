@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -71,9 +72,15 @@ public class StarsController {
     /* UPDATE */
 
     @PutMapping("/{id}")
-    public ResponseEntity<StarDto> updateStar(@PathVariable int id, @RequestBody StarDto starDto) {
-        Optional<StarDto> updatedStarDto = starsService.updateStar(id, starDto);
-        return updatedStarDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<StarDto> putStar(@PathVariable int id, @RequestBody StarDto starDto) {
+        Optional<StarDto> putStarDto = starsService.putStar(id, starDto);
+        return putStarDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<StarDto> patchStar(@PathVariable int id, @RequestBody StarDto starDto) {
+        Optional<StarDto> patchedStarDto = starsService.patchStar(id, starDto);
+        return patchedStarDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /* DELETE */
