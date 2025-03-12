@@ -15,7 +15,7 @@ public class ConstellationMapper {
         List<StarDto> starDtos = constellation.getStars().stream()
                 .map(star -> new StarDto(star.getId(), star.getName(), star.getType(), star.getMass(),
                         star.getRadius(), star.getTemperature(), star.getLuminosity(),
-                        star.getRightAscension(), star.getDeclination(), star.getPositionInConstellation(), star.getConstellation().getId()))
+                        star.getRightAscension(), star.getDeclination(), star.getPositionInConstellation()))
                 .collect(Collectors.toList());
 
         return new ConstellationDto(constellation.getId(), constellation.getName(), constellation.getAbbreviation(),
@@ -23,6 +23,12 @@ public class ConstellationMapper {
     }
 
     public Constellation mapToEntity(ConstellationDto constellationDto) {
+        Constellation constellation = new Constellation();
+        constellation.setId(constellationDto.getId());
+        constellation.setName(constellationDto.getName());
+        constellation.setAbbreviation(constellationDto.getAbbreviation());
+        constellation.setFamily(constellationDto.getFamily());
+        constellation.setRegion(constellationDto.getRegion());
         List<Star> stars = constellationDto.getStars().stream()
                 .map(starDto -> {
                     Star star = new Star();
@@ -36,21 +42,10 @@ public class ConstellationMapper {
                     star.setRightAscension(starDto.getRightAscension());
                     star.setDeclination(starDto.getDeclination());
                     star.setPositionInConstellation(starDto.getPositionInConstellation());
-
-                    Constellation constellation = new Constellation();
-                    constellation.setId(constellationDto.getId());
                     star.setConstellation(constellation);
-
                     return star;
                 })
                 .collect(Collectors.toList());
-
-        Constellation constellation = new Constellation();
-        constellation.setId(constellationDto.getId());
-        constellation.setName(constellationDto.getName());
-        constellation.setAbbreviation(constellationDto.getAbbreviation());
-        constellation.setFamily(constellationDto.getFamily());
-        constellation.setRegion(constellationDto.getRegion());
         constellation.setStars(stars);
 
         return constellation;

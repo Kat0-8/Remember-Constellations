@@ -1,7 +1,6 @@
 package com.example.rememberconstellations.mappers;
 
 import com.example.rememberconstellations.dto.StarDto;
-import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.models.Star;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +18,7 @@ public class StarMapper {
                 star.getLuminosity(),
                 star.getRightAscension(),
                 star.getDeclination(),
-                star.getPositionInConstellation(),
-                star.getConstellation().getId()
+                star.getPositionInConstellation()
         );
     }
 
@@ -36,10 +34,6 @@ public class StarMapper {
         star.setRightAscension(starDto.getRightAscension());
         star.setDeclination(starDto.getDeclination());
         star.setPositionInConstellation(starDto.getPositionInConstellation());
-
-        Constellation constellation = new Constellation();
-        constellation.setId(starDto.getConstellationId());
-        star.setConstellation(constellation);
         return star;
     }
 }

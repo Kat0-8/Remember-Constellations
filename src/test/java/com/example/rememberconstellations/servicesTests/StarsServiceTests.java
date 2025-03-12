@@ -52,7 +52,7 @@ class StarsServiceTests {
         star.setPositionInConstellation("Alpha");
 
         starDto = new StarDto(1, "Betelgeuse", "Supergiant", 18.0, 950.0, 3500.0,
-                100000.0, 5.0, 7.0, "Alpha", 1);
+                100000.0, 5.0, 7.0, "Alpha");
 
         // Mocks
         when(starsRepository.findStarById(1)).thenReturn(Optional.of(star));
@@ -125,7 +125,7 @@ class StarsServiceTests {
     @Test
     void testUpdateStar() {
         StarDto updatedStarDto = new StarDto(1, "New Betelgeuse", "Supergiant", 18.0, 950.0, 3500.0,
-                100000.0, 5.0, 7.0, "Alpha", 1);
+                100000.0, 5.0, 7.0, "Alpha");
 
         when(starsRepository.existsById(1)).thenReturn(true);
         when(starsRepository.save(any(Star.class))).thenReturn(star);
@@ -142,7 +142,7 @@ class StarsServiceTests {
     @Test
     void testUpdateStarShouldReturnEmptyWhenNotFound() {
         StarDto updatedStarDto = new StarDto(1, "New Betelgeuse", "Supergiant", 18.0, 950.0, 3500.0,
-                100000.0, 5.0, 7.0, "Alpha", 1);
+                100000.0, 5.0, 7.0, "Alpha");
 
         when(starsRepository.existsById(999)).thenReturn(false);
 

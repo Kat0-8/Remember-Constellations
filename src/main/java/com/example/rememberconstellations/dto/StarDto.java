@@ -21,6 +21,4 @@ public class StarDto {
     private Double rightAscension;
     private Double declination;
     private String positionInConstellation;
-    private int constellationId;
-
 }
