@@ -97,22 +97,22 @@ public class ConstellationsService {
             constellation = constellationToPatch.get();
 
             if (constellationDto.getName() != null) {
-                constellationToPatch.get().setName(constellationDto.getName());
+                constellation.setName(constellationDto.getName());
             }
             if (constellationDto.getAbbreviation() != null) {
-                constellationToPatch.get().setAbbreviation(constellationDto.getAbbreviation());
+                constellation.setAbbreviation(constellationDto.getAbbreviation());
             }
             if (constellationDto.getFamily() != null) {
-                constellationToPatch.get().setFamily(constellationDto.getFamily());
+                constellation.setFamily(constellationDto.getFamily());
             }
             if (constellationDto.getRegion() != null) {
-                constellationToPatch.get().setRegion(constellationDto.getRegion());
+                constellation.setRegion(constellationDto.getRegion());
             }
             if (constellationDto.getStars() != null) {
                 List<Star> stars = constellationDto.getStars().stream()
                         .map(starMapper::mapToEntity)
                         .collect(Collectors.toList());
-                constellationToPatch.get().setStars(stars);
+                constellation.setStars(stars);
             }
             Constellation patchedConstellation = constellationsRepository.save(constellation);
             return Optional.of(constellationMapper.mapToDto(patchedConstellation));

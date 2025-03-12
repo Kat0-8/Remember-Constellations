@@ -65,8 +65,8 @@ public class ConstellationsController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ConstellationDto> putConstellation(@PathVariable int id, @RequestBody ConstellationDto constellationDto) {
-        Optional<ConstellationDto> updatedConstellationDto = constellationsService.putConstellation(id, constellationDto);
-        return updatedConstellationDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Optional<ConstellationDto> putConstellationDto = constellationsService.putConstellation(id, constellationDto);
+        return putConstellationDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PatchMapping("/{id}")
