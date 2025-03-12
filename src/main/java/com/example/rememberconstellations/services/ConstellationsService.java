@@ -4,6 +4,7 @@ import com.example.rememberconstellations.dto.ConstellationDto;
 import com.example.rememberconstellations.mappers.ConstellationMapper;
 import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Constellation;
+import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.ConstellationsRepository;
 import com.example.rememberconstellations.utilities.ConstellationSpecification;
 import java.util.List;
@@ -21,11 +22,13 @@ public class ConstellationsService {
 
     private final ConstellationsRepository constellationsRepository;
     private final ConstellationMapper constellationMapper;
+    private final StarMapper starMapper;
 
     @Autowired
     public ConstellationsService(ConstellationsRepository constellationsRepository) {
         this.constellationsRepository = constellationsRepository;
-        this.constellationMapper = new ConstellationMapper(new StarMapper());
+        this.starMapper = new StarMapper();
+        this.constellationMapper = new ConstellationMapper(starMapper);
     }
 
     /* CREATE */
@@ -75,7 +78,7 @@ public class ConstellationsService {
     /* UPDATE */
 
     @Transactional
-    public Optional<ConstellationDto> updateConstellation(int id, ConstellationDto constellationDto) {
+    public Optional<ConstellationDto> putConstellation(int id, ConstellationDto constellationDto) {
         if (constellationsRepository.existsById(id)) {
             Constellation constellation = constellationMapper.mapToEntity(constellationDto);
             constellation.setId(id);
@@ -86,12 +89,44 @@ public class ConstellationsService {
         }
     }
 
+    @Transactional
+    public Optional<ConstellationDto> patchConstellation(int id, ConstellationDto constellationDto) {
+        Constellation constellation;
+        Optional<Constellation> constellationToPatch = constellationsRepository.findById(id);
+        if (constellationToPatch.isPresent()) {
+            constellation = constellationToPatch.get();
+
+            if (constellationDto.getName() != null) {
+                constellationToPatch.get().setName(constellationDto.getName());
+            }
+            if (constellationDto.getAbbreviation() != null) {
+                constellationToPatch.get().setAbbreviation(constellationDto.getAbbreviation());
+            }
+            if (constellationDto.getFamily() != null) {
+                constellationToPatch.get().setFamily(constellationDto.getFamily());
+            }
+            if (constellationDto.getRegion() != null) {
+                constellationToPatch.get().setRegion(constellationDto.getRegion());
+            }
+            if (constellationDto.getStars() != null) {
+                List<Star> stars = constellationDto.getStars().stream()
+                        .map(starMapper::mapToEntity)
+                        .collect(Collectors.toList());
+                constellationToPatch.get().setStars(stars);
+            }
+            Constellation patchedConstellation = constellationsRepository.save(constellation);
+            return Optional.of(constellationMapper.mapToDto(patchedConstellation));
+        } else {
+            return Optional.empty();
+        }
+    }
+
     /* DELETE */
 
     @Transactional
     public boolean deleteConstellation(int id) {
-        Optional<Constellation> constellationOptional = constellationsRepository.findById(id);
-        if (constellationOptional.isPresent()) {
+        Optional<Constellation> constellationToDelete = constellationsRepository.findById(id);
+        if (constellationToDelete.isPresent()) {
             constellationsRepository.deleteById(id);
             return true;
         } else {

@@ -107,32 +107,32 @@ class ConstellationsControllerTests {
     /* UPDATE  */
 
     @Test
-    void testUpdateConstellation_Success() {
+    void testPutConstellation_Success() {
         ConstellationDto updatedConstellationDto = new ConstellationDto();
         updatedConstellationDto.setId(1); // Existing constellation ID
-        when(constellationsService.updateConstellation(anyInt(), any(ConstellationDto.class)))
+        when(constellationsService.putConstellation(anyInt(), any(ConstellationDto.class)))
                 .thenReturn(Optional.of(updatedConstellationDto));
 
-        ResponseEntity<ConstellationDto> result = constellationsController.updateConstellation(1, updatedConstellationDto);
+        ResponseEntity<ConstellationDto> result = constellationsController.putConstellation(1, updatedConstellationDto);
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(updatedConstellationDto, result.getBody());
 
-        verify(constellationsService, times(1)).updateConstellation(anyInt(), any(ConstellationDto.class));
+        verify(constellationsService, times(1)).putConstellation(anyInt(), any(ConstellationDto.class));
     }
 
     @Test
-    void testUpdateConstellation_NotFound() {
+    void testPutConstellation_NotFound() {
         ConstellationDto updatedConstellationDto = new ConstellationDto();
         updatedConstellationDto.setId(1);
-        when(constellationsService.updateConstellation(anyInt(), any(ConstellationDto.class)))
+        when(constellationsService.putConstellation(anyInt(), any(ConstellationDto.class)))
                 .thenReturn(Optional.empty());
 
-        ResponseEntity<ConstellationDto> result = constellationsController.updateConstellation(1, updatedConstellationDto);
+        ResponseEntity<ConstellationDto> result = constellationsController.putConstellation(1, updatedConstellationDto);
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 
-        verify(constellationsService, times(1)).updateConstellation(anyInt(), any(ConstellationDto.class));
+        verify(constellationsService, times(1)).putConstellation(anyInt(), any(ConstellationDto.class));
     }
 
     /* DELETE */

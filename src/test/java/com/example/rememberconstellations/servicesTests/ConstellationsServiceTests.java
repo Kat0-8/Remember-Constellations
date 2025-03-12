@@ -123,13 +123,13 @@ class ConstellationsServiceTests {
     /* UPDATE */
 
     @Test
-    void testUpdateConstellation() {
+    void testPutConstellation() {
         ConstellationDto updatedConstellationDto = new ConstellationDto(1, "New Centaurus", "Cen", "Family", "Region", List.of(star1, star2));
 
         when(constellationsRepository.existsById(1)).thenReturn(true);
         when(constellationsRepository.save(any(Constellation.class))).thenReturn(constellation);
 
-        Optional<ConstellationDto> result = constellationsService.updateConstellation(1, updatedConstellationDto);
+        Optional<ConstellationDto> result = constellationsService.putConstellation(1, updatedConstellationDto);
 
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("New Centaurus");
@@ -137,12 +137,12 @@ class ConstellationsServiceTests {
     }
 
     @Test
-    void testUpdateConstellationShouldReturnEmptyWhenNotFound() {
+    void testPutConstellationShouldReturnEmptyWhenNotFound() {
         ConstellationDto updatedConstellationDto = new ConstellationDto(1, "New Centaurus", "Cen", "Family", "Region", List.of(star1, star2));
 
         when(constellationsRepository.existsById(999)).thenReturn(false);
 
-        Optional<ConstellationDto> result = constellationsService.updateConstellation(999, updatedConstellationDto);
+        Optional<ConstellationDto> result = constellationsService.putConstellation(999, updatedConstellationDto);
 
         assertThat(result).isNotPresent();
         verify(constellationsRepository, times(0)).save(any(Constellation.class));

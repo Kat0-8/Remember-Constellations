@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -63,9 +64,15 @@ public class ConstellationsController {
     /* UPDATE */
 
     @PutMapping("/{id}")
-    public ResponseEntity<ConstellationDto> updateConstellation(@PathVariable int id, @RequestBody ConstellationDto constellationDto) {
-        Optional<ConstellationDto> updatedConstellationDto = constellationsService.updateConstellation(id, constellationDto);
+    public ResponseEntity<ConstellationDto> putConstellation(@PathVariable int id, @RequestBody ConstellationDto constellationDto) {
+        Optional<ConstellationDto> updatedConstellationDto = constellationsService.putConstellation(id, constellationDto);
         return updatedConstellationDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ConstellationDto> patchConstellation(@PathVariable int id, @RequestBody ConstellationDto constellationDto) {
+        Optional<ConstellationDto> patchedConstellationDto = constellationsService.patchConstellation(id, constellationDto);
+        return patchedConstellationDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     /* DELETE */
