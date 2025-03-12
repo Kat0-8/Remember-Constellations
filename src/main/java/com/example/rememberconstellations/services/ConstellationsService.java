@@ -109,10 +109,18 @@ public class ConstellationsService {
                 constellation.setRegion(constellationDto.getRegion());
             }
             if (constellationDto.getStars() != null) {
-                List<Star> stars = constellationDto.getStars().stream()
-                        .map(starMapper::mapToEntity)
+                List<Star> oldStars = constellation.getStars();
+                List<Star> newStars = constellationDto.getStars().stream()
+                        .map(starDto -> {
+                            Star star = starMapper.mapToEntity(starDto);
+                            star.setConstellation(constellation);
+                            return star;
+                        })
                         .collect(Collectors.toList());
-                constellation.setStars(stars);
+                oldStars.addAll(newStars.stream()
+                        .filter(newStar -> oldStars.stream().noneMatch(oldStar -> oldStar.getId() == newStar.getId()))
+                        .collect(Collectors.toList()));
+                constellation.setStars(oldStars);
             }
             Constellation patchedConstellation = constellationsRepository.save(constellation);
             return Optional.of(constellationMapper.mapToDto(patchedConstellation));
