@@ -6,16 +6,22 @@ import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.models.Star;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ConstellationMapper {
 
+    private final StarMapper starMapper;
+
+    @Autowired
+    public ConstellationMapper(StarMapper starMapper) {
+        this.starMapper = starMapper;
+    }
+
     public ConstellationDto mapToDto(Constellation constellation) {
         List<StarDto> starDtos = constellation.getStars().stream()
-                .map(star -> new StarDto(star.getId(), star.getName(), star.getType(), star.getMass(),
-                        star.getRadius(), star.getTemperature(), star.getLuminosity(),
-                        star.getRightAscension(), star.getDeclination(), star.getPositionInConstellation()))
+                .map(starMapper::mapToDto)
                 .collect(Collectors.toList());
 
         return new ConstellationDto(constellation.getId(), constellation.getName(), constellation.getAbbreviation(),
@@ -31,17 +37,7 @@ public class ConstellationMapper {
         constellation.setRegion(constellationDto.getRegion());
         List<Star> stars = constellationDto.getStars().stream()
                 .map(starDto -> {
-                    Star star = new Star();
-                    star.setId(starDto.getId());
-                    star.setName(starDto.getName());
-                    star.setType(starDto.getType());
-                    star.setMass(starDto.getMass());
-                    star.setRadius(starDto.getRadius());
-                    star.setTemperature(starDto.getTemperature());
-                    star.setLuminosity(starDto.getLuminosity());
-                    star.setRightAscension(starDto.getRightAscension());
-                    star.setDeclination(starDto.getDeclination());
-                    star.setPositionInConstellation(starDto.getPositionInConstellation());
+                    Star star = starMapper.mapToEntity(starDto);
                     star.setConstellation(constellation);
                     return star;
                 })

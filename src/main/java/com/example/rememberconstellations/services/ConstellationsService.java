@@ -2,6 +2,7 @@ package com.example.rememberconstellations.services;
 
 import com.example.rememberconstellations.dto.ConstellationDto;
 import com.example.rememberconstellations.mappers.ConstellationMapper;
+import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.repositories.ConstellationsRepository;
 import com.example.rememberconstellations.utilities.ConstellationSpecification;
@@ -24,7 +25,7 @@ public class ConstellationsService {
     @Autowired
     public ConstellationsService(ConstellationsRepository constellationsRepository) {
         this.constellationsRepository = constellationsRepository;
-        this.constellationMapper = new ConstellationMapper();
+        this.constellationMapper = new ConstellationMapper(new StarMapper());
     }
 
     /* CREATE */
