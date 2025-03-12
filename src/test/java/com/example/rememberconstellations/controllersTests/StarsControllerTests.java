@@ -1,3 +1,5 @@
+package com.example.rememberconstellations.controllersTests;
+
 import com.example.rememberconstellations.controllers.StarsController;
 import com.example.rememberconstellations.dto.StarDto;
 import com.example.rememberconstellations.services.StarsService;

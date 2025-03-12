@@ -1,7 +1,6 @@
 package com.example.rememberconstellations.controllers;
 
 import com.example.rememberconstellations.dto.StarDto;
-import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.services.StarsService;
 import java.util.List;
 import java.util.Optional;
