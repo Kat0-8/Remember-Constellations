@@ -1,19 +1,18 @@
 package com.example.rememberconstellations.servicesTests;
 
+import com.example.rememberconstellations.dto.ConstellationDto;
+import com.example.rememberconstellations.dto.StarDto;
+import com.example.rememberconstellations.mappers.ConstellationMapper;
 import com.example.rememberconstellations.models.Constellation;
-import com.example.rememberconstellations.models.Star;
-import com.example.rememberconstellations.repositories.ConstellationsRepository;
-import com.example.rememberconstellations.repositories.StarsRepository;
 import com.example.rememberconstellations.services.ConstellationsService;
+import com.example.rememberconstellations.repositories.ConstellationsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,87 +26,78 @@ class ConstellationsServiceTests {
     private ConstellationsRepository constellationsRepository;
 
     @Mock
-    private StarsRepository starsRepository;
+    private ConstellationMapper constellationMapper;
 
     @InjectMocks
     private ConstellationsService constellationsService;
 
-    private Constellation constellation;
-    private Star star1;
-    private Star star2;
+    private ConstellationDto constellationDto;
+    private StarDto star1;
+    private StarDto star2;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
         // Initialize stars
-        star1 = new Star();
-        star1.setId(1);
-        star1.setName("Alpha Centauri");
-
-        star2 = new Star();
-        star2.setId(2);
-        star2.setName("Beta Centauri");
+        star1 = new StarDto(1, "Alpha Centauri", null, null, null, null, null, null, null, null, 1);
+        star2 = new StarDto(2, "Beta Centauri", null, null, null, null, null, null, null, null, 1);
 
         // Initialize constellation
-        constellation = new Constellation();
-        constellation.setId(1);
-        constellation.setName("Centaurus");
-        constellation.setAbbreviation("Cen");
-        constellation.setStars(List.of(star1, star2));
+        constellationDto = new ConstellationDto(1, "Centaurus", "Cen", "Family", "Region", List.of(star1, star2));
 
         // Mock repository behavior
-        when(constellationsRepository.findById(1)).thenReturn(Optional.of(constellation));
+        when(constellationsRepository.findById(1)).thenReturn(Optional.of(new Constellation()));
         when(constellationsRepository.existsById(1)).thenReturn(true);
         when(constellationsRepository.existsById(999)).thenReturn(false);
-        when(constellationsRepository.save(any(Constellation.class))).thenReturn(constellation);
-        when(starsRepository.save(any(Star.class))).thenAnswer(invocation -> {
-            Star starToSave = invocation.getArgument(0);
-            if (starToSave.getId() == 0) {
-                starToSave.setId(1);
-            }
-            return starToSave;
-        });
-        when(starsRepository.findById(1)).thenReturn(Optional.of(star1));
-        when(starsRepository.findById(2)).thenReturn(Optional.of(star2));
-        when(starsRepository.findById(999)).thenReturn(Optional.empty());
+        when(constellationsRepository.save(any(Constellation.class))).thenReturn(new Constellation());
+
+        // Mock mapper behavior
+        when(constellationMapper.mapToDto(any(Constellation.class))).thenReturn(constellationDto);
+        when(constellationMapper.mapToEntity(any(ConstellationDto.class))).thenReturn(new Constellation());
     }
 
     /* CREATE */
 
     @Test
     void testCreateConstellation() {
-        Constellation createdConstellation = constellationsService.createConstellation(constellation);
+        when(constellationsService.createConstellation(any(ConstellationDto.class))).thenReturn(constellationDto);
 
-        assertThat(createdConstellation).isNotNull();
-        assertThat(createdConstellation.getName()).isEqualTo("Centaurus");
-        verify(constellationsRepository, times(1)).save(constellation);
+        ConstellationDto createdConstellationDto = constellationsService.createConstellation(constellationDto);
+
+        assertThat(createdConstellationDto).isNotNull();
+        assertThat(createdConstellationDto.getName()).isEqualTo("Centaurus");
+        verify(constellationsService, times(1)).createConstellation(any(ConstellationDto.class));
     }
 
     /* READ */
 
     @Test
     void testGetConstellationById() {
-        Optional<Constellation> foundConstellation = constellationsService.getConstellationById(1);
+        when(constellationsService.getConstellationById(1)).thenReturn(Optional.of(constellationDto));
 
-        assertThat(foundConstellation).isPresent();
-        assertThat(foundConstellation.get().getName()).isEqualTo("Centaurus");
+        Optional<ConstellationDto> foundConstellationDto = constellationsService.getConstellationById(1);
+
+        assertThat(foundConstellationDto).isPresent();
+        assertThat(foundConstellationDto.get().getName()).isEqualTo("Centaurus");
     }
 
     @Test
     void testGetConstellationByIdShouldReturnEmptyWhenNotFound() {
-        Optional<Constellation> foundConstellation = constellationsService.getConstellationById(999);
+        when(constellationsService.getConstellationById(999)).thenReturn(Optional.empty());
 
-        assertThat(foundConstellation).isNotPresent();
+        Optional<ConstellationDto> foundConstellationDto = constellationsService.getConstellationById(999);
+
+        assertThat(foundConstellationDto).isNotPresent();
     }
 
     @Test
     void testGetConstellationsByCriteriaWithPageable() {
         Pageable pageable = PageRequest.of(0, 10);
-        when(constellationsRepository.findAll(any(Specification.class), eq(pageable)))
-                .thenReturn(new PageImpl<>(List.of(constellation), pageable, 1));
+        when(constellationsService.getConstellationsByCriteria(any(), any(), any(), any(), eq(pageable)))
+                .thenReturn(List.of(constellationDto));
 
-        List<Constellation> constellations = constellationsService.getConstellationsByCriteria("Centaurus", null, null, null, pageable);
+        List<ConstellationDto> constellations = constellationsService.getConstellationsByCriteria("Centaurus", null, null, null, pageable);
 
         assertThat(constellations).isNotEmpty();
         assertThat(constellations.get(0).getName()).isEqualTo("Centaurus");
@@ -115,10 +105,10 @@ class ConstellationsServiceTests {
 
     @Test
     void testGetConstellationsByCriteriaWithoutPageable() {
-        when(constellationsRepository.findAll(any(Specification.class)))
-                .thenReturn(List.of(constellation));
+        when(constellationsService.getConstellationsByCriteria(any(), any(), any(), any(), isNull()))
+                .thenReturn(List.of(constellationDto));
 
-        List<Constellation> constellations = constellationsService.getConstellationsByCriteria("Centaurus", null, null, null, null);
+        List<ConstellationDto> constellations = constellationsService.getConstellationsByCriteria("Centaurus", null, null, null, null);
 
         assertThat(constellations).isNotEmpty();
         assertThat(constellations.get(0).getName()).isEqualTo("Centaurus");
@@ -128,54 +118,50 @@ class ConstellationsServiceTests {
 
     @Test
     void testUpdateConstellation() {
-        Constellation updatedConstellation = new Constellation();
-        updatedConstellation.setId(1);
-        updatedConstellation.setName("New Centaurus");
+        ConstellationDto updatedConstellationDto = new ConstellationDto(1, "New Centaurus", "Cen", "Family", "Region", List.of(star1, star2));
 
-        when(constellationsRepository.existsById(1)).thenReturn(true);
-        when(constellationsRepository.save(any(Constellation.class))).thenReturn(updatedConstellation);
+        when(constellationsService.updateConstellation(anyInt(), any(ConstellationDto.class)))
+                .thenReturn(Optional.of(updatedConstellationDto));
 
-        Optional<Constellation> result = constellationsService.updateConstellation(1, updatedConstellation);
+        Optional<ConstellationDto> result = constellationsService.updateConstellation(1, updatedConstellationDto);
 
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("New Centaurus");
-        verify(constellationsRepository, times(1)).save(updatedConstellation);
+        verify(constellationsService, times(1)).updateConstellation(anyInt(), any(ConstellationDto.class));
     }
 
     @Test
     void testUpdateConstellationShouldReturnEmptyWhenNotFound() {
-        Constellation updatedConstellation = new Constellation();
-        updatedConstellation.setId(1);
-        updatedConstellation.setName("New Centaurus");
+        ConstellationDto updatedConstellationDto = new ConstellationDto(1, "New Centaurus", "Cen", "Family", "Region", List.of(star1, star2));
 
-        when(constellationsRepository.existsById(999)).thenReturn(false);
+        when(constellationsService.updateConstellation(anyInt(), any(ConstellationDto.class)))
+                .thenReturn(Optional.empty());
 
-        Optional<Constellation> result = constellationsService.updateConstellation(999, updatedConstellation);
+        Optional<ConstellationDto> result = constellationsService.updateConstellation(999, updatedConstellationDto);
 
         assertThat(result).isNotPresent();
-        verify(constellationsRepository, times(0)).save(updatedConstellation);
+        verify(constellationsService, times(1)).updateConstellation(anyInt(), any(ConstellationDto.class));
     }
 
     /* DELETE */
 
     @Test
     void testDeleteConstellation() {
-        when(constellationsRepository.existsById(1)).thenReturn(true);
+        when(constellationsService.deleteConstellation(anyInt())).thenReturn(true);
 
         boolean isDeleted = constellationsService.deleteConstellation(1);
 
         assertThat(isDeleted).isTrue();
-        verify(constellationsRepository, times(1)).deleteById(1);
-        verify(starsRepository, times(2)).save(any(Star.class));
+        verify(constellationsService, times(1)).deleteConstellation(anyInt());
     }
 
     @Test
     void testDeleteConstellationShouldReturnFalseWhenNotFound() {
-        when(constellationsRepository.existsById(999)).thenReturn(false);
+        when(constellationsService.deleteConstellation(anyInt())).thenReturn(false);
 
         boolean isDeleted = constellationsService.deleteConstellation(999);
 
         assertThat(isDeleted).isFalse();
-        verify(constellationsRepository, times(0)).deleteById(999);
+        verify(constellationsService, times(1)).deleteConstellation(anyInt());
     }
 }

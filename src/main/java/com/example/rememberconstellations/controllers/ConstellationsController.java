@@ -1,6 +1,6 @@
 package com.example.rememberconstellations.controllers;
 
-import com.example.rememberconstellations.models.Constellation;
+import com.example.rememberconstellations.dto.ConstellationDto;
 import com.example.rememberconstellations.services.ConstellationsService;
 import java.util.List;
 import java.util.Optional;
@@ -31,46 +31,46 @@ public class ConstellationsController {
     /* CREATE */
 
     @PostMapping("")
-    public ResponseEntity<Constellation> createConstellation(@RequestBody Constellation constellation) {
-        Constellation createdConstellation = constellationsService.createConstellation(constellation);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdConstellation);
+    public ResponseEntity<ConstellationDto> createConstellation(@RequestBody ConstellationDto constellationDto) {
+        ConstellationDto createdConstellationDto = constellationsService.createConstellation(constellationDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdConstellationDto);
     }
 
     /* READ */
 
     @GetMapping("/{id}")
-    public ResponseEntity<Constellation> getConstellationById(@PathVariable int id) {
-        Optional<Constellation> constellation = constellationsService.getConstellationById(id);
-        if (constellation.isPresent()) {
-            return ResponseEntity.ok(constellation.get());
+    public ResponseEntity<ConstellationDto> getConstellationById(@PathVariable int id) {
+        Optional<ConstellationDto> constellationDto = constellationsService.getConstellationById(id);
+        if (constellationDto.isPresent()) {
+            return ResponseEntity.ok(constellationDto.get());
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Constellation());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Constellation>> getConstellationByCriteria(
+    public ResponseEntity<List<ConstellationDto>> getConstellationByCriteria(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String abbreviation,
             @RequestParam(required = false) String family,
             @RequestParam(required = false) String region,
             Pageable pageable) {
-        List<Constellation> constellations =
+        List<ConstellationDto> constellationDtos =
                 constellationsService.getConstellationsByCriteria(name, abbreviation, family, region, pageable);
-        if (constellations.isEmpty()) {
+        if (constellationDtos.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(constellations);
+            return ResponseEntity.ok(constellationDtos);
         }
     }
 
     /* UPDATE */
 
     @PutMapping("/{id}")
-    public ResponseEntity<Constellation> updateConstellation(@PathVariable int id, @RequestBody Constellation constellation) {
-        Optional<Constellation> updatedConstellation = constellationsService.updateConstellation(id, constellation);
-        if (updatedConstellation.isPresent()) {
-            return ResponseEntity.ok(updatedConstellation.get());
+    public ResponseEntity<ConstellationDto> updateConstellation(@PathVariable int id, @RequestBody ConstellationDto constellationDto) {
+        Optional<ConstellationDto> updatedConstellationDto = constellationsService.updateConstellation(id, constellationDto);
+        if (updatedConstellationDto.isPresent()) {
+            return ResponseEntity.ok(updatedConstellationDto.get());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -79,7 +79,7 @@ public class ConstellationsController {
     /* DELETE */
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Constellation> deleteConstellation(@PathVariable int id) {
+    public ResponseEntity<Void> deleteConstellation(@PathVariable int id) {
         boolean isDeleted = constellationsService.deleteConstellation(id);
         if (isDeleted) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -88,5 +88,3 @@ public class ConstellationsController {
         }
     }
 }
-
-

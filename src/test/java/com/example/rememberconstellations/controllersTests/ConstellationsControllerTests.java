@@ -1,7 +1,7 @@
 package com.example.rememberconstellations.controllersTests;
 
 import com.example.rememberconstellations.controllers.ConstellationsController;
-import com.example.rememberconstellations.models.Constellation;
+import com.example.rememberconstellations.dto.ConstellationDto;
 import com.example.rememberconstellations.services.ConstellationsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,13 +11,13 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class ConstellationsControllerTests {
@@ -37,31 +37,31 @@ class ConstellationsControllerTests {
 
     @Test
     void testCreateConstellation_Success() {
-        Constellation newConstellation = new Constellation();
-        newConstellation.setId(1); // Set some ID
-        when(constellationsService.createConstellation(any(Constellation.class))).thenReturn(newConstellation);
+        ConstellationDto newConstellationDto = new ConstellationDto();
+        newConstellationDto.setId(1); // Set some ID
+        when(constellationsService.createConstellation(any(ConstellationDto.class))).thenReturn(newConstellationDto);
 
-        ResponseEntity<Constellation> result = constellationsController.createConstellation(newConstellation);
+        ResponseEntity<ConstellationDto> result = constellationsController.createConstellation(newConstellationDto);
         assertNotNull(result);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
-        assertEquals(newConstellation, result.getBody());
+        assertEquals(newConstellationDto, result.getBody());
 
-        verify(constellationsService, times(1)).createConstellation(any(Constellation.class));
+        verify(constellationsService, times(1)).createConstellation(any(ConstellationDto.class));
     }
 
     /* READ */
 
     @Test
     void testGetConstellationById_Success() {
-        Constellation constellation = new Constellation();
-        constellation.setId(1); // Example setting
+        ConstellationDto constellationDto = new ConstellationDto();
+        constellationDto.setId(1); // Example setting
 
-        when(constellationsService.getConstellationById(1)).thenReturn(Optional.of(constellation));
+        when(constellationsService.getConstellationById(1)).thenReturn(Optional.of(constellationDto));
 
-        ResponseEntity<Constellation> result = constellationsController.getConstellationById(1);
+        ResponseEntity<ConstellationDto> result = constellationsController.getConstellationById(1);
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(constellation, result.getBody());
+        assertEquals(constellationDto, result.getBody());
 
         verify(constellationsService, times(1)).getConstellationById(anyInt());
     }
@@ -70,25 +70,24 @@ class ConstellationsControllerTests {
     void testGetConstellationById_NotFound() {
         when(constellationsService.getConstellationById(1)).thenReturn(Optional.empty());
 
-        ResponseEntity<Constellation> result = constellationsController.getConstellationById(1);
+        ResponseEntity<ConstellationDto> result = constellationsController.getConstellationById(1);
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        assertNotNull(result.getBody()); // The body should be an empty Constellation object
 
         verify(constellationsService, times(1)).getConstellationById(anyInt());
     }
 
     @Test
     void testGetConstellationsByCriteria_Success() {
-        List<Constellation> constellations = Arrays.asList(new Constellation(), new Constellation());
+        List<ConstellationDto> constellationDtos = Arrays.asList(new ConstellationDto(), new ConstellationDto());
 
         when(constellationsService.getConstellationsByCriteria(null, null, null, null, Pageable.unpaged()))
-                .thenReturn(constellations);
+                .thenReturn(constellationDtos);
 
-        ResponseEntity<List<Constellation>> result = constellationsController.getConstellationByCriteria(null, null, null, null, Pageable.unpaged());
+        ResponseEntity<List<ConstellationDto>> result = constellationsController.getConstellationByCriteria(null, null, null, null, Pageable.unpaged());
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(constellations, result.getBody());
+        assertEquals(constellationDtos, result.getBody());
 
         verify(constellationsService, times(1)).getConstellationsByCriteria(any(), any(), any(), any(), any(Pageable.class));
     }
@@ -98,7 +97,7 @@ class ConstellationsControllerTests {
         when(constellationsService.getConstellationsByCriteria(null, null, null, null, Pageable.unpaged()))
                 .thenReturn(List.of());
 
-        ResponseEntity<List<Constellation>> result = constellationsController.getConstellationByCriteria(null, null, null, null, Pageable.unpaged());
+        ResponseEntity<List<ConstellationDto>> result = constellationsController.getConstellationByCriteria(null, null, null, null, Pageable.unpaged());
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 
@@ -109,31 +108,31 @@ class ConstellationsControllerTests {
 
     @Test
     void testUpdateConstellation_Success() {
-        Constellation updatedConstellation = new Constellation();
-        updatedConstellation.setId(1); // Existing constellation ID
-        when(constellationsService.updateConstellation(anyInt(), any(Constellation.class)))
-                .thenReturn(Optional.of(updatedConstellation));
+        ConstellationDto updatedConstellationDto = new ConstellationDto();
+        updatedConstellationDto.setId(1); // Existing constellation ID
+        when(constellationsService.updateConstellation(anyInt(), any(ConstellationDto.class)))
+                .thenReturn(Optional.of(updatedConstellationDto));
 
-        ResponseEntity<Constellation> result = constellationsController.updateConstellation(1, updatedConstellation);
+        ResponseEntity<ConstellationDto> result = constellationsController.updateConstellation(1, updatedConstellationDto);
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(updatedConstellation, result.getBody());
+        assertEquals(updatedConstellationDto, result.getBody());
 
-        verify(constellationsService, times(1)).updateConstellation(anyInt(), any(Constellation.class));
+        verify(constellationsService, times(1)).updateConstellation(anyInt(), any(ConstellationDto.class));
     }
 
     @Test
     void testUpdateConstellation_NotFound() {
-        Constellation updatedConstellation = new Constellation();
-        updatedConstellation.setId(1);
-        when(constellationsService.updateConstellation(anyInt(), any(Constellation.class)))
+        ConstellationDto updatedConstellationDto = new ConstellationDto();
+        updatedConstellationDto.setId(1);
+        when(constellationsService.updateConstellation(anyInt(), any(ConstellationDto.class)))
                 .thenReturn(Optional.empty());
 
-        ResponseEntity<Constellation> result = constellationsController.updateConstellation(1, updatedConstellation);
+        ResponseEntity<ConstellationDto> result = constellationsController.updateConstellation(1, updatedConstellationDto);
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 
-        verify(constellationsService, times(1)).updateConstellation(anyInt(), any(Constellation.class));
+        verify(constellationsService, times(1)).updateConstellation(anyInt(), any(ConstellationDto.class));
     }
 
     /* DELETE */
@@ -142,7 +141,7 @@ class ConstellationsControllerTests {
     void testDeleteConstellation_Success() {
         when(constellationsService.deleteConstellation(anyInt())).thenReturn(true);
 
-        ResponseEntity<Constellation> result = constellationsController.deleteConstellation(1);
+        ResponseEntity<Void> result = constellationsController.deleteConstellation(1);
         assertNotNull(result);
         assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
 
@@ -153,7 +152,7 @@ class ConstellationsControllerTests {
     void testDeleteConstellation_NotFound() {
         when(constellationsService.deleteConstellation(anyInt())).thenReturn(false);
 
-        ResponseEntity<Constellation> result = constellationsController.deleteConstellation(1);
+        ResponseEntity<Void> result = constellationsController.deleteConstellation(1);
         assertNotNull(result);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 

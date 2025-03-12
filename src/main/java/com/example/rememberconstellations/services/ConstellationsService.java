@@ -1,10 +1,14 @@
 package com.example.rememberconstellations.services;
 
+import com.example.rememberconstellations.dto.ConstellationDto;
+import com.example.rememberconstellations.mappers.ConstellationMapper;
 import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.repositories.ConstellationsRepository;
 import com.example.rememberconstellations.utilities.ConstellationSpecification;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,26 +20,31 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConstellationsService {
 
     private final ConstellationsRepository constellationsRepository;
+    private final ConstellationMapper constellationMapper;
 
     @Autowired
     public ConstellationsService(ConstellationsRepository constellationsRepository) {
         this.constellationsRepository = constellationsRepository;
+        this.constellationMapper = new ConstellationMapper();
     }
 
     /* CREATE */
 
     @Transactional
-    public Constellation createConstellation(Constellation constellation) {
-        return constellationsRepository.save(constellation);
+    public ConstellationDto createConstellation(ConstellationDto constellationDto) {
+        Constellation constellation = constellationMapper.mapToEntity(constellationDto);
+        Constellation savedConstellation = constellationsRepository.save(constellation);
+        return constellationMapper.mapToDto(savedConstellation);
     }
 
     /* READ */
 
-    public Optional<Constellation> getConstellationById(int id) {
-        return constellationsRepository.findById(id);
+    public Optional<ConstellationDto> getConstellationById(int id) {
+        return constellationsRepository.findById(id)
+                .map(constellationMapper::mapToDto);
     }
 
-    public List<Constellation> getConstellationsByCriteria(String name, String abbreviation,
+    public List<ConstellationDto> getConstellationsByCriteria(String name, String abbreviation,
                                                            String family, String region, Pageable pageable) {
         Specification<Constellation> specification = Specification.where(null);
 
@@ -53,19 +62,25 @@ public class ConstellationsService {
         }
 
         if (pageable != null) {
-            return constellationsRepository.findAll(specification, pageable).getContent();
+            return constellationsRepository.findAll(specification, pageable).getContent().stream()
+                    .map(constellationMapper::mapToDto)
+                    .collect(Collectors.toList());
         } else {
-            return constellationsRepository.findAll(specification);
+            return constellationsRepository.findAll(specification).stream()
+                    .map(constellationMapper::mapToDto)
+                    .collect(Collectors.toList());
         }
     }
 
     /* UPDATE */
 
     @Transactional
-    public Optional<Constellation> updateConstellation(int id, Constellation constellation) {
+    public Optional<ConstellationDto> updateConstellation(int id, ConstellationDto constellationDto) {
         if (constellationsRepository.existsById(id)) {
+            Constellation constellation = constellationMapper.mapToEntity(constellationDto);
             constellation.setId(id);
-            return Optional.of(constellationsRepository.save(constellation));
+            Constellation updatedConstellation = constellationsRepository.save(constellation);
+            return Optional.of(constellationMapper.mapToDto(updatedConstellation));
         } else {
             return Optional.empty();
         }
