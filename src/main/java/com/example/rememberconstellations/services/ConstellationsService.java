@@ -1,5 +1,6 @@
 package com.example.rememberconstellations.services;
 
+import com.example.rememberconstellations.cache.InMemoryCache;
 import com.example.rememberconstellations.dto.ConstellationDto;
 import com.example.rememberconstellations.mappers.ConstellationMapper;
 import com.example.rememberconstellations.mappers.StarMapper;
@@ -23,12 +24,14 @@ public class ConstellationsService {
     private final ConstellationsRepository constellationsRepository;
     private final ConstellationMapper constellationMapper;
     private final StarMapper starMapper;
+    private final InMemoryCache<Integer, ConstellationDto> constellationCache;
 
     @Autowired
     public ConstellationsService(ConstellationsRepository constellationsRepository) {
         this.constellationsRepository = constellationsRepository;
         this.starMapper = new StarMapper();
         this.constellationMapper = new ConstellationMapper(starMapper);
+        this.constellationCache = new InMemoryCache<>();
     }
 
     /* CREATE */
@@ -43,8 +46,16 @@ public class ConstellationsService {
     /* READ */
 
     public Optional<ConstellationDto> getConstellationById(int id) {
+        ConstellationDto cashedConstellationDto = constellationCache.get(id);
+        if (cashedConstellationDto != null) {
+            return Optional.of(cashedConstellationDto);
+        }
         return constellationsRepository.findById(id)
-                .map(constellationMapper::mapToDto);
+                .map(constellation -> {
+                    ConstellationDto constellationDto = constellationMapper.mapToDto(constellation);
+                    constellationCache.put(id, constellationDto);
+                    return constellationDto;
+                });
     }
 
     public List<ConstellationDto> getConstellationsByCriteria(String name, String abbreviation,
@@ -83,7 +94,9 @@ public class ConstellationsService {
             Constellation constellation = constellationMapper.mapToEntity(constellationDto);
             constellation.setId(id);
             Constellation updatedConstellation = constellationsRepository.save(constellation);
-            return Optional.of(constellationMapper.mapToDto(updatedConstellation));
+            ConstellationDto updatedConstellationDto = constellationMapper.mapToDto(updatedConstellation);
+            constellationCache.put(id, updatedConstellationDto);
+            return Optional.of(updatedConstellationDto);
         } else {
             return Optional.empty();
         }
@@ -123,7 +136,9 @@ public class ConstellationsService {
                 constellation.setStars(oldStars);
             }
             Constellation patchedConstellation = constellationsRepository.save(constellation);
-            return Optional.of(constellationMapper.mapToDto(patchedConstellation));
+            ConstellationDto patchedConstellationDto = constellationMapper.mapToDto(patchedConstellation);
+            constellationCache.put(id, patchedConstellationDto);
+            return Optional.of(patchedConstellationDto);
         } else {
             return Optional.empty();
         }
@@ -136,6 +151,7 @@ public class ConstellationsService {
         Optional<Constellation> constellationToDelete = constellationsRepository.findById(id);
         if (constellationToDelete.isPresent()) {
             constellationsRepository.deleteById(id);
+            constellationCache.remove(id);
             return true;
         } else {
             return false;

@@ -1,5 +1,6 @@
 package com.example.rememberconstellations.services;
 
+import com.example.rememberconstellations.cache.InMemoryCache;
 import com.example.rememberconstellations.dto.StarDto;
 import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Star;
@@ -18,11 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class StarsService {
     private final StarsRepository starsRepository;
     private final StarMapper starMapper;
+    private final InMemoryCache<Integer, StarDto> starCache;
 
     @Autowired
     public StarsService(StarsRepository starsRepository, StarMapper starMapper) {
         this.starsRepository = starsRepository;
         this.starMapper = starMapper;
+        this.starCache = new InMemoryCache<>();
     }
 
     /* CREATE */
@@ -37,8 +40,16 @@ public class StarsService {
     /* READ */
 
     public Optional<StarDto> getStarById(final int id) {
+        StarDto cashedStarDto = starCache.get(id);
+        if (cashedStarDto != null) {
+            return Optional.of(cashedStarDto);
+        }
         return starsRepository.findStarById(id)
-                .map(starMapper::mapToDto);
+                .map(star -> {
+                    StarDto starDto = starMapper.mapToDto(star);
+                    starCache.put(id, starDto);
+                    return starDto;
+                });
     }
 
     @SuppressWarnings("java:S107")
@@ -98,7 +109,9 @@ public class StarsService {
             Star star = starMapper.mapToEntity(starDto);
             star.setId(id);
             Star updatedStar = starsRepository.save(star);
-            return Optional.of(starMapper.mapToDto(updatedStar));
+            StarDto updatedStarDto = starMapper.mapToDto(updatedStar);
+            starCache.put(id, updatedStarDto);
+            return Optional.of(updatedStarDto);
         } else {
             return Optional.empty();
         }
@@ -139,7 +152,9 @@ public class StarsService {
                 star.setPositionInConstellation(starDto.getPositionInConstellation());
             }
             Star patchedStar = starsRepository.save(star);
-            return Optional.of(starMapper.mapToDto(patchedStar));
+            StarDto patchedStarDto = starMapper.mapToDto(patchedStar);
+            starCache.put(id, patchedStarDto);
+            return Optional.of(patchedStarDto);
         } else {
             return Optional.empty();
         }
@@ -152,6 +167,7 @@ public class StarsService {
         Optional<Star> starOptional = starsRepository.findStarById(id);
         if (starOptional.isPresent()) {
             starsRepository.deleteById(id);
+            starCache.remove(id);
             return true;
         } else {
             return false;
