@@ -61,6 +61,16 @@ public class ConstellationsController {
         }
     }
 
+    @GetMapping("/star-type")
+    public ResponseEntity<List<ConstellationDto>> getConstellationsByStarType(@RequestParam String starType) {
+        List<ConstellationDto> constellationDtos = constellationsService.getConstellationsByStarType(starType);
+        if (constellationDtos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(constellationDtos);
+        }
+    }
+
     /* UPDATE */
 
     @PutMapping("/{id}")

@@ -86,6 +86,14 @@ public class ConstellationsService {
         }
     }
 
+    public List<ConstellationDto> getConstellationsByStarType(String starType) {
+        Optional<List<Constellation>> constellationsOptional = constellationsRepository.findByStarType(starType);
+        return constellationsOptional.map(constellations -> constellations.stream()
+                .map(constellationMapper::mapToDto)
+                .collect(Collectors.toList()))
+                .orElseGet(List::of);
+    }
+
     /* UPDATE */
 
     @Transactional
