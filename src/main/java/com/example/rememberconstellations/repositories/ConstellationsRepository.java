@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -18,8 +19,8 @@ public interface ConstellationsRepository extends JpaRepository<Constellation, I
     /*
     @Query("SELECT * FROM constellations const " +
            "JOIN stars ss ON const.id = ss.constellation_id " +
-           "WHERE ss.type = :starType", nativeQuery = true)
+           "WHERE ss.type = :type", nativeQuery = true)
     */
-    @Query("SELECT const FROM Constellation const JOIN const.stars ss WHERE ss.type = :starType")
-    Optional<List<Constellation>> findByStarType(String statType);
+    @Query("SELECT const FROM Constellation const JOIN const.stars ss WHERE ss.type = :type")
+    Optional<List<Constellation>> findByStarType(@Param("type") String starType);
 }
