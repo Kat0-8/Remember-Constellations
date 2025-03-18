@@ -1,6 +1,6 @@
 package com.example.rememberconstellations.services;
 
-import com.example.rememberconstellations.cache.InMemoryCache;
+import com.example.rememberconstellations.cache.ConstellationCache;
 import com.example.rememberconstellations.dto.ConstellationDto;
 import com.example.rememberconstellations.mappers.ConstellationMapper;
 import com.example.rememberconstellations.mappers.StarMapper;
@@ -24,14 +24,14 @@ public class ConstellationsService {
     private final ConstellationsRepository constellationsRepository;
     private final ConstellationMapper constellationMapper;
     private final StarMapper starMapper;
-    private final InMemoryCache<Integer, ConstellationDto> constellationCache;
+    private final ConstellationCache constellationCache;
 
     @Autowired
-    public ConstellationsService(ConstellationsRepository constellationsRepository) {
+    public ConstellationsService(ConstellationsRepository constellationsRepository, ConstellationCache constellationCache) {
         this.constellationsRepository = constellationsRepository;
         this.starMapper = new StarMapper();
         this.constellationMapper = new ConstellationMapper(starMapper);
-        this.constellationCache = new InMemoryCache<>();
+        this.constellationCache = constellationCache;
     }
 
     /* CREATE */
@@ -40,7 +40,9 @@ public class ConstellationsService {
     public ConstellationDto createConstellation(ConstellationDto constellationDto) {
         Constellation constellation = constellationMapper.mapToEntity(constellationDto);
         Constellation savedConstellation = constellationsRepository.save(constellation);
-        return constellationMapper.mapToDto(savedConstellation);
+        ConstellationDto savedConstellationDto = constellationMapper.mapToDto(savedConstellation);
+        constellationCache.put(savedConstellation.getId(), savedConstellationDto);
+        return savedConstellationDto;
     }
 
     /* READ */
@@ -75,23 +77,43 @@ public class ConstellationsService {
             specification = specification.and(ConstellationSpecification.withRegion(region));
         }
 
+        List<ConstellationDto> constellationDtos;
         if (pageable != null) {
-            return constellationsRepository.findAll(specification, pageable).getContent().stream()
+            constellationDtos = constellationsRepository.findAll(specification, pageable)
+                    .getContent()
+                    .stream()
                     .map(constellationMapper::mapToDto)
                     .collect(Collectors.toList());
         } else {
-            return constellationsRepository.findAll(specification).stream()
+            constellationDtos = constellationsRepository.findAll(specification)
+                    .stream()
                     .map(constellationMapper::mapToDto)
                     .collect(Collectors.toList());
         }
+
+        for (ConstellationDto constellationDto : constellationDtos) {
+            if (constellationCache.get(constellationDto.getId()) == null) {
+                constellationCache.put(constellationDto.getId(), constellationDto);
+            }
+        }
+        return constellationDtos;
     }
 
     public List<ConstellationDto> getConstellationsByStarType(String starType) {
         Optional<List<Constellation>> constellationsOptional = constellationsRepository.findByStarType(starType);
-        return constellationsOptional.map(constellations -> constellations.stream()
-                .map(constellationMapper::mapToDto)
-                .collect(Collectors.toList()))
+        List<ConstellationDto> constellationDtos = constellationsOptional
+                .map(constellations -> constellations.stream()
+                    .map(constellationMapper::mapToDto)
+                    .collect(Collectors.toList()))
                 .orElseGet(List::of);
+        if (!constellationDtos.isEmpty()) {
+            for (ConstellationDto constellationDto : constellationDtos) {
+                if (constellationCache.get(constellationDto.getId()) == null) {
+                    constellationCache.put(constellationDto.getId(), constellationDto);
+                }
+            }
+        }
+        return constellationDtos;
     }
 
     /* UPDATE */
@@ -137,10 +159,10 @@ public class ConstellationsService {
                             star.setConstellation(constellation);
                             return star;
                         })
-                        .collect(Collectors.toList());
+                        .toList();
                 oldStars.addAll(newStars.stream()
                         .filter(newStar -> oldStars.stream().noneMatch(oldStar -> oldStar.getId() == newStar.getId()))
-                        .collect(Collectors.toList()));
+                        .toList());
                 constellation.setStars(oldStars);
             }
             Constellation patchedConstellation = constellationsRepository.save(constellation);

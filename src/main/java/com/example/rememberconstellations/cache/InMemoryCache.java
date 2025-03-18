@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import lombok.Getter;
@@ -19,6 +20,13 @@ public class InMemoryCache<K, V> {
 
     public InMemoryCache() {
         this.cache = new LinkedHashMap<>(MAX_CACHE_SIZE, 0.75f, true);
+        startCacheCleaner();
+    }
+
+    public InMemoryCache(Integer maxCacheSize) {
+        int cacheSize;
+        cacheSize = Objects.requireNonNullElse(maxCacheSize, MAX_CACHE_SIZE);
+        this.cache = new LinkedHashMap<>(cacheSize, 0.75f, true);
         startCacheCleaner();
     }
 
@@ -39,11 +47,10 @@ public class InMemoryCache<K, V> {
 
     public V get(K key) {
         CacheEntry<V> entry = cache.get(key);
-        if (entry != null && !isExpired(entry)) {
+        if (entry != null) {
             entry.updateTimestamp();
             return entry.getValue();
         } else {
-            cache.remove(key);
             return null;
         }
     }
@@ -72,13 +79,7 @@ public class InMemoryCache<K, V> {
     }
 
     private void cleanExpiredEntries() {
-        Iterator<Map.Entry<K, CacheEntry<V>>> iterator = cache.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<K, CacheEntry<V>> entry = iterator.next();
-            if (isExpired(entry.getValue())) {
-                iterator.remove();
-            }
-        }
+        cache.entrySet().removeIf(entry -> isExpired(entry.getValue()));
     }
 
     private void startCacheCleaner() {

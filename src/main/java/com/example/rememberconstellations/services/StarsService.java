@@ -1,6 +1,6 @@
 package com.example.rememberconstellations.services;
 
-import com.example.rememberconstellations.cache.InMemoryCache;
+import com.example.rememberconstellations.cache.StarCache;
 import com.example.rememberconstellations.dto.StarDto;
 import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Star;
@@ -8,7 +8,6 @@ import com.example.rememberconstellations.repositories.StarsRepository;
 import com.example.rememberconstellations.utilities.StarSpecification;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,13 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class StarsService {
     private final StarsRepository starsRepository;
     private final StarMapper starMapper;
-    private final InMemoryCache<Integer, StarDto> starCache;
+    private final StarCache starCache;
 
     @Autowired
-    public StarsService(StarsRepository starsRepository, StarMapper starMapper) {
+    public StarsService(StarsRepository starsRepository, StarMapper starMapper, StarCache starCache) {
         this.starsRepository = starsRepository;
         this.starMapper = starMapper;
-        this.starCache = new InMemoryCache<>();
+        this.starCache = starCache;
     }
 
     /* CREATE */
@@ -34,7 +33,9 @@ public class StarsService {
     public StarDto createStar(StarDto starDto) {
         Star star = starMapper.mapToEntity(starDto);
         Star savedStar = starsRepository.save(star);
-        return starMapper.mapToDto(savedStar);
+        StarDto savedStarDto = starMapper.mapToDto(savedStar);
+        starCache.put(savedStar.getId(), savedStarDto);
+        return savedStarDto;
     }
 
     /* READ */
@@ -90,15 +91,26 @@ public class StarsService {
             specification = specification.and(StarSpecification.withConstellationId(constellationId));
         }
 
+        List<StarDto> starDtos;
         if (pageable != null) {
-            return starsRepository.findAll(specification, pageable).getContent().stream()
+            starDtos = starsRepository.findAll(specification, pageable)
+                    .getContent()
+                    .stream()
                     .map(starMapper::mapToDto)
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
-            return starsRepository.findAll(specification).stream()
+            starDtos = starsRepository.findAll(specification)
+                    .stream()
                     .map(starMapper::mapToDto)
-                    .collect(Collectors.toList());
+                    .toList();
         }
+
+        for (StarDto starDto : starDtos) {
+            if (starCache.get(starDto.getId()) == null) {
+                starCache.put(starDto.getId(), starDto);
+            }
+        }
+        return starDtos;
     }
 
     /* UPDATE */
