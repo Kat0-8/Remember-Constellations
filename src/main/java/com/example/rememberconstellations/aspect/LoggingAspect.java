@@ -33,8 +33,7 @@ public class LoggingAspect {
         return result;
     }
 
-    @AfterThrowing(pointcut = "within(com.example.rememberconstellations.services..*) || "
-            + "within(com.example.rememberconstellations.controllers..*)", throwing = "exception")
+    @AfterThrowing(pointcut = "within(com.example.rememberconstellations.services..*)", throwing = "exception")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable exception) {
         logger.error("Exception in {} with arguments {}: {}",
                 joinPoint.getSignature().toShortString(),
