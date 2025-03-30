@@ -4,12 +4,10 @@ import com.example.rememberconstellations.dto.StarDto;
 import com.example.rememberconstellations.services.StarsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,23 +34,22 @@ public class StarsController {
 
     @Operation(summary = "Create new star")
     @PostMapping("")
-    public ResponseEntity<StarDto> createStar(@RequestBody StarDto starDto) {
-        StarDto createdStarDto = starsService.createStar(starDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdStarDto);
+    public StarDto createStar(@Valid @RequestBody StarDto starDto) {
+        return starsService.createStar(starDto);
+        //return ResponseEntity.status(HttpStatus.CREATED).body(createdStarDto);
     }
 
     /* READ */
 
     @Operation(summary = "Get star by id")
     @GetMapping("/{id}")
-    public ResponseEntity<StarDto> getStarById(@PathVariable int id) {
-        Optional<StarDto> starDto = starsService.getStarById(id);
-        return starDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public StarDto getStarById(@PathVariable int id) {
+        return starsService.getStarById(id);
     }
 
     @Operation(summary = "Get star by criteria")
     @GetMapping("")
-    public ResponseEntity<List<StarDto>> getStarsByCriteria(
+    public List<StarDto> getStarsByCriteria(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) Double mass,
@@ -64,43 +61,31 @@ public class StarsController {
             @RequestParam(required = false) String positionInConstellation,
             @RequestParam(required = false) Integer constellationId,
             Pageable pageable) {
-        List<StarDto> starDtos =
-                starsService.getStarsByCriteria(name, type, mass, radius, temperature, luminosity,
+        return starsService.getStarsByCriteria(name, type, mass, radius, temperature, luminosity,
                                                 rightAscension, declination, positionInConstellation,
                                                 constellationId, pageable);
-        if (starDtos.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok(starDtos);
-        }
     }
 
     /* UPDATE */
 
     @Operation(summary = "Put star by id")
     @PutMapping("/{id}")
-    public ResponseEntity<StarDto> putStar(@PathVariable int id, @RequestBody StarDto starDto) {
-        Optional<StarDto> putStarDto = starsService.putStar(id, starDto);
-        return putStarDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public StarDto putStar(@PathVariable int id, @RequestBody StarDto starDto) {
+        return starsService.putStar(id, starDto);
+        //return putStarDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Patch star by id")
     @PatchMapping("/{id}")
-    public ResponseEntity<StarDto> patchStar(@PathVariable int id, @RequestBody StarDto starDto) {
-        Optional<StarDto> patchedStarDto = starsService.patchStar(id, starDto);
-        return patchedStarDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public StarDto patchStar(@PathVariable int id, @RequestBody StarDto starDto) {
+        return starsService.patchStar(id, starDto);
     }
 
     /* DELETE */
 
     @Operation(summary = "Delete star by id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStar(@PathVariable int id) {
-        boolean isDeleted = starsService.deleteStar(id);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public void deleteStar(@PathVariable int id) {
+        starsService.deleteStar(id);
     }
 }

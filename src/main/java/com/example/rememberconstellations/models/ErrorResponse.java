@@ -1,5 +1,6 @@
 package com.example.rememberconstellations.models;
 
+import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,11 +9,11 @@ import lombok.Setter;
 public class ErrorResponse {
     private int status;
     private String message;
-    private long timestamp;
+    private Instant timestamp;
 
     public ErrorResponse(int status, String message) {
         this.status = status;
         this.message = message;
-        this.timestamp = System.currentTimeMillis();
+        this.timestamp = Instant.now();
     }
 }

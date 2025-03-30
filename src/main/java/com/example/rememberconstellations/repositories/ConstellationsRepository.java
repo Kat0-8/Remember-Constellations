@@ -22,5 +22,7 @@ public interface ConstellationsRepository extends JpaRepository<Constellation, I
            "WHERE ss.type = :type", nativeQuery = true)
     */
     @Query("SELECT const FROM Constellation const JOIN const.stars ss WHERE ss.type = :type")
-    Optional<List<Constellation>> findByStarType(@Param("type") String starType);
+    List<Constellation> findByStarType(@Param("type") String starType);
+
+    boolean existsByName(String name);
 }

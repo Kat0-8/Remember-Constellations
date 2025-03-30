@@ -2,22 +2,25 @@ package com.example.rememberconstellations.services;
 
 import com.example.rememberconstellations.cache.ConstellationCache;
 import com.example.rememberconstellations.dto.ConstellationDto;
+import com.example.rememberconstellations.exception.ConstellationAlreadyExistsException;
+import com.example.rememberconstellations.exception.ResourceNotFoundException;
 import com.example.rememberconstellations.mappers.ConstellationMapper;
 import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.ConstellationsRepository;
 import com.example.rememberconstellations.utilities.ConstellationSpecification;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+@Slf4j
 @Service
 public class ConstellationsService {
 
@@ -38,26 +41,32 @@ public class ConstellationsService {
 
     @Transactional
     public ConstellationDto createConstellation(ConstellationDto constellationDto) {
+        if (constellationsRepository.existsByName(constellationDto.getName())) {
+            throw new ConstellationAlreadyExistsException("Constellation with name " + constellationDto.getName() + " already exists");
+        }
+        log.info("Creating new constellation with name {}", constellationDto.getName());
         Constellation constellation = constellationMapper.mapToEntity(constellationDto);
         Constellation savedConstellation = constellationsRepository.save(constellation);
         ConstellationDto savedConstellationDto = constellationMapper.mapToDto(savedConstellation);
         constellationCache.put(savedConstellation.getId(), savedConstellationDto);
+        log.info("Constellation with id {} was saved and cashed", savedConstellationDto.getId());
         return savedConstellationDto;
     }
 
     /* READ */
 
-    public Optional<ConstellationDto> getConstellationById(int id) {
+    public ConstellationDto getConstellationById(int id) {
         ConstellationDto cashedConstellationDto = constellationCache.get(id);
         if (cashedConstellationDto != null) {
-            return Optional.of(cashedConstellationDto);
+            log.info("Constellation with id {} was retrieved from cache", id);
+            return cashedConstellationDto;
         }
-        return constellationsRepository.findById(id)
-                .map(constellation -> {
-                    ConstellationDto constellationDto = constellationMapper.mapToDto(constellation);
-                    constellationCache.put(id, constellationDto);
-                    return constellationDto;
-                });
+        Constellation constellation = constellationsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Constellation with id " + id + " was not found"));
+        ConstellationDto constellationDto = constellationMapper.mapToDto(constellation);
+        constellationCache.put(id, constellationDto);
+        log.info("Constellation with id {} was retrieved from repository and cached", id);
+        return constellationDto;
     }
 
     public List<ConstellationDto> getConstellationsByCriteria(String name, String abbreviation,
@@ -94,23 +103,28 @@ public class ConstellationsService {
         for (ConstellationDto constellationDto : constellationDtos) {
             if (constellationCache.get(constellationDto.getId()) == null) {
                 constellationCache.put(constellationDto.getId(), constellationDto);
+                log.info("Constellation with id {} was added to cache (getConstellationsByCriteria)", constellationDto.getId());
+            } else {
+                log.info("Constellation with id {} was already in the cache (getConstellationsByCriteria)", constellationDto.getId());
             }
         }
         return constellationDtos;
     }
 
     public List<ConstellationDto> getConstellationsByStarType(String starType) {
-        Optional<List<Constellation>> constellationsOptional = constellationsRepository.findByStarType(starType);
-        List<ConstellationDto> constellationDtos = constellationsOptional
-                .map(constellations -> constellations.stream()
-                    .map(constellationMapper::mapToDto)
-                    .collect(Collectors.toList()))
-                .orElseGet(List::of);
-        if (!constellationDtos.isEmpty()) {
-            for (ConstellationDto constellationDto : constellationDtos) {
-                if (constellationCache.get(constellationDto.getId()) == null) {
-                    constellationCache.put(constellationDto.getId(), constellationDto);
-                }
+        List<Constellation> constellations = constellationsRepository.findByStarType(starType);
+        if (constellations.isEmpty()) {
+            throw new ResourceNotFoundException("No constellation with star type " + starType + " was found");
+        }
+        List<ConstellationDto> constellationDtos = new ArrayList<>();
+        for (Constellation constellation : constellations) {
+            ConstellationDto constellationDto = constellationMapper.mapToDto(constellation);
+            constellationDtos.add(constellationDto);
+            if (constellationCache.get(constellation.getId()) == null) {
+                constellationCache.put(constellation.getId(), constellationDto);
+                log.info("Constellation with id {} was added to cache (getConstellationsByStarType)", constellation.getId());
+            } else {
+                log.info("Constellation with id {} was already in the cache (getConstellationsByStarType)", constellation.getId());
             }
         }
         return constellationDtos;
@@ -119,72 +133,66 @@ public class ConstellationsService {
     /* UPDATE */
 
     @Transactional
-    public Optional<ConstellationDto> putConstellation(int id, ConstellationDto constellationDto) {
-        if (constellationsRepository.existsById(id)) {
-            Constellation constellation = constellationMapper.mapToEntity(constellationDto);
-            constellation.setId(id);
-            Constellation updatedConstellation = constellationsRepository.save(constellation);
-            ConstellationDto updatedConstellationDto = constellationMapper.mapToDto(updatedConstellation);
-            constellationCache.put(id, updatedConstellationDto);
-            return Optional.of(updatedConstellationDto);
-        } else {
-            return Optional.empty();
+    public ConstellationDto putConstellation(int id, ConstellationDto constellationDto) {
+        if (constellationsRepository.findById(id).isEmpty()) {
+            throw new ResourceNotFoundException("Constellation with id " + id + " was not found for updating(put)");
         }
+        log.info("Updating(put) constellation with id {}", id);
+        Constellation constellationToPut = constellationMapper.mapToEntity(constellationDto);
+        constellationToPut.setId(id);
+        Constellation updatedConstellation = constellationsRepository.save(constellationToPut);
+        ConstellationDto updatedConstellationDto = constellationMapper.mapToDto(updatedConstellation);
+        constellationCache.put(id, updatedConstellationDto);
+        log.info("Constellation with id {} was updated(put) and cache was refreshed", id);
+        return updatedConstellationDto;
     }
 
     @Transactional
-    public Optional<ConstellationDto> patchConstellation(int id, ConstellationDto constellationDto) {
-        Constellation constellation;
-        Optional<Constellation> constellationToPatch = constellationsRepository.findById(id);
-        if (constellationToPatch.isPresent()) {
-            constellation = constellationToPatch.get();
-
-            if (constellationDto.getName() != null) {
-                constellation.setName(constellationDto.getName());
-            }
-            if (constellationDto.getAbbreviation() != null) {
-                constellation.setAbbreviation(constellationDto.getAbbreviation());
-            }
-            if (constellationDto.getFamily() != null) {
-                constellation.setFamily(constellationDto.getFamily());
-            }
-            if (constellationDto.getRegion() != null) {
-                constellation.setRegion(constellationDto.getRegion());
-            }
-            if (constellationDto.getStars() != null) {
-                List<Star> oldStars = constellation.getStars();
-                List<Star> newStars = constellationDto.getStars().stream()
-                        .map(starDto -> {
-                            Star star = starMapper.mapToEntity(starDto);
-                            star.setConstellation(constellation);
-                            return star;
-                        })
-                        .toList();
-                oldStars.addAll(newStars.stream()
-                        .filter(newStar -> oldStars.stream().noneMatch(oldStar -> oldStar.getId() == newStar.getId()))
-                        .toList());
-                constellation.setStars(oldStars);
-            }
-            Constellation patchedConstellation = constellationsRepository.save(constellation);
-            ConstellationDto patchedConstellationDto = constellationMapper.mapToDto(patchedConstellation);
-            constellationCache.put(id, patchedConstellationDto);
-            return Optional.of(patchedConstellationDto);
-        } else {
-            return Optional.empty();
+    public ConstellationDto patchConstellation(int id, ConstellationDto constellationDto) {
+        Constellation constellation = constellationsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No constellation with id " + id + " was found for updating(patch)"));
+        log.info("Updating(patch) constellation with id {}", id);
+        if (constellationDto.getName() != null) {
+            constellation.setName(constellationDto.getName());
         }
+        if (constellationDto.getAbbreviation() != null) {
+            constellation.setAbbreviation(constellationDto.getAbbreviation());
+        }
+        if (constellationDto.getFamily() != null) {
+            constellation.setFamily(constellationDto.getFamily());
+        }
+        if (constellationDto.getRegion() != null) {
+            constellation.setRegion(constellationDto.getRegion());
+        }
+        if (constellationDto.getStars() != null) {
+            List<Star> oldStars = constellation.getStars();
+            List<Star> newStars = constellationDto.getStars().stream()
+                    .map(starDto -> {
+                        Star star = starMapper.mapToEntity(starDto);
+                        star.setConstellation(constellation);
+                        return star;
+                    })
+                    .toList();
+            oldStars.addAll(newStars.stream()
+                    .filter(newStar -> oldStars.stream().noneMatch(oldStar -> oldStar.getId() == newStar.getId()))
+                    .toList());
+            constellation.setStars(oldStars);
+        }
+        Constellation patchedConstellation = constellationsRepository.save(constellation);
+        ConstellationDto patchedConstellationDto = constellationMapper.mapToDto(patchedConstellation);
+        constellationCache.put(id, patchedConstellationDto);
+        log.info("Constellation with id {} was updated(patch) and cache was refreshed", id);
+        return patchedConstellationDto;
     }
 
     /* DELETE */
 
     @Transactional
-    public boolean deleteConstellation(int id) {
-        Optional<Constellation> constellationToDelete = constellationsRepository.findById(id);
-        if (constellationToDelete.isPresent()) {
-            constellationsRepository.deleteById(id);
-            constellationCache.remove(id);
-            return true;
-        } else {
-            return false;
-        }
+    public void deleteConstellation(int id) {
+        Constellation constellation = constellationsRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("No constellation with id " + id + " was found for deleting"));
+        constellationsRepository.delete(constellation);
+        constellationCache.remove(id);
+        log.info("Constellation with id {} was deleted and removed from cache", id);
     }
 }

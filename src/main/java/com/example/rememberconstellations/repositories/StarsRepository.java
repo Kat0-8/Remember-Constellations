@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface StarsRepository extends JpaRepository<Star, Integer>, JpaSpecificationExecutor<Star> {
 
     @EntityGraph(attributePaths = {"constellation"})
-    Optional<Star> findStarById(int id);
+    Optional<Star> findById(int id);
+
+    boolean existsByName(String name);
 }

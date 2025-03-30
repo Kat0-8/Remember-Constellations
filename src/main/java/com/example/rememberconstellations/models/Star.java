@@ -12,6 +12,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,27 +33,41 @@ public class Star {
     @Column(name = "id", nullable = false)
     private int id;
 
+    @NotBlank
     @Column(name = "name", nullable = false)
     private String name;
 
+    @NotBlank
     @Column(name = "type", nullable = false)
     private String type;
 
+    @NotNull
+    @Positive
     @Column(name = "mass", nullable = false)
     private Double mass;
 
+    @NotNull
+    @Positive
     @Column(name = "radius", nullable = false)
     private Double radius;
 
+    @NotNull
+    @Positive
     @Column(name = "temperature", nullable = false)
     private Double temperature;
 
+    @NotNull
+    @Positive
     @Column(name = "luminosity", nullable = false)
     private Double luminosity;
 
+    @NotNull
+    @Positive
     @Column(name = "right_ascension", nullable = false)
     private Double rightAscension;
 
+    @NotNull
+    @Positive
     @Column(name = "declination", nullable = false)
     private Double declination;
 

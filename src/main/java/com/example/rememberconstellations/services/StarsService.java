@@ -2,18 +2,22 @@ package com.example.rememberconstellations.services;
 
 import com.example.rememberconstellations.cache.StarCache;
 import com.example.rememberconstellations.dto.StarDto;
+import com.example.rememberconstellations.exception.ResourceNotFoundException;
+import com.example.rememberconstellations.exception.StarAlreadyExistsException;
 import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.StarsRepository;
 import com.example.rememberconstellations.utilities.StarSpecification;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class StarsService {
     private final StarsRepository starsRepository;
@@ -31,26 +35,32 @@ public class StarsService {
 
     @Transactional
     public StarDto createStar(StarDto starDto) {
+        if (starsRepository.existsByName(starDto.getName())) {
+            throw new StarAlreadyExistsException("Star with name " + starDto.getName() + " already exists");
+        }
+        log.info("Creating new star with name {}", starDto.getName());
         Star star = starMapper.mapToEntity(starDto);
         Star savedStar = starsRepository.save(star);
         StarDto savedStarDto = starMapper.mapToDto(savedStar);
         starCache.put(savedStar.getId(), savedStarDto);
+        log.info("Star with id {} was saved and cached", savedStarDto.getId());
         return savedStarDto;
     }
 
     /* READ */
 
-    public Optional<StarDto> getStarById(final int id) {
+    public StarDto getStarById(final int id) {
         StarDto cashedStarDto = starCache.get(id);
         if (cashedStarDto != null) {
-            return Optional.of(cashedStarDto);
+            log.info("Star with id {} was retrieved from cache", id);
+            return cashedStarDto;
         }
-        return starsRepository.findStarById(id)
-                .map(star -> {
-                    StarDto starDto = starMapper.mapToDto(star);
-                    starCache.put(id, starDto);
-                    return starDto;
-                });
+        Star star = starsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Star with id " + id + " was not found"));
+        StarDto starDto = starMapper.mapToDto(star);
+        starCache.put(id, starDto);
+        log.info("Star with id {} was retrieved from repository and cashed", id);
+        return starDto;
     }
 
     @SuppressWarnings("java:S107")
@@ -108,6 +118,9 @@ public class StarsService {
         for (StarDto starDto : starDtos) {
             if (starCache.get(starDto.getId()) == null) {
                 starCache.put(starDto.getId(), starDto);
+                log.info("Star with id {} was added to cache (getStarsByCriteria)", starDto.getId());
+            } else {
+                log.info("Star with id {} was already in the cache (getStarsByCriteria)", starDto.getId());
             }
         }
         return starDtos;
@@ -116,73 +129,67 @@ public class StarsService {
     /* UPDATE */
 
     @Transactional
-    public Optional<StarDto> putStar(int id, StarDto starDto) {
-        if (starsRepository.existsById(id)) {
-            Star star = starMapper.mapToEntity(starDto);
-            star.setId(id);
-            Star updatedStar = starsRepository.save(star);
-            StarDto updatedStarDto = starMapper.mapToDto(updatedStar);
-            starCache.put(id, updatedStarDto);
-            return Optional.of(updatedStarDto);
-        } else {
-            return Optional.empty();
+    public StarDto putStar(int id, StarDto starDto) {
+        if (starsRepository.findById(id).isEmpty()) {
+            throw new ResourceNotFoundException("Star with id " + id + " was not found for updating(put)");
         }
+        log.info("Updating(put) star with id {}", id);
+        Star starToPut = starMapper.mapToEntity(starDto);
+        starToPut.setId(id);
+        Star updatedStar = starsRepository.save(starToPut);
+        StarDto updatedStarDto = starMapper.mapToDto(updatedStar);
+        starCache.put(id, updatedStarDto);
+        log.info("Star with id {} was updated(put) and cache was refreshed", id);
+        return updatedStarDto;
     }
 
     @Transactional
-    public Optional<StarDto> patchStar(int id, StarDto starDto) {
-        Star star;
-        Optional<Star> starToPatch = starsRepository.findStarById(id);
-        if (starToPatch.isPresent()) {
-            star = starToPatch.get();
-
-            if (starDto.getName() != null) {
-                star.setName(starDto.getName());
-            }
-            if (starDto.getType() != null) {
-                star.setType(starDto.getType());
-            }
-            if (starDto.getMass() != null) {
-                star.setMass(starDto.getMass());
-            }
-            if (starDto.getRadius() != null) {
-                star.setRadius(starDto.getRadius());
-            }
-            if (starDto.getTemperature() != null) {
-                star.setTemperature(starDto.getTemperature());
-            }
-            if (starDto.getLuminosity() != null) {
-                star.setLuminosity(starDto.getLuminosity());
-            }
-            if (starDto.getRightAscension() != null) {
-                star.setRightAscension(starDto.getRightAscension());
-            }
-            if (starDto.getDeclination() != null) {
-                star.setDeclination(starDto.getDeclination());
-            }
-            if (starDto.getPositionInConstellation() != null) {
-                star.setPositionInConstellation(starDto.getPositionInConstellation());
-            }
-            Star patchedStar = starsRepository.save(star);
-            StarDto patchedStarDto = starMapper.mapToDto(patchedStar);
-            starCache.put(id, patchedStarDto);
-            return Optional.of(patchedStarDto);
-        } else {
-            return Optional.empty();
+    public StarDto patchStar(int id, StarDto starDto) {
+        Star starToPatch = starsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No star with id " + id + " was found for updating(patch)"));
+        log.info("Updating(patch) star with id {}", id);
+        if (starDto.getName() != null) {
+            starToPatch.setName(starDto.getName());
         }
+        if (starDto.getType() != null) {
+            starToPatch.setType(starDto.getType());
+        }
+        if (starDto.getMass() != null) {
+            starToPatch.setMass(starDto.getMass());
+        }
+        if (starDto.getRadius() != null) {
+            starToPatch.setRadius(starDto.getRadius());
+        }
+        if (starDto.getTemperature() != null) {
+            starToPatch.setTemperature(starDto.getTemperature());
+        }
+        if (starDto.getLuminosity() != null) {
+            starToPatch.setLuminosity(starDto.getLuminosity());
+        }
+        if (starDto.getRightAscension() != null) {
+            starToPatch.setRightAscension(starDto.getRightAscension());
+        }
+        if (starDto.getDeclination() != null) {
+            starToPatch.setDeclination(starDto.getDeclination());
+        }
+        if (starDto.getPositionInConstellation() != null) {
+            starToPatch.setPositionInConstellation(starDto.getPositionInConstellation());
+        }
+        Star patchedStar = starsRepository.save(starToPatch);
+        StarDto patchedStarDto = starMapper.mapToDto(patchedStar);
+        starCache.put(id, patchedStarDto);
+        log.info("Star with id {} was updated(patch) and cache was refreshed", id);
+        return patchedStarDto;
     }
 
     /* DELETE */
 
     @Transactional
-    public boolean deleteStar(int id) {
-        Optional<Star> starOptional = starsRepository.findStarById(id);
-        if (starOptional.isPresent()) {
-            starsRepository.deleteById(id);
-            starCache.remove(id);
-            return true;
-        } else {
-            return false;
-        }
+    public void deleteStar(int id) {
+        Star star = starsRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("No star with id " + id + " was found for delete"));
+        starsRepository.delete(star);
+        starCache.remove(id);
+        log.info("Star with id {} was deleted and removed from cache", id);
     }
 }
