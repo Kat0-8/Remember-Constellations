@@ -53,5 +53,6 @@ public class Constellation {
     @JsonManagedReference
     @OneToMany(mappedBy = "constellation", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL, orphanRemoval = true)
+    @SuppressWarnings("java:S7027")
     private List<Star> stars = new ArrayList<>();
 }

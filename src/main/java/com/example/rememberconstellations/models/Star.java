@@ -78,6 +78,7 @@ public class Star {
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "constellation_id", nullable = true)
+    @SuppressWarnings("java:S7027")
     private Constellation constellation;
 
     @SuppressWarnings("java:S107")
