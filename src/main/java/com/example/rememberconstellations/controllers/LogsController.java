@@ -24,7 +24,7 @@ public class LogsController {
         this.logsService = logsService;
     }
 
-    @Operation(summary = "Get log file for date")
+    @Operation(summary = "Download log file for specific date")
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadLogFileForDate(@RequestParam String date) {
         Resource resource = logsService.getLogFileForDate(date);
