@@ -1,6 +1,7 @@
 package com.example.rememberconstellations.repositories;
 
 import com.example.rememberconstellations.models.Star;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface StarsRepository extends JpaRepository<Star, Integer>, JpaSpecif
     Optional<Star> findById(int id);
 
     boolean existsByName(String name);
+
+    boolean existsByNameIn(List<String> names);
 }

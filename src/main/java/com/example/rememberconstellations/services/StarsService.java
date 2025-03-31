@@ -9,6 +9,8 @@ import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.StarsRepository;
 import com.example.rememberconstellations.utilities.StarSpecification;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +46,30 @@ public class StarsService {
         starCache.put(savedStar.getId(), savedStarDto);
         log.info("Star with id {} was saved and cached", savedStarDto.getId());
         return savedStarDto;
+    }
+
+    @Transactional
+    public List<StarDto> createStars(List<StarDto> starDtos) {
+        List<String> names = starDtos.stream()
+                .map(StarDto::getName)
+                .toList();
+        if (starsRepository.existsByNameIn(names)) {
+            throw new StarAlreadyExistsException("Star with name " + names + " already exists");
+        }
+        log.info("Creating {} stars in bulk", starDtos.size());
+        List<Star> stars = starDtos.stream()
+                .map(starMapper::mapToEntity)
+                .toList();
+        List<Star> savedStars = starsRepository.saveAll(stars);
+        List<StarDto> savedStarDtos = savedStars.stream()
+                .map(star -> {
+                    StarDto savedStarDto = starMapper.mapToDto(star);
+                    starCache.put(savedStarDto.getId(), savedStarDto);
+                    return savedStarDto;
+                })
+                .toList();
+        log.info("{} stars were saved and cached", savedStarDtos.size());
+        return savedStarDtos;
     }
 
     /* READ */

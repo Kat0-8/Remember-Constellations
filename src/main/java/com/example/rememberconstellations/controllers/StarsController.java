@@ -39,6 +39,12 @@ public class StarsController {
         //return ResponseEntity.status(HttpStatus.CREATED).body(createdStarDto);
     }
 
+    @Operation(summary = "Create several stars in bulk")
+    @PostMapping("")
+    public List<StarDto> createStars(@Valid @RequestBody List<StarDto> starDtos) {
+        return starsService.createStars(starDtos);
+    }
+
     /* READ */
 
     @Operation(summary = "Get star by id")
