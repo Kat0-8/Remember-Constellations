@@ -1,6 +1,7 @@
 package com.example.rememberconstellations.services;
 
 import com.example.rememberconstellations.exception.InvalidInputException;
+import com.example.rememberconstellations.exception.LoggingException;
 import com.example.rememberconstellations.exception.ResourceNotFoundException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class LogsService {
                 }
             }
         } catch (IOException exception) {
-            throw new InvalidInputException("Error reading log file");
+            throw new LoggingException("Error reading log file");
         }
         if (requiredLogs.isEmpty()) {
             throw new ResourceNotFoundException("No logs were found for date: " + date);
