@@ -39,7 +39,7 @@ public class StarsController {
     }
 
     @Operation(summary = "Create several stars in bulk")
-    @PostMapping("")
+    @PostMapping("/bulk")
     public List<StarDto> createStars(@Valid @RequestBody List<StarDto> starDtos) {
         return starsService.createStars(starDtos);
     }
