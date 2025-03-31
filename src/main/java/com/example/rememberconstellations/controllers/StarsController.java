@@ -36,7 +36,6 @@ public class StarsController {
     @PostMapping("")
     public StarDto createStar(@Valid @RequestBody StarDto starDto) {
         return starsService.createStar(starDto);
-        //return ResponseEntity.status(HttpStatus.CREATED).body(createdStarDto);
     }
 
     @Operation(summary = "Create several stars in bulk")
@@ -78,7 +77,6 @@ public class StarsController {
     @PutMapping("/{id}")
     public StarDto putStar(@PathVariable int id, @RequestBody StarDto starDto) {
         return starsService.putStar(id, starDto);
-        //return putStarDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Patch star by id")
