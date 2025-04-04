@@ -38,6 +38,15 @@ public class ConstellationsController {
         return constellationsService.createConstellation(constellationDto);
     }
 
+    @Operation(summary = "Attach stars to constellation")
+    @PostMapping("/{id}/attach-stars")
+    public ConstellationDto attachStars(
+            @PathVariable int id,
+            @RequestBody List<Integer> starIds
+    ) {
+        return constellationsService.attachStars(id, starIds);
+    }
+
     /* READ */
 
     @Operation(summary = "Get constellation by id")

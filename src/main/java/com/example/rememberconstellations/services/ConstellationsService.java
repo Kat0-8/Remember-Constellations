@@ -9,9 +9,11 @@ import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.ConstellationsRepository;
+import com.example.rememberconstellations.repositories.StarsRepository;
 import com.example.rememberconstellations.utilities.ConstellationSpecification;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +30,17 @@ public class ConstellationsService {
     private final ConstellationMapper constellationMapper;
     private final StarMapper starMapper;
     private final ConstellationCache constellationCache;
+    private final StarsRepository starsRepository;
 
     @Autowired
-    public ConstellationsService(ConstellationsRepository constellationsRepository, ConstellationCache constellationCache) {
+    public ConstellationsService(ConstellationsRepository constellationsRepository,
+                                 ConstellationCache constellationCache,
+                                 StarsRepository starsRepository) {
         this.constellationsRepository = constellationsRepository;
         this.starMapper = new StarMapper();
         this.constellationMapper = new ConstellationMapper(starMapper);
         this.constellationCache = constellationCache;
+        this.starsRepository = starsRepository;
     }
 
     /* CREATE */
@@ -53,6 +59,28 @@ public class ConstellationsService {
         return savedConstellationDto;
     }
 
+    @Transactional
+    public ConstellationDto attachStars(int id, List<Integer> starIds) {
+        Constellation constellation = constellationsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Constellation with id " + id + " not found (attachStars)"));
+        List<Star> stars = starsRepository.findByIdAndConstellationIsNull(starIds);
+        if (stars.size() != starIds.size()) {
+            Set<Integer> foundStarIds = stars.stream()
+                    .map(Star::getId)
+                    .collect(Collectors.toSet());
+            List<Integer> missingStarIds = starIds.stream()
+                    .filter(starId -> !foundStarIds.contains(starId))
+                    .toList();
+            throw new ResourceNotFoundException("Stars not found or already assigned: " + missingStarIds);
+        }
+        stars.forEach(star -> {
+            star.setConstellation(constellation);
+            constellation.getStars().add(star);
+        });
+        starsRepository.saveAll(stars);
+        return constellationMapper.mapToDto(constellation);
+    }
+
     /* READ */
 
     public ConstellationDto getConstellationById(int id) {
@@ -62,7 +90,7 @@ public class ConstellationsService {
             return cashedConstellationDto;
         }
         Constellation constellation = constellationsRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Constellation with id " + id + " was not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Constellation with id " + id + " was not found (getConstellationById)"));
         ConstellationDto constellationDto = constellationMapper.mapToDto(constellation);
         constellationCache.put(id, constellationDto);
         log.info("Constellation with id {} was retrieved from repository and cached", id);

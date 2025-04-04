@@ -20,4 +20,7 @@ public interface StarsRepository extends JpaRepository<Star, Integer>, JpaSpecif
 
     @Query("SELECT s.name FROM Star s WHERE s.name IN :names")
     List<String> findExistingStarsNamesIn(@Param("names") List<String> names);
+
+    @Query("SELECT s FROM Star s WHERE s.id IN :ids AND s.constellation IS NULL")
+    List<Star> findByIdAndConstellationIsNull(@Param("ids") List<Integer> ids);
 }
