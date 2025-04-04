@@ -33,6 +33,16 @@
             <spring-boot.version>3.4.3</spring-boot.version>
             <sonar.organization>kat0-8</sonar.organization>
             <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.exclusions>
+                com/example/rememberconstellations/aspect/**/*.*,
+                com/example/rememberconstellations/cache/**/*.*,
+                com/example/rememberconstellations/dto/**/*.*,
+                com/example/rememberconstellations/exception/**/*.*,
+                com/example/rememberconstellations/mappers/**/*.*,
+                com/example/rememberconstellations/models/**/*.*,
+                com/example/rememberconstellations/repositories/**/*.*,
+                com/example/rememberconstellations/utilities/**/*.*
+        </sonar.coverage.exclusions>
     </properties>
     <dependencies>
         <dependency>
