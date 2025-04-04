@@ -22,7 +22,8 @@ https://asciiart.website/index.php?art=nature/astronomy
 --Получение всех созвездий\
 --Получение звезды по id\
 --Получение звёзд по различным критериям\
---Получение всех звёзд
+--Получение всех звёзд\
+--Получение логов по дате в формате dd.MM.yyyy 
 > [!TIP]
 > IAU - International Astronomical Union;
 
