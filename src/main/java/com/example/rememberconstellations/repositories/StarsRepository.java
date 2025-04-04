@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,5 +18,6 @@ public interface StarsRepository extends JpaRepository<Star, Integer>, JpaSpecif
 
     boolean existsByName(String name);
 
-    boolean existsByNameIn(List<String> names);
+    @Query("SELECT s.name FROM Star s WHERE s.name IN :names")
+    List<String> findExistingStarsNamesIn(@Param("names") List<String> names);
 }

@@ -51,8 +51,9 @@ public class StarsService {
         List<String> names = starDtos.stream()
                 .map(StarDto::getName)
                 .toList();
-        if (starsRepository.existsByNameIn(names)) {
-            throw new StarAlreadyExistsException("Star with name " + names + " already exists");
+        List<String> existingStarsNames = starsRepository.findExistingStarsNamesIn(names);
+        if (!existingStarsNames.isEmpty()) {
+            throw new StarAlreadyExistsException("Star with name " + existingStarsNames + " already exists");
         }
         log.info("Creating {} stars in bulk", starDtos.size());
         List<Star> stars = starDtos.stream()
