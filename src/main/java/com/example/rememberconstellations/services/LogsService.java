@@ -30,7 +30,7 @@ public class LogsService {
     public Resource getLogFileForDate(String date) {
         LocalDate parsedDate = parseDate(date);
         String formattedDate = parsedDate.format(LOG_DATE_FORMATTER);
-        Path logFilePath = Paths.get(LOGS_DIR, LOGS_FILE_NAME);
+        Path logFilePath = getLogFilePath();
         if (!Files.exists(logFilePath)) {
             throw new ResourceNotFoundException("Log file " + logFilePath + " was not found");
         }
@@ -63,5 +63,10 @@ public class LogsService {
         } catch (DateTimeParseException exception) {
             throw new InvalidInputException("Invalid date format. Valid format is dd.MM.yyyy");
         }
+
+    }
+
+    public Path getLogFilePath() {
+        return Paths.get(LOGS_DIR, LOGS_FILE_NAME);
     }
 }
