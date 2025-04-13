@@ -3,6 +3,7 @@ package com.example.rememberconstellations.servicesTests;
 import com.example.rememberconstellations.exceptions.InvalidInputException;
 import com.example.rememberconstellations.exceptions.LoggingException;
 import com.example.rememberconstellations.exceptions.ResourceNotFoundException;
+import com.example.rememberconstellations.mappers.LogRequestMapper;
 import com.example.rememberconstellations.services.LogsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,13 +26,17 @@ class LogsServiceTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        logsService = new TestLogsService();
+        logsService = new TestLogsService(new LogRequestMapper());
         logFilePath = tempDir.resolve("app.log");
         Files.createDirectories(tempDir);
     }
 
     // Helper class to override log file location
     private class TestLogsService extends LogsService {
+        public TestLogsService(LogRequestMapper logRequestMapper) {
+            super(logRequestMapper);
+        }
+
         @Override
         public Path getLogFilePath() {
             return logFilePath;

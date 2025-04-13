@@ -7,7 +7,7 @@ import com.example.rememberconstellations.exceptions.StarAlreadyExistsException;
 import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.StarsRepository;
-import com.example.rememberconstellations.utilities.StarSpecification;
+import com.example.rememberconstellations.utilities.specifications.StarSpecification;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

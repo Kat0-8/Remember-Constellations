@@ -10,7 +10,7 @@ import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.ConstellationsRepository;
 import com.example.rememberconstellations.repositories.StarsRepository;
-import com.example.rememberconstellations.utilities.ConstellationSpecification;
+import com.example.rememberconstellations.utilities.specifications.ConstellationSpecification;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

@@ -1,8 +1,12 @@
 package com.example.rememberconstellations.services;
 
+import com.example.rememberconstellations.dtos.LogRequestDto;
 import com.example.rememberconstellations.exceptions.InvalidInputException;
 import com.example.rememberconstellations.exceptions.LoggingException;
 import com.example.rememberconstellations.exceptions.ResourceNotFoundException;
+import com.example.rememberconstellations.mappers.LogRequestMapper;
+import com.example.rememberconstellations.models.LogRequest;
+import com.example.rememberconstellations.utilities.enums.RequestStatus;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -14,16 +18,34 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class LogsService {
     private static final String LOGS_DIR = "logs";
     private static final String LOGS_FILE_NAME = "app.log";
     private static final DateTimeFormatter INPUT_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final DateTimeFormatter LOG_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    private final Map<String, LogRequest> logRequestMap = new ConcurrentHashMap<>();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
+
+    private final LogRequestMapper logRequestMapper;
+
+    @Autowired
+    public LogsService(LogRequestMapper logRequestMapper) {
+        this.logRequestMapper = logRequestMapper;
+    }
 
     /* READ */
 
@@ -50,6 +72,53 @@ public class LogsService {
         }
         String contentOfFile = String.join(System.lineSeparator(), requiredLogs);
         return new ByteArrayResource(contentOfFile.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public String requestLogFileForDate(String date) {
+        log.info("Creating request for log file for date: {}", date);
+        String requestId = UUID.randomUUID().toString();
+        LogRequest logRequest = new LogRequest(requestId, date, RequestStatus.IN_PROGRESS);
+        logRequestMap.put(requestId, logRequest);
+        log.info("Log request with id {} created for date: {}", requestId, date);
+        executor.submit(() -> {
+            try {
+                Resource logFile = getLogFileForDate(date);
+                logRequest.setResource(logFile);
+                logRequest.setStatus(RequestStatus.COMPLETED);
+                log.info("Log request with id {} for date {} was successful", requestId, date);
+            } catch (Exception exception) {
+                logRequest.setStatus(RequestStatus.FAILED);
+                logRequest.setErrorMessage(exception.getMessage());
+                log.error("Log request with id {} for date {} failed: {}", requestId, date, exception.getMessage());
+            }
+        });
+        return requestId;
+    }
+
+    public LogRequestDto getLogRequestById(String requestId) {
+        LogRequest logRequest = logRequestMap.get(requestId);
+        if (logRequest == null) {
+            throw new ResourceNotFoundException("Log request with id " + requestId + " was not found");
+        }
+        return logRequestMapper.mapToDto(logRequest);
+    }
+
+    public Resource getLogFileByRequestId(String requestId) {
+        LogRequest logRequest = logRequestMap.get(requestId);
+        if (logRequest == null) {
+            throw new ResourceNotFoundException("Log request with id " + requestId + " was not found");
+        }
+        switch (logRequest.getStatus()) {
+            case IN_PROGRESS:
+                throw new LoggingException("Log request with id " + requestId + " is in progress");
+            case COMPLETED:
+                break;
+            case FAILED:
+                throw new LoggingException("Log request with id " + requestId + " failed");
+            default:
+                throw new LoggingException("Log request with id " + requestId + " has unknown status");
+        }
+        return logRequest.getResource();
     }
 
     public String getFileName(String date) {

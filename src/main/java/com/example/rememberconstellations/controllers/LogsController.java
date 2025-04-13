@@ -1,5 +1,6 @@
 package com.example.rememberconstellations.controllers;
 
+import com.example.rememberconstellations.dtos.LogRequestDto;
 import com.example.rememberconstellations.services.LogsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +30,29 @@ public class LogsController {
     public ResponseEntity<Resource> downloadLogFileForDate(@RequestParam String date) {
         Resource resource = logsService.getLogFileForDate(date);
         String fileName = logsService.getFileName(date);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(resource);
+    }
+
+    @Operation(summary = "Request log file for specific date")
+    @GetMapping("/request")
+    public ResponseEntity<String> requestLogFileForDate(@RequestParam String date) {
+        return ResponseEntity.ok(logsService.requestLogFileForDate(date));
+    }
+
+    @Operation(summary = "Check request's status by id")
+    @GetMapping("/status")
+    public ResponseEntity<LogRequestDto> checkRequestStatus(@RequestParam String requestId) {
+        return ResponseEntity.ok(logsService.getLogRequestById(requestId));
+    }
+
+    @Operation(summary = "Download requested log file by request's id")
+    @GetMapping("/download-requested")
+    public ResponseEntity<Resource> downloadRequestedLogFile(@RequestParam String requestId) {
+        Resource resource = logsService.getLogFileByRequestId(requestId);
+        String fileName = logsService.getFileName(logsService.getLogRequestById(requestId).getDate());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
