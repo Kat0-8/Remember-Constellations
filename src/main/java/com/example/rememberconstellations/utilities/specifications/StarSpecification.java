@@ -1,4 +1,4 @@
-package com.example.rememberconstellations.utilities;
+package com.example.rememberconstellations.utilities.specifications;
 
 import com.example.rememberconstellations.models.Star;
 import org.springframework.data.jpa.domain.Specification;

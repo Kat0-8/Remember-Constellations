@@ -1,8 +1,8 @@
 package com.example.rememberconstellations.services;
 
-import com.example.rememberconstellations.exception.InvalidInputException;
-import com.example.rememberconstellations.exception.LoggingException;
-import com.example.rememberconstellations.exception.ResourceNotFoundException;
+import com.example.rememberconstellations.exceptions.InvalidInputException;
+import com.example.rememberconstellations.exceptions.LoggingException;
+import com.example.rememberconstellations.exceptions.ResourceNotFoundException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

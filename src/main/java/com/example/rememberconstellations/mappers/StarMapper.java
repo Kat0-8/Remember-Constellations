@@ -1,6 +1,6 @@
 package com.example.rememberconstellations.mappers;
 
-import com.example.rememberconstellations.dto.StarDto;
+import com.example.rememberconstellations.dtos.StarDto;
 import com.example.rememberconstellations.models.Star;
 import org.springframework.stereotype.Component;
 

@@ -1,9 +1,9 @@
 package com.example.rememberconstellations.services;
 
 import com.example.rememberconstellations.cache.StarCache;
-import com.example.rememberconstellations.dto.StarDto;
-import com.example.rememberconstellations.exception.ResourceNotFoundException;
-import com.example.rememberconstellations.exception.StarAlreadyExistsException;
+import com.example.rememberconstellations.dtos.StarDto;
+import com.example.rememberconstellations.exceptions.ResourceNotFoundException;
+import com.example.rememberconstellations.exceptions.StarAlreadyExistsException;
 import com.example.rememberconstellations.mappers.StarMapper;
 import com.example.rememberconstellations.models.Star;
 import com.example.rememberconstellations.repositories.StarsRepository;

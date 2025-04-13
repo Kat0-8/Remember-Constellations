@@ -1,8 +1,8 @@
 package com.example.rememberconstellations.servicesTests;
 
-import com.example.rememberconstellations.exception.InvalidInputException;
-import com.example.rememberconstellations.exception.LoggingException;
-import com.example.rememberconstellations.exception.ResourceNotFoundException;
+import com.example.rememberconstellations.exceptions.InvalidInputException;
+import com.example.rememberconstellations.exceptions.LoggingException;
+import com.example.rememberconstellations.exceptions.ResourceNotFoundException;
 import com.example.rememberconstellations.services.LogsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

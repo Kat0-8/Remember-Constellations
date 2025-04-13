@@ -1,4 +1,4 @@
-package com.example.rememberconstellations.exception;
+package com.example.rememberconstellations.exceptions;
 
 import com.example.rememberconstellations.models.ErrorResponse;
 import io.swagger.v3.oas.annotations.Hidden;

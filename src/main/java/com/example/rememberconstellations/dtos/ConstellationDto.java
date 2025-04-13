@@ -1,4 +1,4 @@
-package com.example.rememberconstellations.dto;
+package com.example.rememberconstellations.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;

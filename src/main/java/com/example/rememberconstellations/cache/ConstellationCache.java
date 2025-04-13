@@ -1,6 +1,6 @@
 package com.example.rememberconstellations.cache;
 
-import com.example.rememberconstellations.dto.ConstellationDto;
+import com.example.rememberconstellations.dtos.ConstellationDto;
 import org.springframework.stereotype.Component;
 
 @Component

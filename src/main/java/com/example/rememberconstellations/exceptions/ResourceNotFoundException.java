@@ -1,4 +1,4 @@
-package com.example.rememberconstellations.exception;
+package com.example.rememberconstellations.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

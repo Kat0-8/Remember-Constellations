@@ -1,4 +1,4 @@
-package com.example.rememberconstellations.exception;
+package com.example.rememberconstellations.exceptions;
 
 public class LoggingException extends RuntimeException {
     public LoggingException(String message) {

@@ -1,6 +1,6 @@
 package com.example.rememberconstellations.controllers;
 
-import com.example.rememberconstellations.dto.StarDto;
+import com.example.rememberconstellations.dtos.StarDto;
 import com.example.rememberconstellations.services.StarsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

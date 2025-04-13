@@ -1,4 +1,4 @@
-package com.example.rememberconstellations.exception;
+package com.example.rememberconstellations.exceptions;
 
 public class StarAlreadyExistsException extends RuntimeException {
     public StarAlreadyExistsException(String message) {

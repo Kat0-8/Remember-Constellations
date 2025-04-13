@@ -1,4 +1,4 @@
-package com.example.rememberconstellations.aspect;
+package com.example.rememberconstellations.aspects;
 
 import java.util.Arrays;
 import org.aspectj.lang.JoinPoint;
