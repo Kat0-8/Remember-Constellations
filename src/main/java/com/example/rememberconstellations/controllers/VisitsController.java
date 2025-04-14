@@ -22,14 +22,14 @@ public class VisitsController {
 
     @Operation(summary = "Get counter for URL")
     @GetMapping("/{url}")
-    public Integer getCounter(@PathVariable String url) {
+    public Long getCounter(@PathVariable String url) {
         String fullPath = String.join("/", "", url);
         return visitsService.getCounter(fullPath);
     }
 
     @Operation(summary = "Get counters for all URLs")
     @GetMapping("")
-    public Map<String, Integer> getAllCounters() {
+    public Map<String, Long> getAllCounters() {
         return visitsService.getAllCounters();
     }
 
