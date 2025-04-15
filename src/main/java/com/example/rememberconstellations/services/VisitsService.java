@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -30,7 +29,6 @@ public class VisitsService {
         urlVisitsCounters.computeIfAbsent(url, u -> new LongAdder()).increment();
     }
 
-    @Transactional
     public void resetCounters() {
         log.info("Resetting counters");
         urlVisitsCounters.clear();

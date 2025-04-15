@@ -82,6 +82,7 @@ public class LogsService {
         log.info("Log request with id {} created for date: {}", requestId, date);
         executor.submit(() -> {
             try {
+                Thread.sleep(15000); // for example of IN_PROGRESS; delete after
                 Resource logFile = getLogFileForDate(date);
                 logRequest.setResource(logFile);
                 logRequest.setStatus(RequestStatus.COMPLETED);
