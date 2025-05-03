@@ -9,6 +9,7 @@ export interface StarDto {
     rightAscension: number;
     declination: number;
     positionInConstellation?: string;
+    constellationId?: number;
 }
 
 export type StarCriteria = {

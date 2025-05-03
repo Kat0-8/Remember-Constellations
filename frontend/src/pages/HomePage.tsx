@@ -30,7 +30,7 @@ const HomePage = () => (
             padding: '20px',
             borderRadius: '24px',
             textAlign: 'center',
-            width: '50%', // Responsive width
+            width: '40%', // Responsive width
             maxWidth: '1200px', // Maximum width
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
             position: 'relative',
@@ -47,7 +47,7 @@ const HomePage = () => (
                 }}
             >
                 <h1 style={{ color: 'white', margin: 0 }}>
-                    Welcome to Remember-Constellations!
+                    Welcome!
                 </h1>
 
                 <Space

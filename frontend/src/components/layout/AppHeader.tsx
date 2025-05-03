@@ -1,6 +1,8 @@
 import { Menu, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import {HomeOutlined, StarOutlined} from "@ant-design/icons";
+import ConstellationIcon from "../customConstellationIcon.tsx";
 
 const { Title } = Typography;
 
@@ -16,24 +18,44 @@ export const AppHeader = () => {
     }, [location]);
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Title level={3} style={{ color: 'white', margin: 0, marginRight: '24px' }}>
-                Remember-Constellations
-            </Title>
+        <div style={{ display: 'flex', alignItems: 'center', overflowX: 'auto' }}>
+            <Link to="/">
+                <Title
+                    level={3}
+                    style={{
+                        color: 'white',
+                        margin: 0,
+                        marginRight: '24px',
+                        cursor: 'pointer',
+                        lineHeight: 'inherit' // Add this to fix vertical alignment
+                    }}
+                >
+                    Remember-Constellations
+                </Title>
+            </Link>
             <Menu
                 theme="dark"
                 mode="horizontal"
+                style={{
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    overflowX: 'auto',
+                    minWidth: 'max-content',
+                }}
                 selectedKeys={selectedKeys}
                 items={[
                     {
+                        icon: <HomeOutlined />,
                         key: 'home',
                         label: <Link to="/">Home</Link>,
                     },
                     {
+                        icon: <ConstellationIcon/>,
                         key: 'constellations',
                         label: <Link to="/constellations">Constellations</Link>,
                     },
                     {
+                        icon: <StarOutlined />,
                         key: 'stars',
                         label: <Link to="/stars">Stars</Link>,
                     },
