@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { message } from 'antd';
 import { starsApi } from '../api/starApi.ts';
 import { StarDto } from '../types/stars';
-import StarList from '../components/StarList.tsx';
-import StarForm from '../components/StarForm.tsx';
+import StarList from '../components/lists/StarList.tsx';
+import StarForm from '../components/forms/StarForm.tsx';
+import {ViewConstellationButton} from "../components/buttons/ViewConstellationInfoButton.tsx";
+import {ConstellationInfoModal} from "../components/modals/ConstellationInfoModal.tsx";
 
-const StarPage: React.FC = () => {
+const StarsPage: React.FC = () => {
     const [stars, setStars] = useState<StarDto[]>([]);
     const [editing, setEditing] = useState<StarDto | null>(null);
     const [loading, setLoading] = useState(false);
+    const [isConstellationInfoModalOpen, setIsConstellationInfoModalOpen] = useState(false);
+    const [selectedConstellationId, setSelectedConstellationId] = useState<number | null>(null);
 
     const loadData = async () => {
         try {
@@ -22,6 +26,11 @@ const StarPage: React.FC = () => {
     useEffect(() => {
         loadData();
     }, []);
+
+    const handleOpenConstellationInfoModal = (constellationId: number) => {
+        setSelectedConstellationId(constellationId);
+        setIsConstellationInfoModalOpen(true);
+    }
 
     const handleSubmit = async (values: Omit<StarDto, 'id'>) => {
         try {
@@ -53,8 +62,14 @@ const StarPage: React.FC = () => {
     };
 
     return (
+       // <div style = {{ width: '100vw'}}>
         <div>
             <h2>Stars</h2>
+            <ViewConstellationButton onOpen={() => handleOpenConstellationInfoModal(1)}/>
+            <ConstellationInfoModal
+                constellationId={selectedConstellationId}
+                open={isConstellationInfoModalOpen}
+                onClose={() => setIsConstellationInfoModalOpen(false)} />
             <StarForm
                 initialValues={editing || undefined}
                 onSubmit={handleSubmit}
@@ -65,4 +80,4 @@ const StarPage: React.FC = () => {
     );
 };
 
-export default StarPage;
+export default StarsPage;

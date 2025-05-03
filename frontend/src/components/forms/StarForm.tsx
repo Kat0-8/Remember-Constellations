@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, InputNumber, Button, Space } from 'antd';
-import { StarDto } from '../types/stars';
+import { StarDto } from '../../types/stars.ts';
 
 interface Props {
     initialValues?: Partial<StarDto>; // allows use for both create (no ID) and update

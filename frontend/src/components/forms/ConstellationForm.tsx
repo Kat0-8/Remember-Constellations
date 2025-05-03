@@ -1,5 +1,5 @@
 import { Form, Input, Button, Space } from 'antd';
-import { ConstellationDto } from '../types/constellations';
+import { ConstellationDto } from '../../types/constellations.ts';
 import * as React from "react";
 
 interface Props {

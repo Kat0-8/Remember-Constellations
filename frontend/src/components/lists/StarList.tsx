@@ -1,6 +1,6 @@
 import { Table, Button } from 'antd';
 import { Link } from 'react-router-dom';
-import { StarDto } from '../types/stars';
+import { StarDto } from '../../types/stars.ts';
 import * as React from "react";
 
 interface Props {

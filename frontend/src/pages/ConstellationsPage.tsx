@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { message } from 'antd';
 import { constellationApi } from '../api/constellationApi.ts';
 import { ConstellationDto } from '../types/constellations';
-import ConstellationList from '../components/ConstellationList.tsx';
-import ConstellationForm from '../components/ConstellationForm.tsx';
+import ConstellationList from '../components/lists/ConstellationList.tsx';
+import ConstellationForm from '../components/forms/ConstellationForm.tsx';
 
-const ConstellationPage: React.FC = () => {
+const ConstellationsPage: React.FC = () => {
     const [constellations, setConstellations] = useState<ConstellationDto[]>([]);
     const [editing, setEditing] = useState<ConstellationDto | null>(null);
     const [loading, setLoading] = useState(false);
@@ -65,4 +65,4 @@ const ConstellationPage: React.FC = () => {
     );
 };
 
-export default ConstellationPage;
+export default ConstellationsPage;

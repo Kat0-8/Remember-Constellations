@@ -1,6 +1,6 @@
 import { Table, Button } from 'antd';
 import { Link } from 'react-router-dom';
-import { ConstellationDto } from '../types/constellations';
+import { ConstellationDto } from '../../types/constellations.ts';
 import * as React from "react";
 
 interface Props {
