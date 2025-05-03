@@ -43,11 +43,11 @@ class StarsServiceTest {
     // CREATE tests
     @Test
     void createStar_NewName_SavesAndCaches() {
-        StarDto inputDto = new StarDto(0, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center");
+        StarDto inputDto = new StarDto(0, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center",null);
         Star entity = new Star("Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center");
         Star savedEntity = new Star("Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center");
         savedEntity.setId(1);
-        StarDto savedDto = new StarDto(1, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center");
+        StarDto savedDto = new StarDto(1, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center", null);
 
         when(starsRepository.existsByName("Sun")).thenReturn(false);
         when(starMapper.mapToEntity(inputDto)).thenReturn(entity);
@@ -64,7 +64,7 @@ class StarsServiceTest {
 
     @Test
     void createStar_ExistingName_ThrowsException() {
-        StarDto inputDto = new StarDto(0, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center");
+        StarDto inputDto = new StarDto(0, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center", null);
         when(starsRepository.existsByName("Sun")).thenReturn(true);
 
         assertThrows(StarAlreadyExistsException.class, () -> starsService.createStar(inputDto));
@@ -74,8 +74,8 @@ class StarsServiceTest {
 
     @Test
     void createStars_AllNew_SavesAndCaches() {
-        StarDto dto1 = new StarDto(0, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
-        StarDto dto2 = new StarDto(0, "Star2", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos");
+        StarDto dto1 = new StarDto(0, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
+        StarDto dto2 = new StarDto(0, "Star2", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos", null);
         List<StarDto> dtos = List.of(dto1, dto2);
 
         Star star1 = new Star("Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
@@ -88,8 +88,8 @@ class StarsServiceTest {
         savedStar2.setId(2);
         List<Star> savedStars = List.of(savedStar1, savedStar2);
 
-        StarDto savedDto1 = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
-        StarDto savedDto2 = new StarDto(2, "Star2", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos");
+        StarDto savedDto1 = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
+        StarDto savedDto2 = new StarDto(2, "Star2", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos", null);
         List<StarDto> savedDtos = List.of(savedDto1, savedDto2);
 
         when(starsRepository.findExistingStarsNamesIn(List.of("Star1", "Star2"))).thenReturn(Collections.emptyList());
@@ -109,7 +109,7 @@ class StarsServiceTest {
 
     @Test
     void createStars_SomeExist_ThrowsException() {
-        StarDto dto = new StarDto(0, "ExistingStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
+        StarDto dto = new StarDto(0, "ExistingStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
         List<StarDto> dtos = List.of(dto);
 
         when(starsRepository.findExistingStarsNamesIn(List.of("ExistingStar"))).thenReturn(List.of("ExistingStar"));
@@ -122,7 +122,7 @@ class StarsServiceTest {
     // READ tests
     @Test
     void getStarById_InCache_ReturnsCached() {
-        StarDto cachedDto = new StarDto(1, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center");
+        StarDto cachedDto = new StarDto(1, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center", null);
         when(starCache.get(1)).thenReturn(cachedDto);
 
         StarDto result = starsService.getStarById(1);
@@ -135,7 +135,7 @@ class StarsServiceTest {
     void getStarById_NotInCache_FetchesAndCaches() {
         Star entity = new Star("Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center");
         entity.setId(1);
-        StarDto dto = new StarDto(1, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center");
+        StarDto dto = new StarDto(1, "Sun", "G-type", 1.0, 1.0, 5778.0, 1.0, 0.0, 0.0, "Center", null);
 
         when(starCache.get(1)).thenReturn(null);
         when(starsRepository.findById(1)).thenReturn(Optional.of(entity));
@@ -156,7 +156,7 @@ class StarsServiceTest {
     }
     @Test
     void putStar_NonExistentId_ThrowsResourceNotFound() {
-        StarDto inputDto = new StarDto(999, "NewStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
+        StarDto inputDto = new StarDto(999, "NewStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
 
         when(starsRepository.findById(999)).thenReturn(Optional.empty());
 
@@ -190,8 +190,8 @@ class StarsServiceTest {
 
         when(starsRepository.findAll(any(Specification.class), any(Pageable.class)))
                 .thenReturn(new org.springframework.data.domain.PageImpl<>(List.of(star1, star2)));
-        when(starMapper.mapToDto(star1)).thenReturn(new StarDto(1, "Star1", "Type1", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos1"));
-        when(starMapper.mapToDto(star2)).thenReturn(new StarDto(2, "Star2", "Type2", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos2"));
+        when(starMapper.mapToDto(star1)).thenReturn(new StarDto(1, "Star1", "Type1", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos1", null));
+        when(starMapper.mapToDto(star2)).thenReturn(new StarDto(2, "Star2", "Type2", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos2", null));
 
         // Execute
         List<StarDto> result = starsService.getStarsByCriteria(
@@ -211,7 +211,7 @@ class StarsServiceTest {
 
         when(starsRepository.findAll(any(Specification.class)))
                 .thenReturn(List.of(star));
-        when(starMapper.mapToDto(star)).thenReturn(new StarDto(1, "Star", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos"));
+        when(starMapper.mapToDto(star)).thenReturn(new StarDto(1, "Star", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null));
 
         // Execute
         List<StarDto> result = starsService.getStarsByCriteria(
@@ -229,7 +229,7 @@ class StarsServiceTest {
         // Setup
         Star star = new Star("NewStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
         star.setId(1);
-        StarDto starDto = new StarDto(1, "NewStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
+        StarDto starDto = new StarDto(1, "NewStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class)))
                 .thenReturn(List.of(star));
@@ -251,7 +251,7 @@ class StarsServiceTest {
         String type = "Type1";
         Star star = new Star("Star1", type, 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
         star.setId(1);
-        StarDto dto = new StarDto(1, "Star1", type, 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
+        StarDto dto = new StarDto(1, "Star1", type, 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -270,7 +270,7 @@ class StarsServiceTest {
         Double mass = 2.0;
         Star star = new Star("Star1", "Type1", mass, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
         star.setId(1);
-        StarDto dto = new StarDto(1, "Star1", "Type1", mass, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
+        StarDto dto = new StarDto(1, "Star1", "Type1", mass, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -290,7 +290,7 @@ class StarsServiceTest {
         String type = "Type1";
         Star star = new Star(name, type, 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
         star.setId(1);
-        StarDto dto = new StarDto(1, name, type, 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
+        StarDto dto = new StarDto(1, name, type, 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -314,8 +314,8 @@ class StarsServiceTest {
         List<Star> stars = List.of(star1, star2);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(stars);
-        when(starMapper.mapToDto(star1)).thenReturn(new StarDto(1, "Star1", "Type1", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos"));
-        when(starMapper.mapToDto(star2)).thenReturn(new StarDto(2, "Star2", "Type2", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos"));
+        when(starMapper.mapToDto(star1)).thenReturn(new StarDto(1, "Star1", "Type1", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null));
+        when(starMapper.mapToDto(star2)).thenReturn(new StarDto(2, "Star2", "Type2", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos", null));
 
         List<StarDto> result = starsService.getStarsByCriteria(
                 null, null, null, null, null, null, null, null, null, null, null
@@ -343,11 +343,11 @@ class StarsServiceTest {
     void getStarsByCriteria_WithSomeCachedStars_UpdatesCacheForNewEntries() {
         Star cachedStar = new Star("CachedStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
         cachedStar.setId(1);
-        StarDto cachedDto = new StarDto(1, "CachedStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos");
+        StarDto cachedDto = new StarDto(1, "CachedStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
 
         Star newStar = new Star("NewStar", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos");
         newStar.setId(2);
-        StarDto newDto = new StarDto(2, "NewStar", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos");
+        StarDto newDto = new StarDto(2, "NewStar", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(cachedStar, newStar));
         when(starMapper.mapToDto(cachedStar)).thenReturn(cachedDto);
@@ -369,7 +369,7 @@ class StarsServiceTest {
         Double radius = 2.0;
         Star star = new Star("Star1", "Type", 1.0, radius, 5000.0, 1.0, 0.0, 0.0, "Pos");
         star.setId(1);
-        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, radius, 5000.0, 1.0, 0.0, 0.0, "Pos");
+        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, radius, 5000.0, 1.0, 0.0, 0.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -388,7 +388,7 @@ class StarsServiceTest {
         Double temperature = 6000.0;
         Star star = new Star("Star1", "Type", 1.0, 1.0, temperature, 1.0, 0.0, 0.0, "Pos");
         star.setId(1);
-        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, temperature, 1.0, 0.0, 0.0, "Pos");
+        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, temperature, 1.0, 0.0, 0.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -407,7 +407,7 @@ class StarsServiceTest {
         Double luminosity = 2.0;
         Star star = new Star("Star1", "Type", 1.0, 1.0, 5000.0, luminosity, 0.0, 0.0, "Pos");
         star.setId(1);
-        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, luminosity, 0.0, 0.0, "Pos");
+        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, luminosity, 0.0, 0.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -426,7 +426,7 @@ class StarsServiceTest {
         Double rightAscension = 5.0;
         Star star = new Star("Star1", "Type", 1.0, 1.0, 5000.0, 1.0, rightAscension, 0.0, "Pos");
         star.setId(1);
-        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, rightAscension, 0.0, "Pos");
+        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, rightAscension, 0.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -445,7 +445,7 @@ class StarsServiceTest {
         Double declination = 10.0;
         Star star = new Star("Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, declination, "Pos");
         star.setId(1);
-        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, declination, "Pos");
+        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, declination, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -464,7 +464,7 @@ class StarsServiceTest {
         String position = "Head";
         Star star = new Star("Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, position);
         star.setId(1);
-        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, position);
+        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, position, null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -484,7 +484,7 @@ class StarsServiceTest {
         Double temperature = 6000.0;
         Star star = new Star("Star1", "Type", 1.0, radius, temperature, 1.0, 0.0, 0.0, "Pos");
         star.setId(1);
-        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, radius, temperature, 1.0, 0.0, 0.0, "Pos");
+        StarDto dto = new StarDto(1, "Star1", "Type", 1.0, radius, temperature, 1.0, 0.0, 0.0, "Pos", null);
 
         when(starsRepository.findAll(any(Specification.class))).thenReturn(List.of(star));
         when(starMapper.mapToDto(star)).thenReturn(dto);
@@ -514,7 +514,7 @@ class StarsServiceTest {
             Star s = inv.getArgument(0);
             return new StarDto(s.getId(), s.getName(), s.getType(), s.getMass(),
                     s.getRadius(), s.getTemperature(), s.getLuminosity(),
-                    s.getRightAscension(), s.getDeclination(), s.getPositionInConstellation());
+                    s.getRightAscension(), s.getDeclination(), s.getPositionInConstellation(), null);
         });
 
         // Execute
@@ -550,7 +550,7 @@ class StarsServiceTest {
             Star s = inv.getArgument(0);
             return new StarDto(s.getId(), s.getName(), s.getType(), s.getMass(),
                     s.getRadius(), s.getTemperature(), s.getLuminosity(),
-                    s.getRightAscension(), s.getDeclination(), s.getPositionInConstellation());
+                    s.getRightAscension(), s.getDeclination(), s.getPositionInConstellation(), null);
         });
 
         // Execute

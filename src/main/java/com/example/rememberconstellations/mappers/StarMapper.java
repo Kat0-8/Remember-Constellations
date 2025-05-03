@@ -8,18 +8,23 @@ import org.springframework.stereotype.Component;
 public class StarMapper {
 
     public StarDto mapToDto(Star star) {
-        return new StarDto(
-                star.getId(),
-                star.getName(),
-                star.getType(),
-                star.getMass(),
-                star.getRadius(),
-                star.getTemperature(),
-                star.getLuminosity(),
-                star.getRightAscension(),
-                star.getDeclination(),
-                star.getPositionInConstellation()
-        );
+        StarDto starDto = new StarDto();
+        starDto.setId(star.getId());
+        starDto.setName(star.getName());
+        starDto.setType(star.getType());
+        starDto.setMass(star.getMass());
+        starDto.setRadius(star.getRadius());
+        starDto.setTemperature(star.getTemperature());
+        starDto.setLuminosity(star.getLuminosity());
+        starDto.setRightAscension(star.getRightAscension());
+        starDto.setDeclination(star.getDeclination());
+        starDto.setPositionInConstellation(star.getPositionInConstellation());
+        if (star.getConstellation() != null) {
+            starDto.setConstellationId(star.getConstellation().getId());
+        } else {
+            starDto.setConstellationId(null);
+        }
+        return starDto;
     }
 
     public Star mapToEntity(StarDto starDto) {
