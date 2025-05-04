@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios';
 import { StarCriteria, StarDto } from '../types/stars';
 import API from './axiosInstance';
 
-import { PaginatedResponse } from './constellationApi'; // Or move this to a shared `types/api.ts` file
+//import { PaginatedResponse } from './constellationApi'; // Or move this to a shared `types/api.ts` file
 
 export const starsApi = {
 
@@ -17,7 +17,7 @@ export const starsApi = {
 
     /* READ */
 
-    getAll: (params?: StarCriteria): Promise<AxiosResponse<PaginatedResponse<StarDto>>> =>
+    getAll: (params?: StarCriteria): Promise<AxiosResponse< StarDto[] >> =>
         API.get('/stars', { params }),
 
     getById: (id: number): Promise<AxiosResponse<StarDto>> =>

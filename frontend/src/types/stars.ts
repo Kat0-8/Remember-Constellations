@@ -10,6 +10,7 @@ export interface StarDto {
     declination: number;
     positionInConstellation?: string;
     constellationId?: number;
+    imageUrl: string;
 }
 
 export type StarCriteria = {

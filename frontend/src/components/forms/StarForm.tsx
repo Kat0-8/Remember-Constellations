@@ -1,42 +1,63 @@
-import React from 'react';
-import { Form, Input, InputNumber, Button, Space } from 'antd';
-import { StarDto } from '../../types/stars.ts';
+import {Form, Input, InputNumber, Button, message, Space} from 'antd';
+import { StarDto } from '../../types/stars';
+import { starsApi } from '../../api/starApi.ts';
+import {useState} from "react";
+import '../../styles/custom-scrollbar.css'
 
-interface Props {
-    initialValues?: Partial<StarDto>; // allows use for both create (no ID) and update
-    onSubmit: (values: Omit<StarDto, 'id'>) => void;
-    isSubmitting?: boolean;
+interface StarFormProps {
+    initialValues?: StarDto;
+    onSuccess: () => void;
 }
 
-const StarForm: React.FC<Props> = ({ initialValues, onSubmit, isSubmitting }) => {
-    const [form] = Form.useForm<Omit<StarDto, 'id'>>();
+export const StarForm = ({ initialValues, onSuccess }: StarFormProps) => {
+    const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
 
-    const handleFinish = (values: Omit<StarDto, 'id'>) => {
-        onSubmit(values);
+    const handleSubmit = async (values: StarDto) => {
+        try {
+            setLoading(true);
+            if (initialValues) {
+                await starsApi.put(initialValues.id, values);
+                message.success('Star updated successfully');
+            } else {
+                await starsApi.create(values);
+                message.success('Star created successfully');
+            }
+            onSuccess();
+        } catch (error) {
+            if (error instanceof Error) {
+                message.error(`Deletion failed : ${error.message}`);
+            } else {
+                message.error('Deletion failed: unknown error');
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
+
+        <div className="custom-scrollbar" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto'}}>
         <Form
             form={form}
-            initialValues={initialValues}
-            onFinish={handleFinish}
             layout="vertical"
-            disabled={isSubmitting}
+            initialValues={initialValues || {}}
+            onFinish={handleSubmit}
         >
             <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Please enter name' }]}>
-                <Input />
+                <Input style={{ width: '90%' }}/>
             </Form.Item>
 
             <Form.Item name="type" label="Type" rules={[{ required: true, message: 'Please enter type' }]}>
-                <Input />
+                <Input style={{ width: '90%' }}/>
             </Form.Item>
 
             <Form.Item name="mass" label="Mass" rules={[{ required: true, message: 'Please enter mass' }]}>
-                <InputNumber min={0} style={{ width: '100%' }} />
+                <InputNumber min={0} style={{ width: '90%' }} />
             </Form.Item>
 
             <Form.Item name="radius" label="Radius" rules={[{ required: true, message: 'Please enter radius' }]}>
-                <InputNumber min={0} style={{ width: '100%' }} />
+                <InputNumber min={0} style={{ width: '90%' }} />
             </Form.Item>
 
             <Form.Item
@@ -44,7 +65,7 @@ const StarForm: React.FC<Props> = ({ initialValues, onSubmit, isSubmitting }) =>
                 label="Temperature"
                 rules={[{ required: true, message: 'Please enter temperature' }]}
             >
-                <InputNumber min={0} style={{ width: '100%' }} />
+                <InputNumber min={0} style={{ width: '90%' }} />
             </Form.Item>
 
             <Form.Item
@@ -52,7 +73,7 @@ const StarForm: React.FC<Props> = ({ initialValues, onSubmit, isSubmitting }) =>
                 label="Luminosity"
                 rules={[{ required: true, message: 'Please enter luminosity' }]}
             >
-                <InputNumber min={0} style={{ width: '100%' }} />
+                <InputNumber min={0} style={{ width: '90%' }} />
             </Form.Item>
 
             <Form.Item
@@ -60,7 +81,7 @@ const StarForm: React.FC<Props> = ({ initialValues, onSubmit, isSubmitting }) =>
                 label="Right Ascension"
                 rules={[{ required: true, message: 'Please enter right ascension' }]}
             >
-                <InputNumber min={0} max={24} step={0.01} style={{ width: '100%' }} />
+                <InputNumber min={0} max={24} step={0.01} style={{ width: '90%' }} />
             </Form.Item>
 
             <Form.Item
@@ -68,23 +89,23 @@ const StarForm: React.FC<Props> = ({ initialValues, onSubmit, isSubmitting }) =>
                 label="Declination"
                 rules={[{ required: true, message: 'Please enter declination' }]}
             >
-                <InputNumber min={-90} max={90} step={0.01} style={{ width: '100%' }} />
+                <InputNumber min={-90} max={90} step={0.01} style={{ width: '90%' }} />
             </Form.Item>
 
             <Form.Item name="positionInConstellation" label="Position in Constellation">
-                <Input />
+                <Input style={{ width: '90%' }}/>
             </Form.Item>
 
             <Space>
-                <Button type="primary" htmlType="submit" loading={isSubmitting}>
+                <Button type="primary" htmlType="submit" loading={loading}>
                     {initialValues?.id ? 'Update Star' : 'Create Star'}
                 </Button>
-                <Button htmlType="button" onClick={() => form.resetFields()} disabled={isSubmitting}>
+                <Button htmlType="button" onClick={() => form.resetFields()} disabled={loading}>
                     Reset
                 </Button>
             </Space>
+
         </Form>
+        </div>
     );
 };
-
-export default StarForm;

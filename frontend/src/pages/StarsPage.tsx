@@ -1,81 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { message } from 'antd';
-import { starsApi } from '../api/starApi.ts';
-import { StarDto } from '../types/stars';
-import StarList from '../components/lists/StarList.tsx';
-import StarForm from '../components/forms/StarForm.tsx';
-import {ViewConstellationButton} from "../components/buttons/ViewConstellationInfoButton.tsx";
-import {ConstellationInfoModal} from "../components/modals/ConstellationInfoModal.tsx";
+import { useState, useEffect } from 'react';
+import {StarDto} from "../types/stars.ts";
+import {starsApi} from "../api/starApi.ts";
+import {StarsList} from "../components/lists/StarsList.tsx";
+import {message} from "antd";
 
-const StarsPage: React.FC = () => {
+const StarsPage = () => {
     const [stars, setStars] = useState<StarDto[]>([]);
-    const [editing, setEditing] = useState<StarDto | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [isConstellationInfoModalOpen, setIsConstellationInfoModalOpen] = useState(false);
-    const [selectedConstellationId, setSelectedConstellationId] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    const loadData = async () => {
-        try {
-            const res = await starsApi.getAll({ page: 0, size: 100 });
-            setStars(res.data.content);
-        } catch {
-            message.error('Failed to load stars');
-        }
-    };
-
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const handleOpenConstellationInfoModal = (constellationId: number) => {
-        setSelectedConstellationId(constellationId);
-        setIsConstellationInfoModalOpen(true);
-    }
-
-    const handleSubmit = async (values: Omit<StarDto, 'id'>) => {
+    const loadStars = async () => {
         try {
             setLoading(true);
-            if (editing) {
-                await starsApi.put(editing.id, { ...editing, ...values });
-                message.success('Star updated');
-            } else {
-                await starsApi.create(values);
-                message.success('Star created');
+            const res = await starsApi.getAll({ name: searchTerm });
+            setStars(res.data);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("API Error:", error.message); // Log details [[1]]
+                message.error("Failed to load stars");
             }
-            setEditing(null);
-            await loadData();
-        } catch {
-            message.error('Error saving star');
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async (id: number) => {
-        try {
-            await starsApi.delete(id);
-            message.success('Deleted');
-            await loadData();
-        } catch {
-            message.error('Failed to delete');
-        }
+        await starsApi.delete(id);
     };
 
+    useEffect(() => {
+        loadStars();
+    }, [searchTerm]);
+
     return (
-       // <div style = {{ width: '100vw'}}>
-        <div>
-            <h2>Stars</h2>
-            <ViewConstellationButton onOpen={() => handleOpenConstellationInfoModal(1)}/>
-            <ConstellationInfoModal
-                constellationId={selectedConstellationId}
-                open={isConstellationInfoModalOpen}
-                onClose={() => setIsConstellationInfoModalOpen(false)} />
-            <StarForm
-                initialValues={editing || undefined}
-                onSubmit={handleSubmit}
-                isSubmitting={loading}
+        <div style={{ padding: '24px' }}>
+            <h1>Stars Catalog</h1>
+            <StarsList
+                stars={stars}
+                loading={loading}
+                searchTerm={searchTerm}
+                onSearch={setSearchTerm}
+                onDelete={handleDelete}
+                onRefresh={loadStars}
             />
-            <StarList data={stars} onDelete={handleDelete} />
         </div>
     );
 };
