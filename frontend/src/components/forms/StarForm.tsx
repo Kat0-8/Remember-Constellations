@@ -1,5 +1,5 @@
 import {Form, Input, InputNumber, message, Select, Space} from 'antd';
-import {StarDto} from '../../types/stars';
+import {StarCriteria, StarDto} from '../../types/stars';
 import {starsApi} from '../../api/starApi.ts';
 import {useEffect, useState} from "react";
 import ReactiveButton from "reactive-button";
@@ -7,8 +7,11 @@ import Scrollbar from "react-scrollbars-custom";
 import '../../styles/custom-scrollbar.css'
 
 interface StarFormProps {
-    initialValues?: StarDto;
+    initialValues?: StarDto | StarCriteria;
     onSuccess: () => void;
+    isFilter?: boolean;
+    onFilter?: (values: StarCriteria) => void;
+    onReset?: () => void;
 }
 
 const greekAlphabet = [
@@ -18,7 +21,13 @@ const greekAlphabet = [
     'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega'
 ];
 
-export const StarForm = ({initialValues, onSuccess}: StarFormProps) => {
+export const StarForm = ({
+                             initialValues,
+                             onSuccess,
+                         isFilter=false,
+                         onFilter,
+                         onReset
+}: StarFormProps) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
@@ -28,14 +37,18 @@ export const StarForm = ({initialValues, onSuccess}: StarFormProps) => {
         };
     }, [form]);
 
-    const handleSubmit = async (values: StarDto) => {
+    const handleSubmit = async (values: StarDto | StarCriteria) => {
+        if(isFilter) {
+            onFilter?.(values as StarCriteria);
+            return;
+        }
         try {
             setLoading(true);
             if (initialValues) {
-                await starsApi.put(initialValues.id, values);
+                await starsApi.put((initialValues as StarDto).id, values as StarDto);
                 message.success('Star updated successfully');
             } else {
-                await starsApi.create(values);
+                await starsApi.create(values as StarDto);
                 message.success('Star created successfully');
             }
             onSuccess();
@@ -64,12 +77,12 @@ export const StarForm = ({initialValues, onSuccess}: StarFormProps) => {
                     className="compact-form"
                 >
                     <Form.Item style={{marginBottom: 8, marginTop: 8}} name="name" label="Name"
-                               rules={[{required: true, message: 'Please enter name'}]}>
+                               rules={isFilter ? [] : [{required: true, message: 'Please enter name'}]}>
                         <Input style={{width: '95%'}}/>
                     </Form.Item>
 
                     <Form.Item style={{marginBottom: 8}} name="type" label="Type"
-                               rules={[{required: true, message: 'Please enter type'}]}>
+                               rules={isFilter ? [] : [{required: true, message: 'Please enter type'}]}>
                         <Select
 
                             style={{width: '95%'}}
@@ -114,12 +127,12 @@ export const StarForm = ({initialValues, onSuccess}: StarFormProps) => {
                     </Form.Item>
 
                     <Form.Item style={{marginBottom: 8}} name="mass" label="Mass"
-                               rules={[{required: true, message: 'Please enter mass'}]}>
+                               rules={isFilter ? [] : [{required: true, message: 'Please enter mass'}]}>
                         <InputNumber min={0} style={{width: '95%'}}/>
                     </Form.Item>
 
                     <Form.Item style={{marginBottom: 8}} name="radius" label="Radius"
-                               rules={[{required: true, message: 'Please enter radius'}]}>
+                               rules={isFilter ? [] : [{required: true, message: 'Please enter radius'}]}>
                         <InputNumber min={0} style={{width: '95%'}}/>
                     </Form.Item>
 
@@ -127,7 +140,7 @@ export const StarForm = ({initialValues, onSuccess}: StarFormProps) => {
                         style={{marginBottom: 8}}
                         name="temperature"
                         label="Temperature"
-                        rules={[{required: true, message: 'Please enter temperature'}]}
+                        rules={isFilter ? [] : [{required: true, message: 'Please enter temperature'}]}
                     >
                         <InputNumber min={0} style={{width: '95%'}}/>
                     </Form.Item>
@@ -136,7 +149,7 @@ export const StarForm = ({initialValues, onSuccess}: StarFormProps) => {
                         style={{marginBottom: 8}}
                         name="luminosity"
                         label="Luminosity"
-                        rules={[{required: true, message: 'Please enter luminosity'}]}
+                        rules={isFilter ? [] : [{required: true, message: 'Please enter luminosity'}]}
                     >
                         <InputNumber min={0} style={{width: '95%'}}/>
                     </Form.Item>
@@ -145,7 +158,7 @@ export const StarForm = ({initialValues, onSuccess}: StarFormProps) => {
                         style={{marginBottom: 8}}
                         name="rightAscension"
                         label="Right Ascension"
-                        rules={[{required: true, message: 'Please enter right ascension'}]}
+                        rules={isFilter ? [] : [{required: true, message: 'Please enter right ascension'}]}
                     >
                         <InputNumber step={0.01} style={{width: '95%'}}/>
                     </Form.Item>
@@ -154,7 +167,7 @@ export const StarForm = ({initialValues, onSuccess}: StarFormProps) => {
                         style={{marginBottom: 8}}
                         name="declination"
                         label="Declination"
-                        rules={[{required: true, message: 'Please enter declination'}]}
+                        rules={isFilter ? [] : [{required: true, message: 'Please enter declination'}]}
                     >
                         <InputNumber step={0.01} style={{width: '95%'}}/>
                     </Form.Item>
@@ -173,17 +186,23 @@ export const StarForm = ({initialValues, onSuccess}: StarFormProps) => {
                         <Space>
                             <ReactiveButton
                                 rounded
-                                color="primary | green"
+                                color="green"
                                 size="medium"
                                 disabled={loading}
-                                idleText={<span>{initialValues?.id ? 'Update Star' : 'Create Star'}</span>}
+                                idleText={<span>{isFilter ? 'Apply filters' : (initialValues as StarDto)?.id ? 'Update Star' : 'Create Star'}</span>}
                                 type={'submit'}
                             />
                             <ReactiveButton
                                 rounded
-                                color="secondary | red"
+                                color="red"
                                 size="medium"
-                                onClick={() => form.resetFields()}
+                                onClick={() => {
+                                    form.resetFields()
+                                    if (isFilter) {
+                                        onReset?.();
+                                    }
+                                }
+                                }
                                 disabled={loading}
                                 idleText={<span>Reset</span>}
                             />

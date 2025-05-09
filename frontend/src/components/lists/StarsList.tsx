@@ -1,5 +1,5 @@
-import {List, Avatar, Input, Modal, Space} from 'antd';
-import {StarDto} from '../../types/stars';
+import {List, Avatar, Modal, Space} from 'antd';
+import {StarCriteria, StarDto} from '../../types/stars';
 import {useState} from 'react';
 import {StarForm} from '../forms/StarForm';
 import {ConstellationInfoModal} from '../modals/ConstellationInfoModal';
@@ -15,7 +15,7 @@ interface StarsListProps {
     stars: StarDto[];
     loading?: boolean;
     searchTerm?: string;
-    onSearch?: (value: string) => void;
+    onSearch?: (value: StarCriteria) => void;
     onDelete?: (id: number) => Promise<void>;
     onRefresh?: () => void;
 }
@@ -23,7 +23,6 @@ interface StarsListProps {
 export const StarsList = ({
                               stars,
                               loading,
-                              searchTerm,
                               onSearch,
                               onDelete,
                               onRefresh
@@ -34,7 +33,13 @@ export const StarsList = ({
     const [isConstellationModalOpen, setIsConstellationModalOpen] = useState(false);
     const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
     const [selectedToDeleteStarId, setSelectedToDeleteStarId] = useState<number>(0);
+    const [filterVisible, setFilterVisible] = useState(false);
+    const [currentFilters, setCurrentFilters] = useState<StarCriteria>({});
 
+    const handleFilter = (values: StarCriteria) => {
+        onSearch?.(values);
+        setFilterVisible(false);
+    };
 
     const handleShowConfirmDeleteModal = (starId: number) => {
         setSelectedToDeleteStarId(starId);
@@ -49,22 +54,25 @@ export const StarsList = ({
     return (
         <div>
             <Space style={{marginBottom: 16, width: '100%'}} direction="vertical">
-                <Input.Search
-                    placeholder="Search stars..."
-                    value={searchTerm}
-                    onChange={(e: { target: { value: string; }; }) => onSearch?.(e.target.value)}
-                    enterButton
-                />
-                <ReactiveButton
-                    className="blue-button"
-                    rounded
-                    idleText="Add new star"
-                    size="medium"
-                    onClick={() => {
-                        setSelectedStar(undefined);
-                        setIsFormVisible(true);
-                    }}
-                />
+                <Space>
+                    <ReactiveButton
+                        className="blue-button"
+                        rounded
+                        idleText="Filters"
+                        size="medium"
+                        onClick={() => setFilterVisible(true)}
+                    />
+                    <ReactiveButton
+                        className="blue-button"
+                        rounded
+                        idleText="Add new star"
+                        size="medium"
+                        onClick={() => {
+                            setSelectedStar(undefined);
+                            setIsFormVisible(true);
+                        }}
+                    />
+                </Space>
             </Space>
 
             <List
@@ -131,6 +139,28 @@ export const StarsList = ({
                 )}
             />
 
+            <Modal
+                title="Filter Stars"
+                open={filterVisible}
+                onCancel={() => setFilterVisible(false)}
+                footer={null}
+                width={550}
+            >
+                <Scrollbar style={{width: '100%', height: '60vh'}}>
+                <StarForm
+                    isFilter
+                    initialValues={currentFilters}
+                    onFilter={handleFilter}
+                    onReset={() => {
+                        onSearch?.({});
+                        setCurrentFilters({});
+                    }}
+                    onSuccess={ () => {
+                        setFilterVisible(false);
+                    }}
+                />
+                </Scrollbar>
+            </Modal>
 
             <Modal
                 title={selectedStar ? "Edit Star" : "New Star"}

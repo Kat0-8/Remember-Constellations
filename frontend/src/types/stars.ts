@@ -29,5 +29,3 @@ export type StarCriteria = {
     size?: number;
     sort?: string;
 };
-
-export type StarSortField = 'name' | 'type' | 'mass' | 'temperature';

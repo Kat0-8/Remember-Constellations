@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import {StarDto} from "../types/stars.ts";
+import {useEffect, useState} from 'react';
+import {StarCriteria, StarDto} from "../types/stars.ts";
 import {starsApi} from "../api/starApi.ts";
 import {StarsList} from "../components/lists/StarsList.tsx";
 import {message} from "antd";
@@ -7,12 +7,12 @@ import {message} from "antd";
 const StarsPage = () => {
     const [stars, setStars] = useState<StarDto[]>([]);
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [filters, setFilters] = useState<StarCriteria>({});
 
-    const loadStars = async () => {
+    const loadStars = async (criteria: StarCriteria = {}) => {
         try {
             setLoading(true);
-            const res = await starsApi.getAll({ name: searchTerm });
+            const res = await starsApi.getAll(criteria);
             setStars(res.data);
         } catch (error) {
             if (error instanceof Error) {
@@ -24,13 +24,23 @@ const StarsPage = () => {
         }
     };
 
+    const handleSearch = (values: StarCriteria) => {
+        setFilters(values);
+        loadStars(values);
+    };
+
+    // const handleResetFilters = () => {
+    //     setFilters({});
+    //     loadStars();
+    // };
+
     const handleDelete = async (id: number) => {
         await starsApi.delete(id);
     };
 
     useEffect(() => {
         loadStars();
-    }, [searchTerm]);
+    }, []);
 
     return (
         <div style={{ padding: '24px', width: '99vw' }}>
@@ -38,10 +48,9 @@ const StarsPage = () => {
             <StarsList
                 stars={stars}
                 loading={loading}
-                searchTerm={searchTerm}
-                onSearch={setSearchTerm}
+                onSearch={handleSearch}
                 onDelete={handleDelete}
-                onRefresh={loadStars}
+                onRefresh={() => loadStars(filters)}
             />
         </div>
     );
