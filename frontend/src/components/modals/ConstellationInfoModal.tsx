@@ -1,7 +1,8 @@
-import {Modal, Descriptions, Skeleton, Button} from 'antd';
+import {Modal, Descriptions, Skeleton} from 'antd';
 import { ConstellationDto } from '../../types/constellations.ts';
 import {useEffect, useState} from "react";
 import {constellationApi} from "../../api/constellationApi.ts";
+import ReactiveButton from "reactive-button";
 
 export const ConstellationInfoModal = ({
                                            constellationId,
@@ -36,9 +37,13 @@ export const ConstellationInfoModal = ({
             open={open}
             onCancel={onClose}
             footer={[
-                <Button key="close" onClick={onClose}>
-                    Close
-                </Button>,
+                <ReactiveButton
+                    rounded
+                    color="secondary"
+                    key="close"
+                    onClick={onClose}
+                    idleText="Close"
+                />
             ]}
         >
             {loading ? (

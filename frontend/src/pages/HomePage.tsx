@@ -1,5 +1,6 @@
-import { Button, Space } from 'antd';
+import { Space } from 'antd';
 import { Link } from 'react-router-dom';
+import ReactiveButton from "reactive-button";
 
 const HomePage = () => (
     <div style={{
@@ -79,17 +80,16 @@ const HomePage = () => (
                                     }}
                                 />
                             </div>
-                            <Button
-                                type="primary"
+                            <ReactiveButton
+                                className="blue-button"
+                                rounded
                                 size="large"
                                 style={{
-                                    minWidth: '150px',
-                                    margin: '8px',
-                                    fontWeight: 'bold'
+                                    fontWeight:'bold',
+                                    minWidth:'150px'
                                 }}
-                            >
-                            <p>Constellations</p>
-                            </Button>
+                                idleText={"Constellations"}
+                            />
                         </Link>
                     </div>
 
@@ -114,17 +114,13 @@ const HomePage = () => (
                                     }}
                                 />
                             </div>
-                            <Button
-                                type="primary"
+                            <ReactiveButton
+                                className="blue-button"
+                                rounded
                                 size="large"
-                                style={{
-                                    minWidth: '150px',
-                                    margin: '8px',
-                                    fontWeight: 'bold'
-                                }}
-                            >
-                                <p>Stars</p>
-                            </Button>
+                                style={{ minWidth:'150px', fontWeight:'bold'}}
+                                idleText={"Stars"}
+                            />
                         </Link>
                     </div>
                 </Space>

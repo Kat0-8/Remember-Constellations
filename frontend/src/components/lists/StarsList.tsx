@@ -1,13 +1,15 @@
-import { List, Button, Avatar, Input, Modal, Space, message } from 'antd';
+import {List, Avatar, Input, Modal, Space} from 'antd';
 import {StarDto} from '../../types/stars';
-import { useState } from 'react';
-import { StarForm } from '../forms/StarForm';
-import { ConstellationInfoModal } from '../modals/ConstellationInfoModal';
+import {useState} from 'react';
+import {StarForm} from '../forms/StarForm';
+import {ConstellationInfoModal} from '../modals/ConstellationInfoModal';
 import {ViewConstellationButton} from "../buttons/ViewConstellationInfoButton.tsx";
 import ReactiveButton from "reactive-button";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import Scrollbar from "react-scrollbars-custom";
 import '../../styles/custom-scrollbar.css'
+import '../../styles/blue-button.css'
+import {ConfirmDeleteModal} from "../modals/ConfirmDeleteModal.tsx";
 
 interface StarsListProps {
     stars: StarDto[];
@@ -30,26 +32,13 @@ export const StarsList = ({
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [selectedConstellationId, setSelectedConstellationId] = useState<number | null>(null);
     const [isConstellationModalOpen, setIsConstellationModalOpen] = useState(false);
+    const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
+    const [selectedToDeleteStarId, setSelectedToDeleteStarId] = useState<number>(0);
 
-    const handleDelete = async (id: number) => {
-        Modal.confirm({
-            title: 'Delete Star',
-            content: 'Are you sure you want to delete this star?',
-            onOk: async () => {
-                try {
-                    await onDelete?.(id);
-                    message.success('Star deleted successfully');
-                    onRefresh?.();
-                } catch (error) {
-                    if (error instanceof Error) {
-                        message.error(`Deletion failed : ${error.message}`);
-                    } else {
-                        message.error('Deletion failed: unknown error');
-                    }
 
-                }
-            }
-        });
+    const handleShowConfirmDeleteModal = (starId: number) => {
+        setSelectedToDeleteStarId(starId);
+        setConfirmDeleteModalVisible(true);
     };
 
     const handleViewConstellation = (constellationId: number) => {
@@ -59,22 +48,23 @@ export const StarsList = ({
 
     return (
         <div>
-            <Space style={{ marginBottom: 16, width: '100%' }} direction="vertical">
+            <Space style={{marginBottom: 16, width: '100%'}} direction="vertical">
                 <Input.Search
                     placeholder="Search stars..."
                     value={searchTerm}
                     onChange={(e: { target: { value: string; }; }) => onSearch?.(e.target.value)}
                     enterButton
                 />
-                <Button
-                    type="primary"
+                <ReactiveButton
+                    className="blue-button"
+                    rounded
+                    idleText="Add new star"
+                    size="medium"
                     onClick={() => {
                         setSelectedStar(undefined);
                         setIsFormVisible(true);
                     }}
-                >
-                    Add New Star
-                </Button>
+                />
             </Space>
 
             <List
@@ -89,11 +79,12 @@ export const StarsList = ({
                                 color="primary | blue"
                                 size="medium"
                                 onClick={() => {
-                                setSelectedStar(star);
-                                setIsFormVisible(true); }}
+                                    setSelectedStar(star);
+                                    setIsFormVisible(true);
+                                }}
                                 idleText={
-                                <span>
-                                    <EditOutlined />
+                                    <span>
+                                    <EditOutlined/>
                                     Edit
                                 </span>}
                             />,
@@ -103,26 +94,27 @@ export const StarsList = ({
                                 rounded
                                 color="primary | red"
                                 size="medium"
-                                onClick={() => handleDelete(star.id)}
+                                onClick={() => handleShowConfirmDeleteModal(star.id)}
                                 idleText={
-                                <span>
-                                    <DeleteOutlined />
+                                    <span>
+                                    <DeleteOutlined/>
                                     Delete
                                 </span>}
                             />
-,
-                            star.constellationId !== 0 && star.constellationId !== undefined ? (
+                            ,
+                            star.constellationId !== 0 && star.constellationId !== null ? (
                                 <ViewConstellationButton
                                     isDisabled={false}
                                     onOpen={() => handleViewConstellation(star.constellationId!)}
                                 />
                             ) : (
-                                <ViewConstellationButton onOpen={()=>{}} isDisabled={true}/>
+                                <ViewConstellationButton onOpen={() => {
+                                }} isDisabled={true}/>
                             )
                         ]}
                     >
                         <List.Item.Meta
-                            avatar={<Avatar src={star.imageUrl} size="large" />}
+                            avatar={<Avatar src={star.imageUrl} size="large"/>}
                             title={star.name}
                             description={`
                                 Type: ${star.type} | 
@@ -139,18 +131,20 @@ export const StarsList = ({
                 )}
             />
 
+
             <Modal
                 title={selectedStar ? "Edit Star" : "New Star"}
                 open={isFormVisible}
                 onCancel={() => {
                     setIsFormVisible(false);
-                    setSelectedStar(undefined);}
+                    setSelectedStar(undefined);
+                }
                 }
                 footer={null}
                 width={550}
-                styles={{ body: { maxHeight: '60vh' } }}
+                styles={{body: {maxHeight: '60vh'}}}
             >
-                <Scrollbar style={{ width: '100%', height: '60vh' }}>
+                <Scrollbar style={{width: '100%', height: '60vh'}}>
                     <StarForm
                         key={selectedStar?.id || 'new'}
                         initialValues={selectedStar}
@@ -163,12 +157,27 @@ export const StarsList = ({
             </Modal>
 
             <ConstellationInfoModal
+                key={selectedConstellationId || 'new'}
                 constellationId={selectedConstellationId}
                 open={isConstellationModalOpen}
                 onClose={() => {
                     setIsConstellationModalOpen(false);
                     setSelectedConstellationId(null);
                 }}
+            />
+
+            <ConfirmDeleteModal
+                key={selectedToDeleteStarId || 'new'}
+                open={isConfirmDeleteModalVisible}
+                id={selectedToDeleteStarId}
+                type={'Star'}
+                onDelete={onDelete}
+                onRefresh={onRefresh}
+                onClose={() => {
+                    setConfirmDeleteModalVisible(false);
+                    setSelectedToDeleteStarId(0);
+                }}
+
             />
         </div>
     );
