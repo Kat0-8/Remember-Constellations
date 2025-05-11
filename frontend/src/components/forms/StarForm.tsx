@@ -1,10 +1,13 @@
-import {Form, Input, InputNumber, message, Select, Space} from 'antd';
+import {Form, Input, InputNumber, message, Select, Space, Upload} from 'antd';
+import type { UploadFile, RcFile } from 'antd/es/upload/interface';
+import type { UploadRequestOption } from 'rc-upload/lib/interface';
 import {StarCriteria, StarDto} from '../../types/stars';
 import {starsApi} from '../../api/starApi.ts';
 import {useEffect, useState} from "react";
 import ReactiveButton from "reactive-button";
 import Scrollbar from "react-scrollbars-custom";
 import '../../styles/custom-scrollbar.css'
+import {UploadOutlined} from "@ant-design/icons";
 
 interface StarFormProps {
     initialValues?: StarDto | StarCriteria;
@@ -24,18 +27,62 @@ const greekAlphabet = [
 export const StarForm = ({
                              initialValues,
                              onSuccess,
-                         isFilter=false,
-                         onFilter,
-                         onReset
-}: StarFormProps) => {
+                             isFilter=false,
+                             onFilter,
+                             onReset
+                         }: StarFormProps) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [previewImage, setPreviewImage] = useState<string>();
 
     useEffect(() => {
         return () => {
             form.resetFields(); // Reset form when component unmounts
         };
     }, [form]);
+
+    const beforeUpload = (file: RcFile) => {
+        // 1. Allowed MIME types
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+        const isValidType = validTypes.includes(file.type);
+
+        // 2. File size check (5MB max)
+        const isLt5M = file.size / 1024 / 1024 < 5;
+
+        // 3. Error handling
+        if (!isValidType) {
+            message.error('You can only upload JPG/PNG/WEBP files!');
+            return Upload.LIST_IGNORE; // Prevent upload
+        }
+
+        if (!isLt5M) {
+            message.error('Image must be smaller than 5MB!');
+            return Upload.LIST_IGNORE;
+        }
+
+        return true; // Allow upload
+    };
+
+    const handleUpload = async (options: UploadRequestOption) => {
+        const { file } = options;
+        const formData = new FormData();
+        formData.append('file', file as Blob);
+
+        try {
+            const res = await starsApi.uploadImage(file as File);
+            form.setFieldValue('imageUrl', res.data);
+            if (file instanceof File) {
+                setPreviewImage(URL.createObjectURL(file));
+            }
+        } catch (error) {
+            message.error(error instanceof Error ? `Upload failed: ${error.message}` : 'Upload failed');
+        }
+    };
+    const handlePreviewChange = (info: { file: UploadFile }) => {
+        if (info.file.originFileObj) {
+            setPreviewImage(URL.createObjectURL(info.file.originFileObj));
+        }
+    };
 
     const handleSubmit = async (values: StarDto | StarCriteria) => {
         if(isFilter) {
@@ -76,7 +123,29 @@ export const StarForm = ({
                     style={{rowGap: 8}} // Reduces spacing between form items
                     className="compact-form"
                 >
-
+                    <Form.Item name="imageUrl" label="Star Image">
+                        <Upload
+                            name="image"
+                            listType="picture-card"
+                            showUploadList={false}
+                            customRequest={handleUpload}
+                            beforeUpload={beforeUpload}
+                            onChange={handlePreviewChange}
+                        >
+                            {previewImage ? (
+                                <img
+                                    src={previewImage}
+                                    alt="preview"
+                                    style={{ width: '100%' }}
+                                />
+                            ) : (
+                                <div>
+                                    <UploadOutlined />
+                                    <div style={{ marginTop: 8 }}>Upload</div>
+                                </div>
+                            )}
+                        </Upload>
+                    </Form.Item>
                     <Form.Item style={{marginBottom: 8, marginTop: 8}} name="name" label="Name"
                                rules={isFilter ? [] : [{required: true, message: 'Please enter name'}]}>
                         <Input style={{width: '95%'}}/>
