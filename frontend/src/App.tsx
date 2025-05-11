@@ -4,6 +4,7 @@ import ConstellationsPage from './pages/ConstellationsPage.tsx';
 import {MainLayout} from "./components/layout/MainLayout.tsx";
 import StarsPage from "./pages/StarsPage.tsx";
 import '@ant-design/v5-patch-for-react-19';
+import NotFoundPage from "./pages/NotFoundPage.tsx";
 
 function App() {
     return (
@@ -13,7 +14,7 @@ function App() {
                         <Route path="/" element={<HomePage />} />
                         <Route path="/constellations" element={<ConstellationsPage />} />
                         <Route path="/stars" element={<StarsPage />} />
-                        <Route path="*" element={<div>404 Not Found TRY LATER LUV U</div>} />
+                        <Route path="*" element={<NotFoundPage/>} />
                     </Routes>
                 </MainLayout>
             </Router>

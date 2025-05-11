@@ -40,7 +40,7 @@ const StarsPage = () => {
 
     return (
         <div style={{ padding: '24px', width: '99vw' }}>
-            <h1>Stars Catalog</h1>
+            <h1>Stars Catalogue</h1>
             <StarsList
                 stars={stars}
                 loading={loading}
