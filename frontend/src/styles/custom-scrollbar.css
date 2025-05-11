@@ -1,17 +1,16 @@
-/* custom-scrollbar.css */
-/* Vertical scrollbar */
+
 .ScrollbarsCustom-Wrapper .ScrollbarsCustom-TrackY {
     background: #f1f1f1 !important;
     width: 10px !important;
 }
 
-/* Horizontal scrollbar */
+
 .ScrollbarsCustom-Wrapper .ScrollbarsCustom-TrackX {
     background: #f1f1f1 !important;
     height: 10px !important;
 }
 
-/* Thumb common styles */
+
 .ScrollbarsCustom-Wrapper .ScrollbarsCustom-Thumb {
     background: #007BFF !important;
     border-radius: 4px !important;
@@ -19,17 +18,16 @@
     transition: background 0.3s ease !important;
 }
 
-/* Hover state */
+
 .ScrollbarsCustom-Wrapper .ScrollbarsCustom-Thumb:hover {
     background: #0056b3 !important;
 }
 
-/* Container */
 .ScrollbarsCustom-Wrapper {
     overflow: hidden !important;
-    scrollbar-width: none; /* For Firefox */
+    scrollbar-width: none;
 }
 
 .ScrollbarsCustom-Wrapper::-webkit-scrollbar {
-    display: none; /* For WebKit browsers */
+    display: none;
 }

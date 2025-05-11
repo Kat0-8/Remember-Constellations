@@ -27,7 +27,7 @@ export const AppHeader = () => {
                         margin: 0,
                         marginRight: '24px',
                         cursor: 'pointer',
-                        lineHeight: 'inherit' // Add this to fix vertical alignment
+                        lineHeight: 'inherit'
                     }}
                 >
                     Remember-Constellations

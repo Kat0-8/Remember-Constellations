@@ -17,7 +17,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => (
             display: 'flex',
             flexDirection: 'column',
             overflow: 'auto',
-            minHeight: 'calc(100vh - 64px - 70px)', // Ensure the content fills the remaining space
+            minHeight: 'calc(100vh - 64px - 70px)',
         }}>
             {children}
         </Content>

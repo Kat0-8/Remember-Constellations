@@ -37,22 +37,19 @@ export const StarForm = ({
 
     useEffect(() => {
         return () => {
-            form.resetFields(); // Reset form when component unmounts
+            form.resetFields();
         };
     }, [form]);
 
     const beforeUpload = (file: RcFile) => {
-        // 1. Allowed MIME types
         const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
         const isValidType = validTypes.includes(file.type);
 
-        // 2. File size check (5MB max)
         const isLt5M = file.size / 1024 / 1024 < 5;
 
-        // 3. Error handling
         if (!isValidType) {
             message.error('You can only upload JPG/PNG/WEBP files!');
-            return Upload.LIST_IGNORE; // Prevent upload
+            return Upload.LIST_IGNORE;
         }
 
         if (!isLt5M) {
@@ -60,7 +57,7 @@ export const StarForm = ({
             return Upload.LIST_IGNORE;
         }
 
-        return true; // Allow upload
+        return true;
     };
 
     const handleUpload = async (options: UploadRequestOption) => {
@@ -119,8 +116,8 @@ export const StarForm = ({
                     layout="vertical"
                     initialValues={initialValues || {}}
                     onFinish={handleSubmit}
-                    size="small" // Makes form elements more compact
-                    style={{rowGap: 8}} // Reduces spacing between form items
+                    size="small"
+                    style={{rowGap: 8}}
                     className="compact-form"
                 >
                     <Form.Item name="imageUrl" label="Star Image">

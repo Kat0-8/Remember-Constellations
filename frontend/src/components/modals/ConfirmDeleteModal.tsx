@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Modal, Space, message } from 'antd';
-import ReactiveButton from 'reactive-button'; // Adjust import as needed
+import ReactiveButton from 'reactive-button';
 
 type Props = {
     open: boolean;
     id: number;
-    type: string; // Type to differentiate between star and constellation
+    type: string;
     onDelete?: (id: number) => Promise<void>;
     onRefresh?: () => void;
     onClose: () => void;

@@ -16,7 +16,7 @@ const StarsPage = () => {
             setStars(res.data);
         } catch (error) {
             if (error instanceof Error) {
-                console.error("API Error:", error.message); // Log details [[1]]
+                console.error("API Error:", error.message);
                 message.error("Failed to load stars");
             }
         } finally {
@@ -29,10 +29,6 @@ const StarsPage = () => {
         loadStars(values);
     };
 
-    // const handleResetFilters = () => {
-    //     setFilters({});
-    //     loadStars();
-    // };
 
     const handleDelete = async (id: number) => {
         await starsApi.delete(id);

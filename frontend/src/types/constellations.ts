@@ -19,5 +19,3 @@ export type ConstellationCriteria = {
     size?: number;
     sort?: string;
 };
-
-export type ConstellationSortField = 'name' | 'abbreviation' | 'family' | 'region';

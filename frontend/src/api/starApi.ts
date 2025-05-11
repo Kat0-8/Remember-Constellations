@@ -1,9 +1,6 @@
-// src/api/starsApi.ts
 import { AxiosResponse } from 'axios';
 import { StarCriteria, StarDto } from '../types/stars';
 import API from './axiosInstance';
-
-//import { PaginatedResponse } from './constellationApi'; // Or move this to a shared `types/api.ts` file
 
 export const starsApi = {
 
