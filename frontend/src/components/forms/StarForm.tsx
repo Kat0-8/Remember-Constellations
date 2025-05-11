@@ -120,7 +120,7 @@ export const StarForm = ({
                     style={{rowGap: 8}}
                     className="compact-form"
                 >
-                    <Form.Item name="imageUrl" label="Star Image">
+                    <Form.Item name="imageUrl" label="Star Image" hidden={isFilter}>
                         <Upload
                             name="image"
                             listType="picture-card"
