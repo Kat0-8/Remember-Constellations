@@ -74,6 +74,9 @@ public class Star {
     @Column(name = "position_in_constellation", nullable = true)
     private String positionInConstellation;
 
+    @Column(name = "image_url", nullable = true)
+    private String imageUrl;
+
     @JsonIdentityReference(alwaysAsId = true)
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

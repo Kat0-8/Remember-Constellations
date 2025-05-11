@@ -10,6 +10,7 @@ import Scrollbar from "react-scrollbars-custom";
 import '../../styles/custom-scrollbar.css'
 import '../../styles/blue-button.css'
 import {ConfirmDeleteModal} from "../modals/ConfirmDeleteModal.tsx";
+import ExpandedImageModal from "../modals/ExpandedImageModal.tsx";
 
 interface StarsListProps {
     stars: StarDto[];
@@ -35,6 +36,8 @@ export const StarsList = ({
     const [selectedToDeleteStarId, setSelectedToDeleteStarId] = useState<number>(0);
     const [filterVisible, setFilterVisible] = useState(false);
     const [currentFilters, setCurrentFilters] = useState<StarCriteria>({});
+    const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+    const [isImageModalVisible, setIsImageModalVisible] = useState(false);
 
     const handleFilter = (values: StarCriteria) => {
         onSearch?.(values);
@@ -44,6 +47,11 @@ export const StarsList = ({
     const handleShowConfirmDeleteModal = (starId: number) => {
         setSelectedToDeleteStarId(starId);
         setConfirmDeleteModalVisible(true);
+    };
+
+    const handleAvatarClick = (imageUrl: string) => {
+        setSelectedImageUrl(imageUrl);
+        setIsImageModalVisible(true);
     };
 
     const handleViewConstellation = (constellationId: number) => {
@@ -122,7 +130,12 @@ export const StarsList = ({
                         ]}
                     >
                         <List.Item.Meta
-                            avatar={<Avatar src={star.imageUrl} size="large"/>}
+                            avatar={<Avatar
+                                src={`http://localhost:8080/api/images/${star.imageUrl}`}
+                                size={50}
+                                onClick={() => handleAvatarClick(star.imageUrl)}
+                                style={{ cursor: 'pointer' }}
+                            />}
                             title={star.name}
                             description={`
                                 Type: ${star.type} | 
@@ -132,7 +145,7 @@ export const StarsList = ({
                                 Luminosity: ${star.luminosity}L⊙ |
                                 Right ascension: ${star.rightAscension} |
                                 Declination: ${star.declination} |
-                                Position: ${star.positionInConstellation ? star.positionInConstellation : 'N/A'} |
+                                Position: ${star.positionInConstellation ? star.positionInConstellation : 'N/A'}
                             `}
                         />
                     </List.Item>
@@ -186,6 +199,18 @@ export const StarsList = ({
                 </Scrollbar>
             </Modal>
 
+            <ExpandedImageModal
+                key={selectedImageUrl || 'new'}
+                open={isImageModalVisible}
+                imageUrl={selectedImageUrl}
+                onClose={() =>
+                {
+                    setIsImageModalVisible(false);
+                    setSelectedImageUrl(null);
+                }
+            }
+            />
+
             <ConstellationInfoModal
                 key={selectedConstellationId || 'new'}
                 constellationId={selectedConstellationId}
@@ -197,7 +222,6 @@ export const StarsList = ({
             />
 
             <ConfirmDeleteModal
-                key={selectedToDeleteStarId || 'new'}
                 open={isConfirmDeleteModalVisible}
                 id={selectedToDeleteStarId}
                 type={'Star'}

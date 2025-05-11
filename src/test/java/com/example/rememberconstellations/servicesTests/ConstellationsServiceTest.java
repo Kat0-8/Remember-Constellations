@@ -436,7 +436,7 @@ class ConstellationsServiceTest {
     /* CREATE TESTS - Additional Cases */
     @Test
     void createConstellation_WithStars_SavesHierarchy() {
-        StarDto starDto = new StarDto(0, "TestStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", 1);
+        StarDto starDto = new StarDto(0, "TestStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null,1 );
         ConstellationDto inputDto = new ConstellationDto(0, "Test", "TST", "Family", "Region", List.of(starDto));
 
         Constellation savedConstellation = createBaseConstellation();
@@ -525,7 +525,7 @@ class ConstellationsServiceTest {
         original.getStars().add(existingStar);
 
         // New star to add
-        StarDto newStarDto = new StarDto(2, "NewStar", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "NewPos",1);
+        StarDto newStarDto = new StarDto(2, "NewStar", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "NewPos", null, 1);
         ConstellationDto patchDto = new ConstellationDto();
         patchDto.setStars(List.of(newStarDto));
 
@@ -545,7 +545,7 @@ class ConstellationsServiceTest {
         existing.setId(1);
         existing.getStars().add(new Star("OldStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos"));
 
-        StarDto newStarDto = new StarDto(2, "NewStar", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "NewPos",1);
+        StarDto newStarDto = new StarDto(2, "NewStar", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "NewPos",null ,1);
         ConstellationDto putDto = new ConstellationDto(1, "NewName", "NEW", "NewFam", "NewReg", List.of(newStarDto));
 
         when(constellationsRepository.findById(1)).thenReturn(Optional.of(existing));
@@ -609,7 +609,7 @@ class ConstellationsServiceTest {
     void patchConstellation_InvalidStar_ThrowsException() {
         Constellation original = createBaseConstellation();
         original.setId(1);
-        StarDto invalidStar = new StarDto(999, null, null, null, null, null, null, null, null, null, null);
+        StarDto invalidStar = new StarDto(999, null, null, null, null, null, null, null, null, null, null, null);
 
         ConstellationDto patchDto = new ConstellationDto();
         patchDto.setStars(List.of(invalidStar));

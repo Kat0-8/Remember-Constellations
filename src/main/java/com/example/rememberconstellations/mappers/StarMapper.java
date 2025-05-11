@@ -19,6 +19,7 @@ public class StarMapper {
         starDto.setRightAscension(star.getRightAscension());
         starDto.setDeclination(star.getDeclination());
         starDto.setPositionInConstellation(star.getPositionInConstellation());
+        starDto.setImageUrl(star.getImageUrl());
         if (star.getConstellation() != null) {
             starDto.setConstellationId(star.getConstellation().getId());
         } else {
@@ -39,6 +40,7 @@ public class StarMapper {
         star.setRightAscension(starDto.getRightAscension());
         star.setDeclination(starDto.getDeclination());
         star.setPositionInConstellation(starDto.getPositionInConstellation());
+        star.setImageUrl(starDto.getImageUrl());
         return star;
     }
 }

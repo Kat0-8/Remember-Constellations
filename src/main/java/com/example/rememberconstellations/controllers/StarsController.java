@@ -1,6 +1,7 @@
 package com.example.rememberconstellations.controllers;
 
 import com.example.rememberconstellations.dtos.StarDto;
+import com.example.rememberconstellations.services.ImagesService;
 import com.example.rememberconstellations.services.StarsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,16 +19,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Stars API", description = "Operations on stars")
 @RestController
 @RequestMapping(value = "/stars")
 public class StarsController {
     private final StarsService starsService;
+    private final ImagesService imagesService;
 
     @Autowired
-    public StarsController(StarsService starsService) {
+    public StarsController(StarsService starsService, ImagesService imagesService) {
         this.starsService = starsService;
+        this.imagesService = imagesService;
     }
 
     /* CREATE */
@@ -42,6 +46,11 @@ public class StarsController {
     @PostMapping("/bulk")
     public List<StarDto> createStars(@Valid @RequestBody List<StarDto> starDtos) {
         return starsService.createStars(starDtos);
+    }
+
+    @PostMapping("/upload")
+    public String uploadImage(@RequestParam("file") MultipartFile file) {
+        return imagesService.storeFile(file, "star");
     }
 
     /* READ */

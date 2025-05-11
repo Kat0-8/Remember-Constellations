@@ -31,5 +31,6 @@ public class StarDto {
     @NotNull
     private Double declination;
     private String positionInConstellation;
+    private String imageUrl;
     private Integer constellationId;
 }

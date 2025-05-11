@@ -11,6 +11,7 @@ import com.example.rememberconstellations.utilities.specifications.StarSpecifica
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class StarsService {
     private final StarsRepository starsRepository;
     private final StarMapper starMapper;
     private final StarCache starCache;
+
+    @Value("${file.default-star-image}")
+    private String defaultStarImage;
 
     @Autowired
     public StarsService(StarsRepository starsRepository, StarMapper starMapper, StarCache starCache) {
@@ -39,6 +43,9 @@ public class StarsService {
         }
         log.info("Creating new star with name {}", starDto.getName());
         Star star = starMapper.mapToEntity(starDto);
+        if (star.getImageUrl() == null || star.getImageUrl().isEmpty()) {
+            star.setImageUrl(defaultStarImage);
+        }
         Star savedStar = starsRepository.save(star);
         StarDto savedStarDto = starMapper.mapToDto(savedStar);
         starCache.put(savedStar.getId(), savedStarDto);
@@ -57,7 +64,13 @@ public class StarsService {
         }
         log.info("Creating {} stars in bulk", starDtos.size());
         List<Star> stars = starDtos.stream()
-                .map(starMapper::mapToEntity)
+                .map(starDto -> {
+                    Star star = starMapper.mapToEntity(starDto);
+                    if (star.getImageUrl() == null || star.getImageUrl().isEmpty()) {
+                        star.setImageUrl(defaultStarImage);
+                    }
+                    return star;
+                })
                 .toList();
         List<Star> savedStars = starsRepository.saveAll(stars);
         List<StarDto> savedStarDtos = savedStars.stream()
@@ -198,6 +211,9 @@ public class StarsService {
         }
         if (starDto.getPositionInConstellation() != null) {
             starToPatch.setPositionInConstellation(starDto.getPositionInConstellation());
+        }
+        if (starDto.getImageUrl() != null) {
+            starToPatch.setImageUrl(starDto.getImageUrl());
         }
         Star patchedStar = starsRepository.save(starToPatch);
         StarDto patchedStarDto = starMapper.mapToDto(patchedStar);

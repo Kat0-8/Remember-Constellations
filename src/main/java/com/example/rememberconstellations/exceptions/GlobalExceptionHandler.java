@@ -54,4 +54,10 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_GATEWAY.value(), exception.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_GATEWAY);
     }
+
+    @ExceptionHandler(FileSizeException.class)
+    public ResponseEntity<ErrorResponse> handleFileSizeException(FileSizeException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }

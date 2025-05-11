@@ -76,6 +76,7 @@ export const StarForm = ({
                     style={{rowGap: 8}} // Reduces spacing between form items
                     className="compact-form"
                 >
+
                     <Form.Item style={{marginBottom: 8, marginTop: 8}} name="name" label="Name"
                                rules={isFilter ? [] : [{required: true, message: 'Please enter name'}]}>
                         <Input style={{width: '95%'}}/>

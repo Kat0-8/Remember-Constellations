@@ -15,6 +15,17 @@ export const starsApi = {
     createBulk: (data: Omit<StarDto, 'id'>[]): Promise<AxiosResponse<StarDto[]>> =>
         API.post('/stars/bulk', data),
 
+    uploadImage: (file: File): Promise<AxiosResponse<string>> => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return API.post('/stars/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+
+
     /* READ */
 
     getAll: (params?: StarCriteria): Promise<AxiosResponse< StarDto[] >> =>
