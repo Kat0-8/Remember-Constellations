@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class ConstellationsService {
     private final StarMapper starMapper;
     private final ConstellationCache constellationCache;
     private final StarsRepository starsRepository;
+
+    @Value("${file.default-constellation-image}")
+    private String defaultConstellationImage;
 
     @Autowired
     public ConstellationsService(ConstellationsRepository constellationsRepository,
@@ -52,6 +56,9 @@ public class ConstellationsService {
         }
         log.info("Creating new constellation with name {}", constellationDto.getName());
         Constellation constellation = constellationMapper.mapToEntity(constellationDto);
+        if (constellationDto.getImageUrl() == null || constellationDto.getImageUrl().isEmpty()) {
+            constellation.setImageUrl(defaultConstellationImage);
+        }
         Constellation savedConstellation = constellationsRepository.save(constellation);
         ConstellationDto savedConstellationDto = constellationMapper.mapToDto(savedConstellation);
         constellationCache.put(savedConstellation.getId(), savedConstellationDto);

@@ -56,10 +56,10 @@ class ConstellationsServiceTest {
     /* CREATE TESTS */
     @Test
     void createConstellation_NewName_SavesAndCaches() {
-        ConstellationDto inputDto = new ConstellationDto(0, "Orion", "ORI", "Winter", "Equatorial", Collections.emptyList());
+        ConstellationDto inputDto = new ConstellationDto(0, "Orion", "ORI", "Winter", "Equatorial", null, Collections.emptyList());
         Constellation savedEntity = createBaseConstellation();
         savedEntity.setId(1);
-        ConstellationDto expectedDto = new ConstellationDto(1, "Orion", "ORI", "Winter", "Equatorial", Collections.emptyList());
+        ConstellationDto expectedDto = new ConstellationDto(1, "Orion", "ORI", "Winter", "Equatorial", null, Collections.emptyList());
 
         when(constellationsRepository.existsByName("Orion")).thenReturn(false);
         when(constellationsRepository.save(any(Constellation.class))).thenReturn(savedEntity);
@@ -79,7 +79,7 @@ class ConstellationsServiceTest {
 
     @Test
     void createConstellation_ExistingName_ThrowsException() {
-        ConstellationDto inputDto = new ConstellationDto(0, "Orion", "ORI", "Winter", "Equatorial", null);
+        ConstellationDto inputDto = new ConstellationDto(0, "Orion", "ORI", "Winter", "Equatorial", null,  null);
         when(constellationsRepository.existsByName("Orion")).thenReturn(true);
 
         assertThrows(ConstellationAlreadyExistsException.class, () ->
@@ -129,7 +129,7 @@ class ConstellationsServiceTest {
     /* READ TESTS */
     @Test
     void getConstellationById_Cached_ReturnsFromCache() {
-        ConstellationDto cachedDto = new ConstellationDto(1, "Orion", "ORI", "Winter", "Equatorial", List.of());
+        ConstellationDto cachedDto = new ConstellationDto(1, "Orion", "ORI", "Winter", "Equatorial", null,  List.of());
         when(constellationCache.get(1)).thenReturn(cachedDto);
 
         ConstellationDto result = constellationsService.getConstellationById(1);
@@ -142,7 +142,7 @@ class ConstellationsServiceTest {
     void getConstellationById_Uncached_FetchesAndCaches() {
         Constellation entity = createBaseConstellation();
         entity.setId(1);
-        ConstellationDto expectedDto = new ConstellationDto(1, "Orion", "ORI", "Winter", "Equatorial", Collections.emptyList());
+        ConstellationDto expectedDto = new ConstellationDto(1, "Orion", "ORI", "Winter", "Equatorial", null, Collections.emptyList());
 
         when(constellationCache.get(1)).thenReturn(null);
         when(constellationsRepository.findById(1)).thenReturn(Optional.of(entity));
@@ -260,7 +260,7 @@ class ConstellationsServiceTest {
         // Setup
         Constellation cachedConstellation = createBaseConstellation();
         cachedConstellation.setId(1);
-        ConstellationDto cachedDto = new ConstellationDto(1, "Cached", "CAC", "Family", "Region", Collections.emptyList());
+        ConstellationDto cachedDto = new ConstellationDto(1, "Cached", "CAC", "Family", "Region", null, Collections.emptyList());
 
         Constellation uncachedConstellation = createBaseConstellation();
         uncachedConstellation.setId(2);
@@ -284,7 +284,7 @@ class ConstellationsServiceTest {
     void putConstellation_ValidId_UpdatesAndCaches() {
         Constellation existing = createBaseConstellation();
         existing.setId(1);
-        ConstellationDto inputDto = new ConstellationDto(1, "New Orion", "NOR", "Winter", "Equatorial", List.of());
+        ConstellationDto inputDto = new ConstellationDto(1, "New Orion", "NOR", "Winter", "Equatorial", null, List.of());
 
         when(constellationsRepository.findById(1)).thenReturn(Optional.of(existing));
         when(constellationsRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
@@ -299,7 +299,7 @@ class ConstellationsServiceTest {
     void patchConstellation_PartialUpdate_ModifiesOnlySpecifiedFields() {
         Constellation original = createBaseConstellation();
         original.setId(1);
-        ConstellationDto patchDto = new ConstellationDto(0, null, "NEW", null, "Southern", null);
+        ConstellationDto patchDto = new ConstellationDto(0, null, "NEW", null, "Southern", null, null);
 
         when(constellationsRepository.findById(1)).thenReturn(Optional.of(original));
         when(constellationsRepository.save(any())).thenReturn(original);
@@ -437,7 +437,7 @@ class ConstellationsServiceTest {
     @Test
     void createConstellation_WithStars_SavesHierarchy() {
         StarDto starDto = new StarDto(0, "TestStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos", null,1 );
-        ConstellationDto inputDto = new ConstellationDto(0, "Test", "TST", "Family", "Region", List.of(starDto));
+        ConstellationDto inputDto = new ConstellationDto(0, "Test", "TST", "Family", "Region", null, List.of(starDto));
 
         Constellation savedConstellation = createBaseConstellation();
         savedConstellation.setId(1);
@@ -546,7 +546,7 @@ class ConstellationsServiceTest {
         existing.getStars().add(new Star("OldStar", "Type", 1.0, 1.0, 5000.0, 1.0, 0.0, 0.0, "Pos"));
 
         StarDto newStarDto = new StarDto(2, "NewStar", "Type", 2.0, 2.0, 6000.0, 2.0, 1.0, 1.0, "NewPos",null ,1);
-        ConstellationDto putDto = new ConstellationDto(1, "NewName", "NEW", "NewFam", "NewReg", List.of(newStarDto));
+        ConstellationDto putDto = new ConstellationDto(1, "NewName", "NEW", "NewFam", "NewReg", null,  List.of(newStarDto));
 
         when(constellationsRepository.findById(1)).thenReturn(Optional.of(existing));
         when(constellationsRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
@@ -561,7 +561,7 @@ class ConstellationsServiceTest {
     void putConstellation_NonExistentId_ThrowsResourceNotFound() {
         // Setup
         int nonExistentId = 999;
-        ConstellationDto inputDto = new ConstellationDto(nonExistentId, "NewName", "NEW", "Family", "Region", List.of());
+        ConstellationDto inputDto = new ConstellationDto(nonExistentId, "NewName", "NEW", "Family", "Region", null, List.of());
 
         when(constellationsRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 

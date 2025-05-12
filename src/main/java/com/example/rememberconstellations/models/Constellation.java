@@ -49,6 +49,9 @@ public class Constellation {
     @Column(name = "region", nullable = false)
     private String region;
 
+    @Column(name = "image_url", nullable = true)
+    private String imageUrl;
+
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonManagedReference
     @OneToMany(mappedBy = "constellation", fetch = FetchType.LAZY,

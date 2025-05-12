@@ -2,6 +2,7 @@ package com.example.rememberconstellations.controllers;
 
 import com.example.rememberconstellations.dtos.ConstellationDto;
 import com.example.rememberconstellations.services.ConstellationsService;
+import com.example.rememberconstellations.services.ImagesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,16 +19,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Constellation API", description = "Operations on constellations")
 @RestController
 @RequestMapping(value = "/constellations")
 public class ConstellationsController {
     private final ConstellationsService constellationsService;
+    private final ImagesService imagesService;
 
     @Autowired
-    public ConstellationsController(ConstellationsService constellationsService) {
+    public ConstellationsController(ConstellationsService constellationsService, ImagesService imagesService) {
         this.constellationsService = constellationsService;
+        this.imagesService = imagesService;
     }
 
     /* CREATE */
@@ -45,6 +49,11 @@ public class ConstellationsController {
             @RequestBody List<Integer> starIds
     ) {
         return constellationsService.attachStars(id, starIds);
+    }
+
+    @PostMapping("/upload")
+    public String uploadImage(@RequestParam("file") MultipartFile file) {
+        return imagesService.storeFile(file, "constellation");
     }
 
     /* READ */

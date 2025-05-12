@@ -25,7 +25,7 @@ public class ConstellationMapper {
                 .collect(Collectors.toList());
 
         return new ConstellationDto(constellation.getId(), constellation.getName(), constellation.getAbbreviation(),
-                constellation.getFamily(), constellation.getRegion(), starDtos);
+                constellation.getFamily(), constellation.getRegion(), constellation.getImageUrl(), starDtos);
     }
 
     public Constellation mapToEntity(ConstellationDto constellationDto) {
@@ -35,6 +35,7 @@ public class ConstellationMapper {
         constellation.setAbbreviation(constellationDto.getAbbreviation());
         constellation.setFamily(constellationDto.getFamily());
         constellation.setRegion(constellationDto.getRegion());
+        constellation.setImageUrl(constellationDto.getImageUrl());
         List<Star> stars = constellationDto.getStars().stream()
                 .map(starDto -> {
                     Star star = starMapper.mapToEntity(starDto);

@@ -22,5 +22,6 @@ public class ConstellationDto {
     private String family;
     @NotBlank
     private String region;
+    private String imageUrl;
     private List<StarDto> stars;
 }
