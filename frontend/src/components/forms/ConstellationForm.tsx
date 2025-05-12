@@ -8,6 +8,8 @@ import ReactiveButton from "reactive-button";
 import Scrollbar from "react-scrollbars-custom";
 import '../../styles/custom-scrollbar.css';
 import {UploadOutlined} from "@ant-design/icons";
+import {starsApi} from "../../api/starApi.ts";
+import {StarDto} from "../../types/stars.ts";
 
 interface ConstellationFormProps {
     form: FormInstance;
@@ -40,6 +42,22 @@ export const ConstellationForm = ({
                                       setPreviewImage
                                   }: ConstellationFormProps) => {
     const [loading, setLoading] = useState(false);
+    const [allStars, setAllStars] = useState<StarDto[]>([]);
+    const [selectedStarIds, setSelectedStarIds] = useState<number[]>([]);
+
+    useEffect(() => {
+        const loadStars = async () => {
+            try {
+                const response = await starsApi.getAll({
+                    constellationId: undefined // Only unattached stars
+                });
+                setAllStars(response.data);
+            } catch (error) {
+                message.error(error instanceof Error ? `Upload failed: ${error.message}` : 'Upload failed');
+            }
+        };
+        if (!isFilter) loadStars();
+    }, [isFilter]);
 
     useEffect(() => {
         return () => {
@@ -100,9 +118,13 @@ export const ConstellationForm = ({
 
             if (initialValues && 'id' in initialValues) {
                 await constellationApi.patch(initialValues.id, constellationData);
+                await constellationApi.attachStars(initialValues.id, selectedStarIds);
                 message.success('Constellation updated successfully');
             } else {
-                await constellationApi.create(constellationData);
+                const response = await constellationApi.create(constellationData);
+                if (selectedStarIds.length > 0) {
+                    await constellationApi.attachStars(response.data.id, selectedStarIds);
+                }
                 message.success('Constellation created successfully');
             }
 
@@ -202,6 +224,35 @@ export const ConstellationForm = ({
                                 label: region
                             }))}
                         />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Attach Stars"
+                        hidden={isFilter}
+                    >
+                        <Space.Compact style={{ width: '100%' }}>
+                            <Select
+                                mode="multiple"
+                                style={{ width: '85%' }}
+                                placeholder="Select available stars"
+                                value={selectedStarIds}
+                                onChange={setSelectedStarIds}
+                                options={allStars.map(star => ({
+                                    value: star.id,
+                                    label: `${star.name} (${star.type})`,
+                                    disabled: star.constellationId !== null // Disable already attached
+                                }))}
+                                showSearch
+                                optionFilterProp="label"
+                            />
+                            {/*<ReactiveButton*/}
+                            {/*    rounded*/}
+                            {/*    outline*/}
+                            {/*    size="small"*/}
+                            {/*    color="blue"*/}
+                            {/*    idleText="Create New Star"*/}
+                            {/*/>*/}
+                        </Space.Compact>
                     </Form.Item>
 
                     <Form.Item style={{marginBottom: 0, paddingBottom: 0}}>
