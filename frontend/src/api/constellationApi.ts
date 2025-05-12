@@ -1,4 +1,3 @@
-// src/api/constellationApi.ts
 import { AxiosResponse } from 'axios';
 import { ConstellationCriteria, ConstellationDto } from '../types/constellations';
 import API from './axiosInstance.ts'
@@ -22,9 +21,19 @@ export const constellationApi = {
     attachStars: (id: number, starIds: number[]): Promise<AxiosResponse<ConstellationDto>> =>
         API.post(`/constellations/${id}/attach-stars`, starIds),
 
+    uploadImage: (file: File): Promise<AxiosResponse<string>> => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return API.post('/constellations/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+
     /* READ */
 
-    getAll: (params?: ConstellationCriteria): Promise<AxiosResponse<PaginatedResponse<ConstellationDto>>> =>
+    getAll: (params?: ConstellationCriteria): Promise<AxiosResponse<ConstellationDto[]>> =>
         API.get('/constellations', { params }),
 
     getById: (id: number): Promise<AxiosResponse<ConstellationDto>> =>
@@ -46,5 +55,3 @@ export const constellationApi = {
     delete: (id: number): Promise<AxiosResponse<void>> =>
         API.delete(`/constellations/${id}`),
 };
-
-export { API };

@@ -6,6 +6,7 @@ export interface ConstellationDto {
     abbreviation: string;
     family: string;
     region: string;
+    imageUrl: string;
     stars?: StarDto[];
 }
 

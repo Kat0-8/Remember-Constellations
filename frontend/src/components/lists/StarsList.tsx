@@ -1,6 +1,6 @@
 import {List, Avatar, Modal, Space} from 'antd';
 import {StarCriteria, StarDto} from '../../types/stars';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {StarForm} from '../forms/StarForm';
 import {ConstellationInfoModal} from '../modals/ConstellationInfoModal';
 import {ViewConstellationButton} from "../buttons/ViewConstellationInfoButton.tsx";
@@ -16,7 +16,6 @@ import {useForm} from "antd/es/form/Form";
 interface StarsListProps {
     stars: StarDto[];
     loading?: boolean;
-    searchTerm?: string;
     onSearch?: (value: StarCriteria) => void;
     onDelete?: (id: number) => Promise<void>;
     onRefresh?: () => void;
@@ -40,7 +39,24 @@ export const StarsList = ({
     const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
     const [isImageModalVisible, setIsImageModalVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState<string>('');
-    const [form] = useForm();
+    const [editForm] = useForm();
+    const [filterForm] = useForm();
+
+    useEffect(() => {
+        if (filterVisible) {
+            filterForm.resetFields();
+            filterForm.setFieldsValue(currentFilters);
+        }
+    }, [filterVisible]);
+
+    useEffect(() => {
+        if (isFormVisible) {
+            editForm.resetFields();
+            if (selectedStar) {
+                editForm.setFieldsValue(selectedStar);
+            }
+        }
+    }, [isFormVisible, selectedStar]);
 
     const resetPreviewImage = () => {
         setPreviewImage('');
@@ -164,7 +180,7 @@ export const StarsList = ({
                 open={filterVisible}
                 onCancel={() => {
                     setFilterVisible(false);
-                    form.resetFields();
+                    filterForm.resetFields();
                 }
                 }
                 footer={null}
@@ -172,7 +188,7 @@ export const StarsList = ({
             >
                 <Scrollbar style={{width: '100%', height: '60vh'}}>
                 <StarForm
-                    form = {form}
+                    form = {filterForm}
                     isFilter
                     initialValues={currentFilters}
                     onFilter={handleFilter}
@@ -193,7 +209,7 @@ export const StarsList = ({
                 onCancel={() => {
                     setIsFormVisible(false);
                     setSelectedStar(undefined);
-                    form.resetFields();
+                    editForm.resetFields();
                     resetPreviewImage();
                 }
                 }
@@ -203,7 +219,7 @@ export const StarsList = ({
             >
                 <Scrollbar style={{width: '100%', height: '60vh'}}>
                     <StarForm
-                        form = {form}
+                        form = {editForm}
                         key={selectedStar?.id || 'new'}
                         initialValues={selectedStar}
                         onSuccess={() => {

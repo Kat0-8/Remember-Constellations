@@ -4,7 +4,6 @@ import com.example.rememberconstellations.dtos.ConstellationDto;
 import com.example.rememberconstellations.dtos.StarDto;
 import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.models.Star;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

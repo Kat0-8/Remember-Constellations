@@ -1,68 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { message } from 'antd';
-import { constellationApi } from '../api/constellationApi.ts';
-import { ConstellationDto } from '../types/constellations';
-import ConstellationList from '../components/lists/ConstellationList.tsx';
-import ConstellationForm from '../components/forms/ConstellationForm.tsx';
+import {useEffect, useState} from 'react';
+import {ConstellationsList} from "../components/lists/ConstellationList.tsx";
+import {message} from "antd";
+import {ConstellationCriteria, ConstellationDto} from "../types/constellations.ts";
+import {constellationApi} from "../api/constellationApi.ts";
 
-const ConstellationsPage: React.FC = () => {
+const StarsPage = () => {
     const [constellations, setConstellations] = useState<ConstellationDto[]>([]);
-    const [editing, setEditing] = useState<ConstellationDto | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [filters, setFilters] = useState<ConstellationCriteria>({});
 
-    const loadData = async () => {
-        try {
-            const res = await constellationApi.getAll({ page: 0, size: 100 });
-            setConstellations(res.data.content);
-        } catch {
-            message.error('Failed to load constellations');
-        }
-    };
-
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const handleSubmit = async (values: Omit<ConstellationDto, 'id'>) => {
+    const loadConstellations = async (criteria: ConstellationCriteria = {}) => {
         try {
             setLoading(true);
-            if (editing) {
-                await constellationApi.put(editing.id, { ...editing, ...values });
-                message.success('Constellation updated');
-            } else {
-                await constellationApi.create(values);
-                message.success('Constellation created');
+            const res = await constellationApi.getAll(criteria);
+            setConstellations(res.data);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("API Error:", error.message);
+                message.error("Failed to load constellations");
             }
-            setEditing(null);
-            await loadData();
-        } catch {
-            message.error('Error saving constellation');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDelete = async (id: number) => {
-        try {
-            await constellationApi.delete(id);
-            message.success('Deleted');
-            await loadData();
-        } catch {
-            message.error('Failed to delete');
-        }
+    const handleSearch = (values: ConstellationCriteria) => {
+        setFilters(values);
+        loadConstellations(values);
     };
 
+
+    const handleDelete = async (id: number) => {
+        await constellationApi.delete(id);
+    };
+
+    useEffect(() => {
+        loadConstellations();
+    }, []);
+
     return (
-        <div>
-            <h2>Constellations</h2>
-            <ConstellationForm
-                initialValues={editing || undefined}
-                onSubmit={handleSubmit}
-                isSubmitting={loading}
+        <div style={{ padding: '24px', width: '99vw' }}>
+            <h1>Constellations Catalogue</h1>
+            <ConstellationsList
+               constellations={constellations}
+               loading={loading}
+               onSearch={handleSearch}
+               onDelete={handleDelete}
+               onRefresh={()=>loadConstellations(filters)}
             />
-            <ConstellationList data={constellations} onDelete={handleDelete} />
         </div>
     );
 };
 
-export default ConstellationsPage;
+export default StarsPage;

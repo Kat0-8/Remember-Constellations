@@ -117,7 +117,6 @@ export const StarForm = ({
 
     return (
         <Scrollbar style={{width: '100%', height: '60vh'}}>
-            {/*<div>*/}
             <div style={{maxHeight: 'calc(100vh - 200px)', paddingBottom: 80}}>
                 <Form
                     form={form}
@@ -286,8 +285,6 @@ export const StarForm = ({
                     </Form.Item>
                 </Form>
             </div>
-
-            {/*</div>*/}
         </Scrollbar>
     );
 };
