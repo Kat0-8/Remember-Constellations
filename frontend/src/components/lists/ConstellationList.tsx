@@ -10,6 +10,8 @@ import '../../styles/blue-button.css';
 import { ConfirmDeleteModal } from "../modals/ConfirmDeleteModal.tsx";
 import { useForm } from "antd/es/form/Form";
 import ExpandedImageModal from "../modals/ExpandedImageModal.tsx";
+import {StarsList} from "./StarsList.tsx";
+import {starsApi} from "../../api/starApi.ts";
 
 interface ConstellationsListProps {
     constellations: ConstellationDto[];
@@ -35,12 +37,18 @@ export const ConstellationsList = ({
     const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
     const [isImageModalVisible, setIsImageModalVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState<string>('');
+    const [isStarsListVisible, setIsStarsListVisible] = useState(false);
+    const [selectedConstellationStarsId, setSelectedConstellationStarsId] = useState<number | null>(null);
     const [editForm] = useForm();
     const [filterForm] = useForm();
 
+    const handleDeleteStar = async (id: number) => {
+        await starsApi.delete(id);
+    };
+
     useEffect(() => {
         if (filterVisible) {
-            filterForm.resetFields();
+            //filterForm.resetFields();
             filterForm.setFieldsValue(currentFilters);
         }
     }, [filterVisible]);
@@ -133,8 +141,12 @@ export const ConstellationsList = ({
                             <ReactiveButton
                                 outline
                                 rounded
-                                color="primary | purple"
+                                color="secondary"
                                 size="medium"
+                                onClick={() => {
+                                    setSelectedConstellationStarsId(constellation.id);
+                                    setIsStarsListVisible(true);
+                                }}
                                 idleText={
                                     <span>
                                         <StarOutlined />
@@ -162,6 +174,26 @@ export const ConstellationsList = ({
                     </List.Item>
                 )}
             />
+            <Modal
+                title={`Stars in ${constellations.find(c => c.id === selectedConstellationStarsId)?.name || 'Constellation'}`}
+                open={isStarsListVisible}
+                onCancel={() => {
+                    setIsStarsListVisible(false);
+                    setSelectedConstellationStarsId(null);
+                }}
+                footer={null}
+                width={800}
+                destroyOnHidden
+            >
+                <Scrollbar className="custom-scrollbar" style={{ width: '100%', height: '60vh' }}>
+                    <StarsList
+                        stars={constellations.find(c => c.id === selectedConstellationStarsId)?.stars || []}
+                        onRefresh={onRefresh}
+                        onDelete={handleDeleteStar}
+                        hideButtons={true}
+                    />
+                </Scrollbar>
+            </Modal>
 
             <Modal
                 title="Filter Constellations"
@@ -173,7 +205,7 @@ export const ConstellationsList = ({
                 footer={null}
                 width={550}
             >
-                <Scrollbar style={{ width: '100%', height: '60vh' }}>
+                <Scrollbar style={{ width: '100%', height: '50vh' }}>
                     <ConstellationForm
                         form={filterForm}
                         isFilter
@@ -201,7 +233,7 @@ export const ConstellationsList = ({
                 width={550}
                 styles={{ body: { maxHeight: '60vh' } }}
             >
-                <Scrollbar style={{ width: '100%', height: '60vh' }}>
+                <Scrollbar style={{ width: '100%', height: '50vh' }}>
                     <ConstellationForm
                         form={editForm}
                         key={selectedConstellation?.id || 'new'}

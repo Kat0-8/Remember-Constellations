@@ -30,7 +30,7 @@ const StarsPage = () => {
     };
 
 
-    const handleDelete = async (id: number) => {
+    const handleDeleteStar = async (id: number) => {
         await starsApi.delete(id);
     };
 
@@ -45,7 +45,7 @@ const StarsPage = () => {
                 stars={stars}
                 loading={loading}
                 onSearch={handleSearch}
-                onDelete={handleDelete}
+                onDelete={handleDeleteStar}
                 onRefresh={() => loadStars(filters)}
             />
         </div>

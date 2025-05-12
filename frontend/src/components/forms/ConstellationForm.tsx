@@ -22,7 +22,7 @@ interface ConstellationFormProps {
 
 const constellationFamilies = [
     'Ursa Major', 'Zodiac', 'Perseus', 'Hercules', 'Orion',
-    'Heavenly Waters', 'Bayer Family', 'La Caille', 'Modern'
+    'Heavenly Waters', 'Bayer Family', 'La Caille'
 ];
 
 const celestialRegions = [
@@ -99,7 +99,7 @@ export const ConstellationForm = ({
             const constellationData = values as ConstellationDto;
 
             if (initialValues && 'id' in initialValues) {
-                await constellationApi.put(initialValues.id, constellationData);
+                await constellationApi.patch(initialValues.id, constellationData);
                 message.success('Constellation updated successfully');
             } else {
                 await constellationApi.create(constellationData);
@@ -116,15 +116,15 @@ export const ConstellationForm = ({
     };
 
     return (
-        <Scrollbar style={{width: '100%', height: '60vh'}}>
-            <div style={{maxHeight: 'calc(100vh - 200px)', paddingBottom: 80}}>
+        <Scrollbar style={{width: '100%', height: '50vh'}}>
+            <div style={{maxHeight: 'calc(80vh - 100px)', paddingBottom: 20}}>
                 <Form
                     form={form}
                     layout="vertical"
                     initialValues={initialValues || {}}
                     onFinish={handleSubmit}
                     size="small"
-                    style={{rowGap: 8}}
+                    style={{rowGap: 8, paddingBottom: 0}}
                     className="compact-form"
                 >
                     <Form.Item name="imageUrl" label="Constellation Image" hidden={isFilter}>
@@ -204,7 +204,7 @@ export const ConstellationForm = ({
                         />
                     </Form.Item>
 
-                    <Form.Item style={{marginBottom: 10, paddingBottom: 10}}>
+                    <Form.Item style={{marginBottom: 0, paddingBottom: 0}}>
                         <Space>
                             <ReactiveButton
                                 rounded

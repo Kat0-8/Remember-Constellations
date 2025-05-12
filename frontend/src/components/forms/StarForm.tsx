@@ -96,7 +96,7 @@ export const StarForm = ({
         try {
             setLoading(true);
             if (initialValues) {
-                await starsApi.put((initialValues as StarDto).id, values as StarDto);
+                await starsApi.patch((initialValues as StarDto).id, values as StarDto);
                 message.success('Star updated successfully');
             } else {
                 await starsApi.create(values as StarDto);

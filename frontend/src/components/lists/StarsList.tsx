@@ -19,6 +19,7 @@ interface StarsListProps {
     onSearch?: (value: StarCriteria) => void;
     onDelete?: (id: number) => Promise<void>;
     onRefresh?: () => void;
+    hideButtons?: boolean;
 }
 
 export const StarsList = ({
@@ -26,7 +27,8 @@ export const StarsList = ({
                               loading,
                               onSearch,
                               onDelete,
-                              onRefresh
+                              onRefresh,
+                              hideButtons
                           }: StarsListProps) => {
     const [selectedStar, setSelectedStar] = useState<StarDto | undefined>(undefined);
     const [isFormVisible, setIsFormVisible] = useState(false);
@@ -44,7 +46,7 @@ export const StarsList = ({
 
     useEffect(() => {
         if (filterVisible) {
-            filterForm.resetFields();
+            //filterForm.resetFields();
             filterForm.setFieldsValue(currentFilters);
         }
     }, [filterVisible]);
@@ -84,27 +86,29 @@ export const StarsList = ({
 
     return (
         <div>
-            <Space style={{marginBottom: 16, width: '100%'}} direction="vertical">
-                <Space>
-                    <ReactiveButton
-                        className="blue-button"
-                        rounded
-                        idleText="Filters"
-                        size="medium"
-                        onClick={() => setFilterVisible(true)}
-                    />
-                    <ReactiveButton
-                        className="blue-button"
-                        rounded
-                        idleText="Add new star"
-                        size="medium"
-                        onClick={() => {
-                            setSelectedStar(undefined);
-                            setIsFormVisible(true);
-                        }}
-                    />
+            {!hideButtons && (
+                <Space style={{marginBottom: 16, width: '100%'}} direction="vertical">
+                    <Space>
+                        <ReactiveButton
+                            className="blue-button"
+                            rounded
+                            idleText="Filters"
+                            size="medium"
+                            onClick={() => setFilterVisible(true)}
+                        />
+                        <ReactiveButton
+                            className="blue-button"
+                            rounded
+                            idleText="Add new star"
+                            size="medium"
+                            onClick={() => {
+                                setSelectedStar(undefined);
+                                setIsFormVisible(true);
+                            }}
+                        />
+                    </Space>
                 </Space>
-            </Space>
+            )}
 
             <List
                 loading={loading}
@@ -141,14 +145,15 @@ export const StarsList = ({
                                 </span>}
                             />
                             ,
-                            star.constellationId !== 0 && star.constellationId !== null ? (
-                                <ViewConstellationButton
-                                    isDisabled={false}
-                                    onOpen={() => handleViewConstellation(star.constellationId!)}
-                                />
-                            ) : (
-                                <ViewConstellationButton onOpen={() => {
-                                }} isDisabled={true}/>
+                            !hideButtons && (
+                                star.constellationId !== 0 && star.constellationId !== null ? (
+                                    <ViewConstellationButton
+                                        isDisabled={false}
+                                        onOpen={() => handleViewConstellation(star.constellationId!)}
+                                    />
+                                ) : (
+                                    <ViewConstellationButton onOpen={() => {}} isDisabled={true}/>
+                                )
                             )
                         ]}
                     >

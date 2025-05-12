@@ -30,7 +30,7 @@ const StarsPage = () => {
     };
 
 
-    const handleDelete = async (id: number) => {
+    const handleDeleteConstellation = async (id: number) => {
         await constellationApi.delete(id);
     };
 
@@ -45,7 +45,7 @@ const StarsPage = () => {
                constellations={constellations}
                loading={loading}
                onSearch={handleSearch}
-               onDelete={handleDelete}
+               onDelete={handleDeleteConstellation}
                onRefresh={()=>loadConstellations(filters)}
             />
         </div>
