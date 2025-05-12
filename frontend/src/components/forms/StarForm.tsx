@@ -1,4 +1,4 @@
-import {Form, Input, InputNumber, message, Select, Space, Upload} from 'antd';
+import {Form, FormInstance, Input, InputNumber, message, Select, Space, Upload} from 'antd';
 import type { UploadFile, RcFile } from 'antd/es/upload/interface';
 import type { UploadRequestOption } from 'rc-upload/lib/interface';
 import {StarCriteria, StarDto} from '../../types/stars';
@@ -10,11 +10,14 @@ import '../../styles/custom-scrollbar.css'
 import {UploadOutlined} from "@ant-design/icons";
 
 interface StarFormProps {
+    form: FormInstance;
     initialValues?: StarDto | StarCriteria;
     onSuccess: () => void;
     isFilter?: boolean;
     onFilter?: (values: StarCriteria) => void;
     onReset?: () => void;
+    previewImage?: string;
+    setPreviewImage?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const greekAlphabet = [
@@ -25,19 +28,23 @@ const greekAlphabet = [
 ];
 
 export const StarForm = ({
+                             form,
                              initialValues,
                              onSuccess,
                              isFilter=false,
                              onFilter,
-                             onReset
+                             onReset,
+                             previewImage,
+                             setPreviewImage
                          }: StarFormProps) => {
-    const [form] = Form.useForm();
+    //const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [previewImage, setPreviewImage] = useState<string>();
+    //const [previewImage, setPreviewImage] = useState<string>();
 
     useEffect(() => {
         return () => {
             form.resetFields();
+            setPreviewImage?.('');
         };
     }, [form]);
 
@@ -69,7 +76,7 @@ export const StarForm = ({
             const res = await starsApi.uploadImage(file as File);
             form.setFieldValue('imageUrl', res.data);
             if (file instanceof File) {
-                setPreviewImage(URL.createObjectURL(file));
+                setPreviewImage?.(URL.createObjectURL(file));
             }
         } catch (error) {
             message.error(error instanceof Error ? `Upload failed: ${error.message}` : 'Upload failed');
@@ -77,7 +84,7 @@ export const StarForm = ({
     };
     const handlePreviewChange = (info: { file: UploadFile }) => {
         if (info.file.originFileObj) {
-            setPreviewImage(URL.createObjectURL(info.file.originFileObj));
+            setPreviewImage?.(URL.createObjectURL(info.file.originFileObj));
         }
     };
 
@@ -98,13 +105,14 @@ export const StarForm = ({
             onSuccess();
         } catch (error) {
             if (error instanceof Error) {
-                message.error(`Deletion failed : ${error.message}`);
+                message.error(`Updating failed : ${error.message}`);
             } else {
-                message.error('Deletion failed: unknown error');
+                message.error('Updating failed: unknown error');
             }
         } finally {
             setLoading(false);
         }
+        setPreviewImage?.('');
     };
 
     return (
@@ -265,6 +273,7 @@ export const StarForm = ({
                                 size="medium"
                                 onClick={() => {
                                     form.resetFields()
+                                    setPreviewImage?.('')
                                     if (isFilter) {
                                         onReset?.();
                                     }

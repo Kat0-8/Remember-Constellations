@@ -11,6 +11,7 @@ import '../../styles/custom-scrollbar.css'
 import '../../styles/blue-button.css'
 import {ConfirmDeleteModal} from "../modals/ConfirmDeleteModal.tsx";
 import ExpandedImageModal from "../modals/ExpandedImageModal.tsx";
+import {useForm} from "antd/es/form/Form";
 
 interface StarsListProps {
     stars: StarDto[];
@@ -38,6 +39,12 @@ export const StarsList = ({
     const [currentFilters, setCurrentFilters] = useState<StarCriteria>({});
     const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
     const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+    const [previewImage, setPreviewImage] = useState<string>('');
+    const [form] = useForm();
+
+    const resetPreviewImage = () => {
+        setPreviewImage('');
+    };
 
     const handleFilter = (values: StarCriteria) => {
         onSearch?.(values);
@@ -155,12 +162,17 @@ export const StarsList = ({
             <Modal
                 title="Filter Stars"
                 open={filterVisible}
-                onCancel={() => setFilterVisible(false)}
+                onCancel={() => {
+                    setFilterVisible(false);
+                    form.resetFields();
+                }
+                }
                 footer={null}
                 width={550}
             >
                 <Scrollbar style={{width: '100%', height: '60vh'}}>
                 <StarForm
+                    form = {form}
                     isFilter
                     initialValues={currentFilters}
                     onFilter={handleFilter}
@@ -181,6 +193,8 @@ export const StarsList = ({
                 onCancel={() => {
                     setIsFormVisible(false);
                     setSelectedStar(undefined);
+                    form.resetFields();
+                    resetPreviewImage();
                 }
                 }
                 footer={null}
@@ -189,12 +203,16 @@ export const StarsList = ({
             >
                 <Scrollbar style={{width: '100%', height: '60vh'}}>
                     <StarForm
+                        form = {form}
                         key={selectedStar?.id || 'new'}
                         initialValues={selectedStar}
                         onSuccess={() => {
                             setIsFormVisible(false);
                             onRefresh?.();
+                            resetPreviewImage();
                         }}
+                        previewImage={previewImage}
+                        setPreviewImage={setPreviewImage}
                     />
                 </Scrollbar>
             </Modal>
