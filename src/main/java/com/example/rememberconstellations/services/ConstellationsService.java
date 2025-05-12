@@ -86,7 +86,9 @@ public class ConstellationsService {
         });
         starsRepository.saveAll(stars);
         Constellation savedConstellation = constellationsRepository.save(constellation);
-        return constellationMapper.mapToDto(savedConstellation);
+        ConstellationDto savedConstellationDto = constellationMapper.mapToDto(savedConstellation);
+        constellationCache.put(savedConstellation.getId(), savedConstellationDto);
+        return savedConstellationDto;
     }
 
     /* READ */
