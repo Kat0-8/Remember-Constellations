@@ -56,7 +56,7 @@ public class ConstellationsService {
         }
         log.info("Creating new constellation with name {}", constellationDto.getName());
         Constellation constellation = constellationMapper.mapToEntity(constellationDto);
-        if (constellationDto.getImageUrl() == null || constellationDto.getImageUrl().isEmpty()) {
+        if (constellation.getImageUrl() == null || constellation.getImageUrl().isEmpty()) {
             constellation.setImageUrl(defaultConstellationImage);
         }
         Constellation savedConstellation = constellationsRepository.save(constellation);
