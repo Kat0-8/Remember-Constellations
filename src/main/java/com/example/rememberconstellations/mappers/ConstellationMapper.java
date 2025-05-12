@@ -4,6 +4,8 @@ import com.example.rememberconstellations.dtos.ConstellationDto;
 import com.example.rememberconstellations.dtos.StarDto;
 import com.example.rememberconstellations.models.Constellation;
 import com.example.rememberconstellations.models.Star;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,15 +38,19 @@ public class ConstellationMapper {
         constellation.setFamily(constellationDto.getFamily());
         constellation.setRegion(constellationDto.getRegion());
         constellation.setImageUrl(constellationDto.getImageUrl());
-        List<Star> stars = constellationDto.getStars().stream()
-                .map(starDto -> {
-                    Star star = starMapper.mapToEntity(starDto);
-                    star.setConstellation(constellation);
-                    return star;
-                })
-                .collect(Collectors.toList());
+        List<Star> stars;
+        if (constellationDto.getStars() != null) {
+            stars = constellationDto.getStars().stream()
+                    .map(starDto -> {
+                        Star star = starMapper.mapToEntity(starDto);
+                        star.setConstellation(constellation);
+                        return star;
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            stars = Collections.emptyList();
+        }
         constellation.setStars(stars);
-
         return constellation;
     }
 }
