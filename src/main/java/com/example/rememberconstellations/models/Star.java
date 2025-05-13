@@ -67,7 +67,6 @@ public class Star {
     private Double rightAscension;
 
     @NotNull
-    @Positive
     @Column(name = "declination", nullable = false)
     private Double declination;
 
