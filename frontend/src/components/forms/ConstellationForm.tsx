@@ -230,10 +230,10 @@ export const ConstellationForm = ({
                         label="Attach Stars"
                         hidden={isFilter}
                     >
-                        <Space.Compact style={{ width: '100%' }}>
+
                             <Select
                                 mode="multiple"
-                                style={{ width: '85%' }}
+                                style={{ width: '95%' }}
                                 placeholder="Select available stars"
                                 value={selectedStarIds}
                                 onChange={setSelectedStarIds}
@@ -252,7 +252,7 @@ export const ConstellationForm = ({
                             {/*    color="blue"*/}
                             {/*    idleText="Create New Star"*/}
                             {/*/>*/}
-                        </Space.Compact>
+
                     </Form.Item>
 
                     <Form.Item style={{marginBottom: 0, paddingBottom: 0}}>
