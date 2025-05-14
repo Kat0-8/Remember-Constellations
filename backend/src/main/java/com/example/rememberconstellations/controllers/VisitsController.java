@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Visits API", description = "Get visits counter by URL")
 @RestController
-@RequestMapping("/visits")
+@RequestMapping("/api/visits")
 public class VisitsController {
     private final VisitsService visitsService;
 

@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Stars API", description = "Operations on stars")
 @RestController
-@RequestMapping(value = "/stars")
+@RequestMapping(value = "/api/stars")
 public class StarsController {
     private final StarsService starsService;
     private final ImagesService imagesService;

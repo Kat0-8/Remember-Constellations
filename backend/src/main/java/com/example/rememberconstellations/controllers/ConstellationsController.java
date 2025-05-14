@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Constellation API", description = "Operations on constellations")
 @RestController
-@RequestMapping(value = "/constellations")
+@RequestMapping(value = "/api/constellations")
 public class ConstellationsController {
     private final ConstellationsService constellationsService;
     private final ImagesService imagesService;

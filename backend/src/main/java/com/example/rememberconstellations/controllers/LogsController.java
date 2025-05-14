@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Log API", description = "Get logs")
 @RestController
-@RequestMapping("logs")
+@RequestMapping("/api/logs")
 public class LogsController {
     private final LogsService logsService;
 
