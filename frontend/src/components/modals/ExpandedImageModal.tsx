@@ -19,7 +19,7 @@ const ExpandedImageModal: React.FC<ImageModalProps> = ({ open, imageUrl, onClose
         title="Image"
     >
     <img
-        src={`http://localhost:8080/api/images/${imageUrl}`}
+        src={`/api/images/${imageUrl}`}
     alt="Expanded View"
     style={{ width: '100%' }}
     />

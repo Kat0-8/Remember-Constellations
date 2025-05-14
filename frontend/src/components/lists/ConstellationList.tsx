@@ -158,7 +158,7 @@ export const ConstellationsList = ({
                     >
                         <List.Item.Meta
                             avatar={<Avatar
-                                src={`http://localhost:8080/api/images/${constellation.imageUrl}`}
+                                src={`/api/images/${constellation.imageUrl}`}
                                 size={50}
                                 onClick={() => handleAvatarClick(constellation.imageUrl)}
                                 style={{ cursor: 'pointer'}}
