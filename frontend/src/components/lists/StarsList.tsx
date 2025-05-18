@@ -159,7 +159,9 @@ export const StarsList = ({
                     >
                         <List.Item.Meta
                             avatar={<Avatar
-                                src={`/api/images/${star.imageUrl}`}
+                                src={star.imageUrl?.startsWith("/static/")
+                                    ? star.imageUrl
+                                    : `/api/images/${star.imageUrl}`}
                                 size={50}
                                 onClick={() => handleAvatarClick(star.imageUrl)}
                                 style={{ cursor: 'pointer' }}

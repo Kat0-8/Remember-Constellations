@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,7 @@ public class ImagesService {
 
     public String storeFile(MultipartFile file, String entryType) {
         if (file == null || file.isEmpty()) {
-            return Objects.equals(entryType, "star") ? defaultStarImage : defaultConstellationImage;
+            return "/static/images/" + (entryType.equals("star") ? defaultStarImage : defaultConstellationImage);
         }
 
         // Validate file size (5MB max)
